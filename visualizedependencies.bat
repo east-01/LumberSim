@@ -1,0 +1,1 @@
+python "C:\East\Prog\Python\DependencyVisualizer\dependencyvisualizer.py" "C:\East\Prog\Unity\PackDev" --ns_whitelist Core,Bootstrapper,Networking,PlayerMgmt,MenuController

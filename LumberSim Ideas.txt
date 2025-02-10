@@ -1,0 +1,13 @@
+- Tree felling
+- Tree felling Tools:
+  - Axe
+  - Saw
+  - Chainsaw
+- Physics based logs, grabbable and orientable by player with mouse and VR
+- Wood sales:
+  - Firewood (initial way of getting $$ from small trees and axe)
+  - Logs
+  - Planks
+- Sawmills
+- Conveyor system
+- Snap-in-place Lincoln log buildings
