@@ -58,7 +58,7 @@ public class GameplayManager : MonoBehaviour
     private void Update() 
     {
         if(!hasSpawnedTree && InstanceFinder.IsServerStarted) {
-            SpawnLogObject(new(-19.58f, 0, 1.997f), new(
+            SpawnLogObject(new(-19.58f, 0, 1.997f), Quaternion.identity, new(
                 5f,
                 1f,
                 Vector3.up,
@@ -87,7 +87,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField]
     private GameObject choppableTreePrefab;
 
-    public TreeLogGroup SpawnLogObject(Vector3 position, TreeLogData rootData) 
+    public TreeLogGroup SpawnLogObject(Vector3 position, Quaternion rotation, TreeLogData rootData) 
     {
         if(!InstanceFinder.IsServerStarted) 
             throw new InvalidOperationException("Can't spawn log object, server isn't started.");
@@ -99,7 +99,8 @@ public class GameplayManager : MonoBehaviour
 
         InstanceFinder.ServerManager.Spawn(logObject, null, gameObject.scene);
 
-        logObject.transform.position = position;
+        // logObject.transform.position = position;
+        logObject.transform.SetPositionAndRotation(position, rotation);
 
         return log;
     }

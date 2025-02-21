@@ -3,6 +3,7 @@ using EMullen.Core;
 using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
 using FishNet;
+using FishNet.Component.Transforming;
 using FishNet.Managing.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -228,7 +229,7 @@ public class Player : NetworkBehaviour, IS3
         newLogData.children = (TreeLogData[]) hitLog.Data.children.Clone();
 
         // Spawn new log group
-        gameplayManager.SpawnLogObject(hitGlobal, newLogData);
+        gameplayManager.SpawnLogObject(hitGlobal, group.transform.rotation, newLogData);
 
     }
 

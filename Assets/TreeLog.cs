@@ -30,11 +30,11 @@ public class TreeLog : MonoBehaviour
     [SerializeField]
     private Vector3 angleReadout;
     // public Vector3 Angle { get; private set; }    
-    private Vector3 CalculateEndpoint(Vector3 baseAngle, int dir) => (Data.angle + baseAngle)*(Data.length/2f)*dir;
-    public Vector3 LocalEndpointForward => CalculateEndpoint(Vector3.zero, 1);
-    public Vector3 LocalEndpointBackward => CalculateEndpoint(Vector3.zero, -1);
-    public Vector3 EndpointForward => logObject.transform.position + CalculateEndpoint(LogGroup.transform.rotation.eulerAngles, 1);
-    public Vector3 EndpointBackward => logObject.transform.position + CalculateEndpoint(LogGroup.transform.rotation.eulerAngles, -1);
+    private Vector3 CalculateEndpoint(Vector3 baseDirection, int dir) => (Quaternion.Euler(Data.angle) * baseDirection).normalized * (Data.length / 2f) * dir;
+    public Vector3 LocalEndpointForward => CalculateEndpoint(Vector3.up, 1);
+    public Vector3 LocalEndpointBackward => CalculateEndpoint(Vector3.up, -1);
+    public Vector3 EndpointForward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, 1);
+    public Vector3 EndpointBackward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, -1);
 
     public TreeLog Parent { get {
         if(transform.parent == null)
@@ -127,6 +127,7 @@ public class TreeLog : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(EndpointForward, 0.5f);
         Gizmos.DrawWireSphere(EndpointBackward, 0.2f);
+        Gizmos.DrawLine(logObject.transform.position, EndpointForward);
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(logObject.transform.position, 0.5f);
