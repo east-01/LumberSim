@@ -57,7 +57,6 @@ public class PlayerObjectManager : NetworkBehaviour
                     if(player == default)
                         continue;
 
-                    BLog.Highlight("Registered player");
                     playersObjects[uid] = player;
                     PlayerConnectedEvent?.Invoke(uid, player);
                     // The player won't recieve PlayerConnectedEvent, they subscribe to it after it's called.

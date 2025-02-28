@@ -33,8 +33,8 @@ public class TreeLog : MonoBehaviour
     private Vector3 CalculateEndpoint(Vector3 baseDirection, int dir) => (Quaternion.Euler(Data.angle) * baseDirection).normalized * (Data.length / 2f) * dir;
     public Vector3 LocalEndpointForward => CalculateEndpoint(Vector3.up, 1);
     public Vector3 LocalEndpointBackward => CalculateEndpoint(Vector3.up, -1);
-    public Vector3 EndpointForward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, 1);
-    public Vector3 EndpointBackward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, -1);
+    // public Vector3 EndpointForward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, 1);
+    // public Vector3 EndpointBackward => logObject.transform.position + LogGroup.transform.rotation * CalculateEndpoint(Vector3.up, -1);
 
     public TreeLog Parent { get {
         if(transform.parent == null)
@@ -75,11 +75,13 @@ public class TreeLog : MonoBehaviour
         if(Parent == null) {
             transform.localPosition = Vector3.zero;
         } else {
-            transform.position = Parent.EndpointForward;
+            // transform.position = LogGroup.GetFrontEndpoint(Parent.GetIdentifierPath());
+            transform.localPosition = Parent.Data.angle.normalized*Parent.Data.length;
         }
 
         logObject.transform.localPosition = Data.angle*(Data.length/2);
-        logObject.transform.forward = Data.angle;
+        // logObject.transform.forward = /*LogGroup.transform.rotation * */Data.angle;
+        logObject.transform.localRotation = Quaternion.LookRotation(Data.angle);
 
         MeshFilter meshFilter = logObject.GetComponent<MeshFilter>();
         float meshLength = meshFilter.mesh.bounds.size.z;
@@ -90,13 +92,6 @@ public class TreeLog : MonoBehaviour
         Vector3 transformScale = logObject.transform.GetScale();
         transformScale.z = data.length/meshLength;
         logObject.transform.SetScale(transformScale);
-
-        ChildBranches.Where(cb => cb != null).ToList().ForEach(cb => cb.transform.position = EndpointForward);
-    }
-
-    public void Hit(Vector3 localPosition) 
-    {
-        Debug.DrawRay(transform.position + localPosition, localPosition - transform.position, Color.yellow);
     }
 
     /// <summary>
@@ -125,9 +120,13 @@ public class TreeLog : MonoBehaviour
             return;
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(EndpointForward, 0.5f);
-        Gizmos.DrawWireSphere(EndpointBackward, 0.2f);
-        Gizmos.DrawLine(logObject.transform.position, EndpointForward);
+        Vector3 forwardEndpoint = LogGroup.GetFrontEndpoint(GetIdentifierPath());
+        Gizmos.DrawWireSphere(forwardEndpoint, 0.5f);
+        // Gizmos.DrawWireSphere(EndpointBackward, 0.2f);
+        Gizmos.DrawLine(logObject.transform.position, forwardEndpoint);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(LocalEndpointForward, 0.5f);
+        Gizmos.DrawWireSphere(LocalEndpointBackward, 0.2f);
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(logObject.transform.position, 0.5f);

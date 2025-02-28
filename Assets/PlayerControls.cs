@@ -71,6 +71,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ChangeToolbelt"",
+                    ""type"": ""Value"",
+                    ""id"": ""3159f9d1-2006-4be7-a297-e7bbc5989e34"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -227,6 +236,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Primary"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65ce4022-31ec-411c-97f5-232e84c6d4a5"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeToolbelt"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -268,6 +288,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Primary = m_Gameplay.FindAction("Primary", throwIfNotFound: true);
+        m_Gameplay_ChangeToolbelt = m_Gameplay.FindAction("ChangeToolbelt", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -332,6 +353,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Look;
     private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Primary;
+    private readonly InputAction m_Gameplay_ChangeToolbelt;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -341,6 +363,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Gameplay_Look;
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
         public InputAction @Primary => m_Wrapper.m_Gameplay_Primary;
+        public InputAction @ChangeToolbelt => m_Wrapper.m_Gameplay_ChangeToolbelt;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -365,6 +388,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Primary.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimary;
                 @Primary.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimary;
                 @Primary.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimary;
+                @ChangeToolbelt.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
+                @ChangeToolbelt.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
+                @ChangeToolbelt.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -384,6 +410,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Primary.started += instance.OnPrimary;
                 @Primary.performed += instance.OnPrimary;
                 @Primary.canceled += instance.OnPrimary;
+                @ChangeToolbelt.started += instance.OnChangeToolbelt;
+                @ChangeToolbelt.performed += instance.OnChangeToolbelt;
+                @ChangeToolbelt.canceled += instance.OnChangeToolbelt;
             }
         }
     }
@@ -413,5 +442,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnPrimary(InputAction.CallbackContext context);
+        void OnChangeToolbelt(InputAction.CallbackContext context);
     }
 }

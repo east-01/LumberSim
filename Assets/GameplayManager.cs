@@ -58,17 +58,20 @@ public class GameplayManager : MonoBehaviour
     private void Update() 
     {
         if(!hasSpawnedTree && InstanceFinder.IsServerStarted) {
-            SpawnLogObject(new(-19.58f, 0, 1.997f), Quaternion.identity, new(
+            TreeLogGroup grp = SpawnLogObject(new(-19.58f, 0, 1.997f), Quaternion.Euler(45f, 0f, 0f), new(
                 5f,
                 1f,
                 Vector3.up,
                 0, 
                 new TreeLogData[] {
-                    // new(3f, 1f, Vector3.right, 0, new TreeLogData[0])
+                    new(3f, 1f, Vector3.right, 0, new TreeLogData[] {
+                        new(3f, 1f, new Vector3(1, 1, 0).normalized, 0, new TreeLogData[0])
+                    })
                 }
             ));
+            Destroy(grp.GetComponent<Rigidbody>());
 
-            // SpawnTree(new(-19.58f, 0, 11.997f));
+            SpawnTree(new(-19.58f, 0, 11.997f));
             hasSpawnedTree = true;
         }
     }
@@ -95,12 +98,12 @@ public class GameplayManager : MonoBehaviour
         GameObject logObject = Instantiate(logObjectPrefab);
 
         TreeLogGroup log = logObject.GetComponent<TreeLogGroup>();
+        logObject.transform.SetPositionAndRotation(position, rotation);
         log.SetRootData(rootData);
 
         InstanceFinder.ServerManager.Spawn(logObject, null, gameObject.scene);
 
         // logObject.transform.position = position;
-        logObject.transform.SetPositionAndRotation(position, rotation);
 
         return log;
     }
