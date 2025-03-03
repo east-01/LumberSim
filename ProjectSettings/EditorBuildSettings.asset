@@ -6,15 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Bootstrapper.unity
+    path: Assets/!/_Scenes/Bootstrapper.unity
     guid: 1957d46f6169f3e4fb900d360236353e
   - enabled: 1
-    path: Assets/Scenes/GameplayBootstrapper.unity
+    path: Assets/!/_Scenes/GameplayBootstrapper.unity
     guid: f43b99fb65787cd49902d27bcc28e2fb
   - enabled: 1
-    path: Assets/Scenes/HoldingScene.unity
+    path: Assets/!/_Scenes/HoldingScene.unity
     guid: b910fe1c562acec489282dc05bc0da5f
   - enabled: 1
-    path: Assets/Scenes/GameplayScene.unity
+    path: Assets/!/_Scenes/GameplayScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
