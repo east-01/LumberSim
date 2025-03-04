@@ -27,6 +27,11 @@ public class TreeLogGroup : NetworkBehaviour, IS3
         Root = root;
     }
 
+    /// <summary>
+    /// Set this flag if the tree should prune tiny logs on the next possible frame.
+    /// </summary>
+    public bool ShouldPrune = false;
+
 #region Initializers
     private void OnEnable() 
     {
@@ -52,7 +57,12 @@ public class TreeLogGroup : NetworkBehaviour, IS3
             return;
 
     }
-    #endregion
+#endregion
+
+    public void Delete() 
+    {
+        Destroy(gameObject);
+    }
 
     private void Update()
     {
@@ -64,6 +74,10 @@ public class TreeLogGroup : NetworkBehaviour, IS3
                 SceneSingletons.SubscribeToSingleton(this, lookupData, typeof(GameplayManager));
             }
         }    
+
+        if(ShouldPrune && gameplayManager != null) {
+            PruneTinyLogs();
+        }
     }
 
     /// <summary>
@@ -81,7 +95,8 @@ public class TreeLogGroup : NetworkBehaviour, IS3
                 test.Initialize(data);
             }
 
-            if(test.ChildBranches.Length != data.children.Length) {
+            bool destroyChildren = test.ChildBranches.Length != data.children.Length;
+            if(destroyChildren) {
                 for(int childIdx = 0; childIdx < test.ChildBranches.Length; childIdx++) {
                     Destroy(test.ChildBranches[childIdx].gameObject);
                 }
@@ -90,27 +105,21 @@ public class TreeLogGroup : NetworkBehaviour, IS3
             if(test.Data.length - data.length > 0.01 ||
                test.Data.radius - data.radius > 0.01 ||
                test.Data.angle != data.angle) {
-                test.SetData(data);
+                test.SetData(data, true);
             }
 
             for(int i = 0; i < data.children.Length; i++) {
                 TreeLog[] childBranches = test.ChildBranches;
                 TreeLog child = i < childBranches.Length ? childBranches[i] : null;
+                if(destroyChildren)
+                    child = null;
                 EnsureDataMatches(data.children[i], test, child);
             }
         }
 
         EnsureDataMatches(rootData.Value, null, Root, true);
     }
-
-    public void SetRootData(TreeLogData rootData) {
-        if(!InstanceFinder.IsServerStarted) {
-            Debug.LogError("Can't SetRootData, server isn't started.");
-            return;
-        }
-        this.rootData.Value = rootData;
-        DataUpdated();
-    }
+    private void TreeLogData_OnChange(TreeLogData prev, TreeLogData next, bool asServer) => DataUpdated();
 
     public void SplitLog(int[] identifierPath, Vector3 hitGlobal, NetworkConnection childOwner = null) 
     {
@@ -125,17 +134,14 @@ public class TreeLogGroup : NetworkBehaviour, IS3
             return;
         }
 
-        TreeLogData origHitLogData = hitLog.Data.Clone();
-
         Vector3 endpointForward = GetFrontEndpoint(identifierPath);
         Vector3 endpointBackward = hitLog.transform.position;
 
-        Debug.DrawLine(hitGlobal, endpointBackward, Color.red, 60);
-        Debug.DrawLine(endpointForward, endpointBackward, Color.yellow, 60);
-
-        // Store log length for finding the new logs length
+        // Store original data points for future reference
+        TreeLogData origHitLogData = hitLog.Data.Clone();
         float origLogLength = hitLog.Data.length;
 
+        // ----- Part of the tree that's still attached -----
         // Calculate the length of the log still attached
         Vector3 hitPointVector = hitGlobal - endpointBackward;
         Vector3 logVector = endpointForward-endpointBackward;
@@ -145,93 +151,48 @@ public class TreeLogGroup : NetworkBehaviour, IS3
         TreeLogData newAttachedData = origHitLogData.Clone();
         newAttachedData.length = attachedLength;
         newAttachedData.children = new TreeLogData[0];
+        TreeOpSet(identifierPath, newAttachedData);
 
-        // Insert newly created data into the original groups data tree
-        TreeLogData focusData = RootData;
-        if(identifierPath.Length > 0) { // Case where the split log is NOT the root log
-            for(int branchLayer = 0; branchLayer < identifierPath.Length; branchLayer++) {
-                if(branchLayer < identifierPath.Length - 1) {
-                    // For all branches except the one we're targeting, iterate through the tree
-                    focusData = focusData.children[identifierPath[branchLayer]];
-                } else {
-                    // For the parent of the branch we're targeting, set the child to the new attached data
-                    focusData.children[identifierPath[branchLayer]] = newAttachedData;
-                }
-            }
-            DataUpdated();
-        } else { // Case where the split log is the root log
-            SetRootData(newAttachedData);
-        }
-
+        // ----- Part of the tree that's just been detached -----
         // Create the data for the new log group to be spawned
         float newLogLength = origLogLength-attachedLength;
         TreeLogData newLogData = origHitLogData.Clone();
         newLogData.length = newLogLength;
 
         // Spawn new log group
-        gameplayManager.SpawnLogObject(hitGlobal, transform.rotation, newLogData, childOwner);
+        TreeLogGroup newGroup = gameplayManager.SpawnLogObject(hitGlobal, transform.rotation, newLogData, childOwner);
+
+        // ----- Cleanup -----
+        ShouldPrune = true;
+        newGroup.ShouldPrune = true;
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRpcHitLog(int[] treeLogIP, Vector3 hitGlobal) => SplitLog(treeLogIP, hitGlobal);
 
     private void PruneTinyLogs() 
     {
-        // void CheckPrune(TreeLog log) {
-        //     if(log.Data.length < minLogLength) {
+        void CheckPrune(TreeLog log) {
+            if(log.Data.length < minLogLength) {
+                // Spawn children and continue prune with the newly spawned groups to ensure all
+                //   branches are pruned
+                foreach(TreeLog child in log.ChildBranches) {
+                    TreeLogGroup newChild = gameplayManager.SpawnLogObject(child.transform.position, child.transform.rotation, child.Data, log.LogGroup.Owner);
+                    newChild.ShouldPrune = true;
+                }
 
-        //     }
-        // }
-    }
-
-    /// <summary>
-    /// See TreeLog#GetIdentifierPath() for details, we follow each sibling index until the target
-    ///   is found.
-    /// </summary>
-    public TreeLog TreeOpGet(int[] identifierPath) 
-    {
-        TreeLog curr = Root;
-        for(int branchLayer = 0; branchLayer < identifierPath.Length; branchLayer++) {
-            int siblingIdx = identifierPath[branchLayer];
-            if(siblingIdx < 0 || siblingIdx >= curr.ChildBranches.Length)
-                throw new InvalidOperationException($"Can't get TreeLog from identifierPath, the sibling idx \"{siblingIdx}\" is invalid for arr of len {curr.ChildBranches.Length}");
-            curr = curr.ChildBranches[identifierPath[branchLayer]];
+                if(log == Root) {
+                    Delete();
+                } else {
+                    TreeOpDelete(log.GetIdentifierPath());
+                }
+                return;
+            }
+            // Check children
+            foreach(TreeLog child in log.ChildBranches) {
+                CheckPrune(child);
+            }
         }
-        return curr;
-    }
-
-    /// <summary>
-    /// Delete the TreeLogData at the specified 
-    /// </summary>
-    /// <param name="treeLogIP"></param>
-    public void TreeOpDelete(int[] treeLogIP) 
-    {
-        if(!InstanceFinder.IsServerStarted)
-            throw new Exception("TreeOpDelete can't be executed on clients");
-        if(treeLogIP.Length == 0) {
-            Debug.LogError("Can't delete TreeLogData, the treeLogIP specified points to root!");
-            return;
-        }
-
-        // This loop gets us to the correct target data
-        TreeLogData targData = rootData.Value;
-        for(int level = 0; level < treeLogIP.Length-1; level++) {
-            int childIdx = treeLogIP[level];
-            if(childIdx < 0 || childIdx >= targData.children.Length)
-                throw new InvalidOperationException($"Can't get TreeLog from identifierPath, the sibling idx \"{childIdx}\" is invalid for arr of len {targData.children.Length}");
-            targData = targData.children[childIdx];
-        }
-
-        // Delete the right child from the target data
-        targData.RemoveChild(treeLogIP[^1]);
-
-        rootData.DirtyAll();
-
-        DataUpdated();
-    }
-
-    private void TreeLogData_OnChange(TreeLogData prev, TreeLogData next, bool asServer)
-    {
-        DataUpdated();
+        CheckPrune(Root);
     }
 
     public Vector3 GetFrontEndpoint(int[] identifierPath) 
@@ -256,5 +217,91 @@ public class TreeLogGroup : NetworkBehaviour, IS3
 
         return position;
     }
+    
+#region Tree Operations
+    /// <summary>
+    /// Gets the TreeLog object at the identifier path on the tree.
+    /// Uses a tree identifier path- See TreeLog#GetIdentifierPath() for details.
+    /// </summary>
+    public TreeLog TreeOpGet(int[] identifierPath) 
+    {
+        TreeLog curr = Root;
+        for(int branchLayer = 0; branchLayer < identifierPath.Length; branchLayer++) {
+            int siblingIdx = identifierPath[branchLayer];
+            if(siblingIdx < 0 || siblingIdx >= curr.ChildBranches.Length)
+                throw new InvalidOperationException($"Can't get TreeLog from identifierPath, the sibling idx \"{siblingIdx}\" is invalid for arr of len {curr.ChildBranches.Length}");
+            curr = curr.ChildBranches[identifierPath[branchLayer]];
+        }
+        return curr;
+    }
+
+    /// <summary>
+    /// Delete the TreeLogData at the specified identifier path.
+    /// Uses a tree identifier path- See TreeLog#GetIdentifierPath() for details.
+    /// </summary>
+    /// <param name="treeLogIP"></param>
+    public void TreeOpDelete(int[] treeLogIP) 
+    {
+        if(!InstanceFinder.IsServerStarted)
+            throw new Exception("TreeOpDelete can't be executed on clients");
+        if(treeLogIP.Length == 0) {
+            Debug.LogError("Can't delete TreeLogData, the treeLogIP specified points to root!");
+            return;
+        }
+
+        TreeLogData rootData = this.rootData.Value;
+        // This loop gets us to the correct target data
+        TreeLogData targData = rootData;
+        for(int level = 0; level < treeLogIP.Length-1; level++) {
+            int childIdx = treeLogIP[level];
+            if(childIdx < 0 || childIdx >= targData.children.Length)
+                throw new InvalidOperationException($"Can't get TreeLog from identifierPath, the sibling idx \"{childIdx}\" is invalid for arr of len {targData.children.Length}");
+            targData = targData.children[childIdx];
+        }
+
+        // Delete the right child from the target data
+        targData.RemoveChild(treeLogIP[^1]);
+
+        this.rootData.Value = rootData;
+
+        DataUpdated();
+    }
+
+    /// <summary>
+    /// Set the TreeLogData at the specified identifier path.
+    /// Uses a tree identifier path- See TreeLog#GetIdentifierPath() for details.
+    /// </summary>
+    /// <param name="treeLogIP">The identifier path of the data to set.</param>
+    /// <param name="newData">The new data to set.</param>
+    public void TreeOpSet(int[] treeLogIP, TreeLogData newData) 
+    {
+        if(!InstanceFinder.IsServerStarted)
+            throw new Exception("TreeOpDelete can't be executed on clients");
+        if(treeLogIP.Length > 0) {
+            // This loop gets us to the correct target data
+            TreeLogData targData = rootData.Value;
+            for(int level = 0; level < treeLogIP.Length-1; level++) {
+                int childIdx = treeLogIP[level];
+                if(childIdx < 0 || childIdx >= targData.children.Length)
+                    throw new InvalidOperationException($"Can't get TreeLog from identifierPath, the sibling idx \"{childIdx}\" is invalid for arr of len {targData.children.Length}");
+                targData = targData.children[childIdx];
+            }
+
+            targData.children[treeLogIP[^1]] = newData;
+        } else {
+            rootData.Value = newData;
+        }
+
+        rootData.DirtyAll();
+
+        DataUpdated();
+    }
+    /// <summary>
+    /// Set the root TreeLogData for this TreeLogGroup.
+    /// Shortcut for TreeOpSet([], rootData)
+    /// </summary>
+    /// <param name="rootData">The new data to set.</param>
+    public void SetRootData(TreeLogData rootData) => TreeOpSet(new int[0], rootData);
+#endregion
 
 }

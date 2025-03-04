@@ -2,7 +2,6 @@ using EMullen.Core;
 using EMullen.PlayerMgmt;
 using FishNet.Object;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,18 +63,6 @@ public class ToolBelt : NetworkBehaviour, IInputListener
     // InputPolling is toggled off
     public void InputPoll(InputAction action) 
     {
-
-        switch(action.name) {
-            case "Primary":
-                switch(toolbeltIndex) {
-                    case 0:
-                        bool pressed = action.ReadValue<float>() > 0.1f;
-                        // BLog.Highlight("Hand grab: " + pressed);
-                        // test
-                        break;
-                }
-                break;
-        }
     }
 
     /// <summary>

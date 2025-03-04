@@ -42,7 +42,6 @@ public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
             status = Status.CONNECTING;
             // BLog.Highlight($"Client: {NetworkController.Instance.IsClientActive} Server: {NetworkController.Instance.IsServerActive}");
             if(NetworkController.Instance.CanStartNetwork()) {
-                BLog.Highlight("Starting net");
                 NetworkController.Instance.StartNetwork();
             }
         } else if(!PlayerDataRegistry.Instance.Networked) {
@@ -57,7 +56,6 @@ public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
                 SceneController.Instance.LoadServerScene(new("GameplayScene"));
                 SceneController.Instance.AddClientToScene(InstanceFinder.ClientManager.Connection, new("GameplayScene"));
             } else {
-                BLog.Highlight("Issued request to join scene");
                 ClientNetworkedScene request = new(new SceneLookupData("GameplayScene"), ClientNetworkedScene.Action.ADD);
                 InstanceFinder.ClientManager.Broadcast(request);
                 UnityEngine.SceneManagement.SceneManager.LoadScene("GameplayScene", UnityEngine.SceneManagement.LoadSceneMode.Single);

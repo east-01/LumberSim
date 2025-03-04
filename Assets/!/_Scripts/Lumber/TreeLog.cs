@@ -68,17 +68,18 @@ public class TreeLog : MonoBehaviour
         SetData(data);
     }
 
-    public void SetData(TreeLogData data) 
+    /// <summary>
+    /// Set the TreeLogData for this TreeLog.
+    /// Use updateChildPos if you want the children to update their position, this is only necessary
+    ///   when updating the data for this tree alone outside of the generation cycle.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="updateChildPos"></param>
+    public void SetData(TreeLogData data, bool updateChildPos = false) 
     {
         this.data = data;
 
-        if(Parent == null) {
-            transform.localPosition = Vector3.zero;
-            LogGroup.SetRoot(this);
-        } else {
-            // transform.position = LogGroup.GetFrontEndpoint(Parent.GetIdentifierPath());
-            transform.localPosition = Parent.Data.angle.normalized*Parent.Data.length;
-        }
+        UpdatePosition();
 
         logObject.transform.localPosition = Data.angle*(Data.length/2);
         // logObject.transform.forward = /*LogGroup.transform.rotation * */Data.angle;
@@ -93,6 +94,20 @@ public class TreeLog : MonoBehaviour
         Vector3 transformScale = logObject.transform.GetScale();
         transformScale.z = data.length/meshLength;
         logObject.transform.SetScale(transformScale);
+
+        if(updateChildPos)
+            ChildBranches.ToList().ForEach(branch => branch.UpdatePosition());
+    }
+
+    public void UpdatePosition() 
+    {
+        if(Parent == null) {
+            transform.localPosition = Vector3.zero;
+            LogGroup.SetRoot(this);
+        } else {
+            // transform.position = LogGroup.GetFrontEndpoint(Parent.GetIdentifierPath());
+            transform.localPosition = Parent.Data.angle.normalized*Parent.Data.length;
+        }
     }
 
     /// <summary>
@@ -134,13 +149,15 @@ public class TreeLog : MonoBehaviour
 }
 
 [Serializable]
-public struct TreeLogData 
+public class TreeLogData 
 {
     public float length;
     public float radius;
     public Vector3 angle;
     public TreeLogData[] children;
     public int siblingIndex;
+    public TreeLogData() {}
+
     public TreeLogData(float length, float radius, Vector3 angle, int siblingIndex, TreeLogData[] children) 
     {
         this.length = length;

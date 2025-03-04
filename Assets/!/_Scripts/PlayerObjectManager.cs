@@ -79,7 +79,6 @@ public class PlayerObjectManager : NetworkBehaviour
 
     public void SpawnPlayer(NetworkConnection owner, string uid) {
 
-        BLog.Highlight("Connect id: " + LocalConnection.ClientId);
         if(!InstanceFinder.IsServerStarted) {
             ServerRpcSpawnPlayer(LocalConnection, uid);
             return;
@@ -87,7 +86,6 @@ public class PlayerObjectManager : NetworkBehaviour
 
         GameObject spawnedPlayer = Instantiate(playerPrefab);
         spawnedPlayer.GetComponent<Player>().uid.Value = uid;
-        BLog.Highlight("Spawned: " + spawnedPlayer + $" in scene {GetComponent<GameplayManager>().GameplayScene.GetSceneLookupData()}");
         InstanceFinder.ServerManager.Spawn(spawnedPlayer, owner, GetComponent<GameplayManager>().GameplayScene);
     }
     [ServerRpc(RequireOwnership = false)]

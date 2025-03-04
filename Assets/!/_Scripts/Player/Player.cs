@@ -40,7 +40,6 @@ public class Player : NetworkBehaviour, IS3
 
         gameplayManager = singleton as GameplayManager;
         gameplayManager.GetComponent<PlayerObjectManager>().PlayerConnectedEvent += PlayerObjectManager_PlayerConnectedEvent;
-        BLog.Highlight("Registered Gameplaymanager");
     }
 
     public void SingletonDeregistered(Type type, object singleton)
@@ -101,7 +100,5 @@ public class Player : NetworkBehaviour, IS3
 
         this.localPlayer = localPlayer;
         GetComponent<PlayerInputManager>().ConnectPlayer(localPlayer.Input);        
-
-        BLog.Highlight("Connected to local player idx " + this.localPlayer.Input.playerIndex);
     }
 }

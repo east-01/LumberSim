@@ -45,14 +45,10 @@ public class LogSellPoint : NetworkBehaviour
             return;
         }
 
-        BLog.Highlight("Owner's client id: " + owner.ClientId);
-
         float saleValue = logGroupNetworkObject.GetComponent<TreeLogGroup>().EvaluateLumber(pricePerFt, radiusMultiplier);
-        BLog.Highlight("Sale value: " + saleValue);
 
         // Assumes connected to lobby bootstrapped
         List<PlayerData> connectionsPlayerDatas = PlayerDataRegistry.Instance.GetAllData().ToList().Where(pd => pd.GetData<NetworkIdentifierData>().clientID == owner.ClientId).ToList();
-        BLog.Highlight("Got " + connectionsPlayerDatas.Count + " connection datas.");
         connectionsPlayerDatas.ForEach(pd => {
             GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
             gpd.balance += saleValue;
