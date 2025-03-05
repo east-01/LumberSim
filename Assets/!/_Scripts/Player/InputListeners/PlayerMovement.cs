@@ -2,8 +2,11 @@ using EMullen.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(NetworkedAudioController))]
 public class PlayerMovement : MonoBehaviour, IInputListener
 {
+
+    private NetworkedAudioController audioController;
 
     public Vector2 movementInput;
     public bool sprintingInput;
@@ -16,6 +19,9 @@ public class PlayerMovement : MonoBehaviour, IInputListener
     public float sprintSpeed = 9f;
     public float speedTransitionTime = 0.35f;
     
+    [Header("Other")]
+    public float stepLength = 0.5f;
+
     /// <summary>
     /// The actual speed of the player.
     /// </summary>
@@ -41,7 +47,14 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
     private CharacterController characterController;
 
-    void Start()
+    private Vector3 lastSteppedPosition = Vector3.zero;
+
+    private void Awake()
+    {
+        audioController = GetComponent<NetworkedAudioController>();
+    }
+
+    private void Start()
     {
         characterController = GetComponent<CharacterController>();
         if (characterController == null)
@@ -51,7 +64,7 @@ public class PlayerMovement : MonoBehaviour, IInputListener
         }
     }
 
-    void Update()
+    private void Update()
     {
         // Check if the jump button was just pressed
         JumpDown = !lastJump && jumpInput;
@@ -82,6 +95,13 @@ public class PlayerMovement : MonoBehaviour, IInputListener
         }
 
         lastJump = jumpInput;
+
+        // Play step sound
+        if(lastSteppedPosition == Vector3.zero) lastSteppedPosition = transform.position;
+        if(Vector3.Distance(lastSteppedPosition, transform.position) >= stepLength) {
+            lastSteppedPosition = transform.position;
+            audioController.PlaySound($"walk{Random.Range(1, 7)}");
+        }
     }
 
     public void InputEvent(InputAction.CallbackContext context)

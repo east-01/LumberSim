@@ -9,6 +9,7 @@ using FishNet.Object;
 using UnityEngine;
 
 [RequireComponent(typeof(LumberEvaluator))]
+[RequireComponent(typeof(NetworkedAudioController))]
 public class LogSellPoint : NetworkBehaviour
 {
     [SerializeField]
@@ -16,7 +17,14 @@ public class LogSellPoint : NetworkBehaviour
     [SerializeField]
     private float radiusMultiplier = 1f;
 
-    void OnTriggerEnter(Collider other)
+    private NetworkedAudioController audioController;
+
+    private void Awake()
+    {
+        audioController = GetComponent<NetworkedAudioController>();
+    }
+
+    private void OnTriggerEnter(Collider other)
     {
         if(!other.CompareTag("TreeLog"))
             return;
@@ -34,6 +42,8 @@ public class LogSellPoint : NetworkBehaviour
 
     private void SellLog(NetworkObject logGroupNetworkObject) 
     {
+        audioController.PlaySound("chaching");
+
         if(!InstanceFinder.IsServerStarted) {
             ServerRpcSellLog(logGroupNetworkObject);
             return;

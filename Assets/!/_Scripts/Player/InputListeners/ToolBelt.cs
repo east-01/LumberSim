@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(NetworkedAudioController))]
 public class ToolBelt : NetworkBehaviour, IInputListener
 {
 
@@ -13,6 +14,7 @@ public class ToolBelt : NetworkBehaviour, IInputListener
     [SerializeField]
     private TMP_Text toolbeltText;
 
+    private NetworkedAudioController audioController;
     int toolbeltIndex = 0;
     string[] toolbeltOptions = new string[] {"hands", "axe"};
 
@@ -25,6 +27,11 @@ public class ToolBelt : NetworkBehaviour, IInputListener
     private TreeLogGroup grabbedGroup;
     private Vector3 grabOffset;
     private Vector3 targetPosition;
+
+    private void Awake()
+    {
+        audioController = GetComponent<NetworkedAudioController>();
+    }
 
     private void Start()
     {
@@ -95,12 +102,14 @@ public class ToolBelt : NetworkBehaviour, IInputListener
 
     private void SwingAxe() 
     {
+        audioController.PlaySound("swingaxe");
+
         LogPickArgs args = PickLog();
         if(args == null)
             return;
 
         int[] identifierPath = args.log.GetIdentifierPath();
-        args.group.SplitLog(identifierPath, args.hit.point, LocalConnection);
+        args.group.HitLog(identifierPath, args.hit.point, LocalConnection);
     }
 
     private void PickupLog(bool performed) 
@@ -118,6 +127,8 @@ public class ToolBelt : NetworkBehaviour, IInputListener
                 grabbedRB.AddForce(Vector3.up*3f);
                 return;
             }
+
+            audioController.PlaySound("pickup");
 
             grabbedRB.useGravity = false;
 

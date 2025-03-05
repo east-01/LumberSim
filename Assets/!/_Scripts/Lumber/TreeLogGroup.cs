@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EMullen.Core;
 using EMullen.SceneMgmt;
 using FishNet;
@@ -10,13 +11,18 @@ using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkTransform))]
+[RequireComponent(typeof(NetworkedAudioController))]
 public class TreeLogGroup : NetworkBehaviour, IS3
 {
+    private NetworkedAudioController audioController;
+
     [SerializeField]
     private float minLogLength = 0.2f;
 
     [SerializeField]
     private GameObject logPrefab;
+    [SerializeField]
+    private List<AudioClip> logHitAudios;
 
     private GameplayManager gameplayManager;
 
@@ -32,7 +38,12 @@ public class TreeLogGroup : NetworkBehaviour, IS3
     /// </summary>
     public bool ShouldPrune = false;
 
-#region Initializers
+    #region Initializers
+    private void Awake()
+    {
+        audioController = GetComponent<NetworkedAudioController>();
+    }
+
     private void OnEnable() 
     {
         rootData.OnChange += TreeLogData_OnChange;
@@ -121,13 +132,25 @@ public class TreeLogGroup : NetworkBehaviour, IS3
     }
     private void TreeLogData_OnChange(TreeLogData prev, TreeLogData next, bool asServer) => DataUpdated();
 
-    public void SplitLog(int[] identifierPath, Vector3 hitGlobal, NetworkConnection childOwner = null) 
+    public void HitLog(int[] identifierPath, Vector3 hitGlobal, NetworkConnection childOwner = null) 
     {
+        // Not stoked with hard-coding this, see NetworkedAudioController description
+        audioController.PlaySound($"log_hit_{UnityEngine.Random.Range(1, 7)}");
+
         if(!InstanceFinder.IsServerStarted) {
             ServerRpcHitLog(identifierPath, hitGlobal);
             return;
         }
 
+        // TODO: Logic for storing multiple hits
+
+        SplitLog(identifierPath, hitGlobal, childOwner);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerRpcHitLog(int[] treeLogIP, Vector3 hitGlobal) => HitLog(treeLogIP, hitGlobal);
+
+    public void SplitLog(int[] identifierPath, Vector3 hitGlobal, NetworkConnection childOwner = null) 
+    {
         TreeLog hitLog = TreeOpGet(identifierPath);
         if(hitLog == null) {
             Debug.LogError($"Failed to resolve hit log from treelog ip: {string.Join(", ", identifierPath)}");
@@ -166,8 +189,6 @@ public class TreeLogGroup : NetworkBehaviour, IS3
         ShouldPrune = true;
         newGroup.ShouldPrune = true;
     }
-    [ServerRpc(RequireOwnership = false)]
-    private void ServerRpcHitLog(int[] treeLogIP, Vector3 hitGlobal) => SplitLog(treeLogIP, hitGlobal);
 
     private void PruneTinyLogs() 
     {
@@ -302,6 +323,11 @@ public class TreeLogGroup : NetworkBehaviour, IS3
     /// </summary>
     /// <param name="rootData">The new data to set.</param>
     public void SetRootData(TreeLogData rootData) => TreeOpSet(new int[0], rootData);
-#endregion
+    #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        audioController.PlaySound($"drop{UnityEngine.Random.Range(1, 7)}");
+    }
 
 }
