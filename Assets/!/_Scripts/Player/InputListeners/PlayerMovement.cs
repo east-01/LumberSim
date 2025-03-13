@@ -66,8 +66,10 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
     private void Update()
     {
+        CharacterController cc = GetComponent<CharacterController>();
+
         // Check if the jump button was just pressed
-        JumpDown = !lastJump && jumpInput;
+        JumpDown = !lastJump && jumpInput && cc.isGrounded;
         if(JumpDown)
             jumpPowerRemaining = 13f;
 
@@ -96,9 +98,9 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
         lastJump = jumpInput;
 
-        // Play step sound
+        // Play step sound        
         if(lastSteppedPosition == Vector3.zero) lastSteppedPosition = transform.position;
-        if(Vector3.Distance(lastSteppedPosition, transform.position) >= stepLength) {
+        if(Vector3.Distance(lastSteppedPosition, transform.position) >= stepLength && cc.isGrounded) {
             lastSteppedPosition = transform.position;
             audioController.PlaySound($"walk{Random.Range(1, 7)}");
         }

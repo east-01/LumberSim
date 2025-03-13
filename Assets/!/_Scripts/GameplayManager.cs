@@ -8,17 +8,20 @@ using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
+using FishNet.Object;
 using FishNet.Transporting;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameplayManager : MonoBehaviour
+public class GameplayManager : NetworkBehaviour
 {
 
     public static Dictionary<SceneLookupData, GameplayManager> SceneSingleton = new();
 
     public Scene GameplayScene => gameObject.scene;
+
+    public Dictionary<int, TreeLogGroup> treeLogGroups = new();
 
     private void Start() 
     {
@@ -87,6 +90,8 @@ public class GameplayManager : MonoBehaviour
 
         // logObject.transform.position = position;
 
+        treeLogGroups.Add(log.NetworkObject.ObjectId, log);
+
         return log;
     }
 
@@ -102,6 +107,10 @@ public class GameplayManager : MonoBehaviour
         treeObject.transform.position = position;
 
         return treeObject.GetComponent<ChoppableTree>();
+    }
+
+    public TreeLogGroup GetLogGroupFromNetworkID(int netID) {
+        return treeLogGroups[netID];
     }
 
 }

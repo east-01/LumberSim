@@ -38,7 +38,7 @@ public class NetworkedAudioController : NetworkBehaviour
         });
     }
 
-    public void PlaySound(string soundID) 
+    public void PlaySound(string soundID, bool propogate = true) 
     {
         if(!audioClips.ContainsKey(soundID)) {
             Debug.LogError($"Can't play sound \"{soundID}\"");
@@ -50,7 +50,8 @@ public class NetworkedAudioController : NetworkBehaviour
         source.clip = sound;
         source.Play();
 
-        PropogateSound(soundID, new NetworkConnection[] {LocalConnection});
+        if(propogate)
+            PropogateSound(soundID, new NetworkConnection[] {LocalConnection});
     }
 
     /// <summary>
@@ -74,7 +75,7 @@ public class NetworkedAudioController : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ServerRpcPropogateSound(string sound, NetworkConnection[] blacklistedClients = null) => PropogateSound(sound, blacklistedClients);
     [TargetRpc]
-    private void TargetRpcPropogateSound(NetworkConnection conn, string sound) => PlaySound(sound);
+    private void TargetRpcPropogateSound(NetworkConnection conn, string sound) => PlaySound(sound, false);
 
     [Serializable]
     public struct IDAudioClip 

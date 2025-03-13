@@ -1,12 +1,17 @@
+using System;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
+using EMullen.SceneMgmt;
+using FishNet;
+using FishNet.Component.Transforming;
+using FishNet.Managing.Scened;
 using FishNet.Object;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NetworkedAudioController))]
-public class ToolBelt : NetworkBehaviour, IInputListener
+public class ToolBelt : NetworkBehaviour, IInputListener, IS3
 {
 
     [SerializeField]
@@ -15,6 +20,7 @@ public class ToolBelt : NetworkBehaviour, IInputListener
     private TMP_Text toolbeltText;
 
     private NetworkedAudioController audioController;
+    private GameplayManager gameplayManager;
     int toolbeltIndex = 0;
     string[] toolbeltOptions = new string[] {"hands", "axe"};
 
@@ -38,12 +44,57 @@ public class ToolBelt : NetworkBehaviour, IInputListener
         UpdateText();   
     }
 
+    public void SingletonRegistered(Type type, object singleton)
+    {
+        if(type != typeof(GameplayManager))
+            return;
+
+        gameplayManager = singleton as GameplayManager;
+    }
+
+    public void SingletonDeregistered(Type type, object singleton)
+    {
+        if(type != typeof(GameplayManager))
+            return;
+
+        gameplayManager = null;
+    }
+
     private void Update() 
     {
-        if(grabbedGroup != null) {
-            targetPosition = camera.transform.position + camera.transform.forward * grabDistance;
-            grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, grabOffset + targetPosition, Time.deltaTime * 5f);
+        // Safely subscribe to the GameplayManager singleton
+        if(gameObject.scene.name == "GameplayScene") {
+            SceneLookupData lookupData = gameObject.scene.GetSceneLookupData();
+
+            if(!SceneSingletons.IsSubscribed(this, lookupData, typeof(GameplayManager))) {
+                SceneSingletons.SubscribeToSingleton(this, lookupData, typeof(GameplayManager));
+            }
         }
+        
+        if(grabbedGroup != null) {
+            targetPosition = grabOffset + (camera.transform.position + camera.transform.forward * grabDistance);
+            UpdateGrabbedGroupPosition(grabbedGroup.NetworkObject, targetPosition);
+        }
+    }
+
+    public void UpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) 
+    {
+        if(!InstanceFinder.IsServerStarted) {
+            grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/3f);
+            ServerRpcUpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
+            return;
+        }
+
+        grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/3f);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerRpcUpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) 
+    {
+
+        // if (InstanceFinder.NetworkManager..Spawn().SpawnedObjects.TryGetValue(objectId, out NetworkObject grabbedGroup))
+        // {
+            UpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
+        // }
     }
 
     public void InputEvent(InputAction.CallbackContext context)
@@ -124,6 +175,9 @@ public class ToolBelt : NetworkBehaviour, IInputListener
 
             float weight = args.group.EvaluateTotalWeight();
             if(weight > maxCarryWeight) {
+                PlayerHUDMenuController mc = gameObject.GetComponentInChildren<PlayerHUDMenuController>();
+                if(mc != null)
+                    mc.ShowWarning("Too heavy!", 0.75f);
                 grabbedRB.AddForce(Vector3.up*3f);
                 return;
             }
@@ -133,15 +187,35 @@ public class ToolBelt : NetworkBehaviour, IInputListener
             grabbedRB.useGravity = false;
 
             grabbedGroup = args.group;
-            grabOffset = args.hit.point-args.group.transform.position;
+            grabOffset = /*args.hit.point-args.group.transform.position*/Vector3.zero;
+
+            ServerSetPickedUp(args.group.ObjectId, performed);
         } else {
             if(grabbedGroup != null && grabbedGroup.TryGetComponent(out Rigidbody grabbedRB))
                 grabbedRB.useGravity = true;
+
+            if(grabbedGroup != null)
+                ServerSetPickedUp(grabbedGroup.ObjectId, performed);
 
             grabbedGroup = null;
             grabOffset = Vector3.zero;
         }
     }
+
+    private void ServerSetPickedUp(int logNetID, bool performed) 
+    {
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRpcServerSetPickedUp(logNetID, performed);
+            return;
+        }
+
+        TreeLogGroup group = gameplayManager.GetLogGroupFromNetworkID(logNetID);
+        Rigidbody rb = group.GetComponent<Rigidbody>();
+        rb.useGravity = !performed;
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerRpcServerSetPickedUp(int logNetID, bool performed) => ServerSetPickedUp(logNetID, performed);
 
     private void UpdateText() 
     {

@@ -31,6 +31,7 @@ public class Player : NetworkBehaviour, IS3
     private void Awake()
     {
         playerInputManager = GetComponent<PlayerInputManager>();
+        UpdateActiveComponents();
     }
 
     public void SingletonRegistered(Type type, object singleton)
@@ -99,6 +100,24 @@ public class Player : NetworkBehaviour, IS3
         }
 
         this.localPlayer = localPlayer;
-        GetComponent<PlayerInputManager>().ConnectPlayer(localPlayer.Input);        
+        GetComponent<PlayerInputManager>().ConnectPlayer(localPlayer.Input);       
+
+        UpdateActiveComponents(); 
+    }
+
+    /// <summary>
+    /// Update the components related to having a localplayer attached or not
+    /// </summary>
+    private void UpdateActiveComponents() 
+    {
+        for(int childIdx = 0; childIdx < transform.childCount; childIdx++) {
+            GameObject child = transform.GetChild(childIdx).gameObject;
+            if(child.name == "Root")
+                continue;
+            child.SetActive(localPlayer != null);
+        }
+
+        GetComponent<PlayerMovement>().enabled = localPlayer != null;
+        // GetComponent<ToolBelt>().enabled = localPlayer != null;
     }
 }

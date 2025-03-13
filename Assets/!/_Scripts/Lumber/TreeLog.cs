@@ -88,6 +88,8 @@ public class TreeLog : MonoBehaviour
 
         Vector3 transformScale = logObject.transform.GetScale();
         transformScale.z = data.length/meshLength;
+        transformScale.x = data.radius*2;
+        transformScale.y = data.radius*2;
         logObject.transform.SetScale(transformScale);
 
         if(updateChildPos)

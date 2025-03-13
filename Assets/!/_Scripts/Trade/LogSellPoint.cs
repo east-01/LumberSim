@@ -42,6 +42,11 @@ public class LogSellPoint : NetworkBehaviour
 
     private void SellLog(NetworkObject logGroupNetworkObject) 
     {
+        if(logGroupNetworkObject == null) {
+            Debug.LogError("Can't sell log the log group network object is null!");
+            return;
+        }
+
         audioController.PlaySound("chaching");
 
         if(!InstanceFinder.IsServerStarted) {

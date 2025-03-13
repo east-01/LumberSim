@@ -138,7 +138,7 @@ public class TreeLogGroup : NetworkBehaviour, IS3
         audioController.PlaySound($"log_hit_{UnityEngine.Random.Range(1, 7)}");
 
         if(!InstanceFinder.IsServerStarted) {
-            ServerRpcHitLog(identifierPath, hitGlobal);
+            ServerRpcHitLog(identifierPath, hitGlobal, LocalConnection);
             return;
         }
 
@@ -147,7 +147,7 @@ public class TreeLogGroup : NetworkBehaviour, IS3
         SplitLog(identifierPath, hitGlobal, childOwner);
     }
     [ServerRpc(RequireOwnership = false)]
-    private void ServerRpcHitLog(int[] treeLogIP, Vector3 hitGlobal) => HitLog(treeLogIP, hitGlobal);
+    private void ServerRpcHitLog(int[] treeLogIP, Vector3 hitGlobal, NetworkConnection childOwner = null) => HitLog(treeLogIP, hitGlobal, childOwner);
 
     public void SplitLog(int[] identifierPath, Vector3 hitGlobal, NetworkConnection childOwner = null) 
     {
@@ -327,6 +327,11 @@ public class TreeLogGroup : NetworkBehaviour, IS3
 
     private void OnCollisionEnter(Collision collision)
     {
+        float impactSpeed = collision.relativeVelocity.magnitude;
+        // Ensure only forceful impacts make noise
+        if(impactSpeed < 0.25f)
+            return;
+
         audioController.PlaySound($"drop{UnityEngine.Random.Range(1, 7)}");
     }
 

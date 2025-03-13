@@ -94,15 +94,18 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 3180197479215652024}
   _networkObjectCache: {fileID: 3180197479215652024}
   defaultTreeSettings:
-    branchLayers: 3
-    timePerBranchSet: 600
-    maxBranchLength:
-    - {x: 5, y: 7}
-    - {x: 4, y: 5}
-    - {x: 2, y: 4}
-    maxNumBranches:
-    - {x: 3, y: 4}
-    - {x: 5, y: 6}
+  - timeToGrow: 600
+    lengthRange: {x: 5, y: 8}
+    radiusRange: {x: 1.3, y: 2}
+    childCountRange: {x: 2, y: 4}
+  - timeToGrow: 300
+    lengthRange: {x: 4, y: 6}
+    radiusRange: {x: 0.5, y: 0.7}
+    childCountRange: {x: 3, y: 5}
+  - timeToGrow: 300
+    lengthRange: {x: 2, y: 4}
+    radiusRange: {x: 0.5, y: 0.7}
+    childCountRange: {x: 0, y: 0}
 --- !u!114 &3180197479215652024 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8853704450417640882, guid: dec67fce942f2504092b84e24e71d198, type: 3}

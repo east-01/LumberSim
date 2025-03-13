@@ -16,12 +16,13 @@ using EMullen.SceneMgmt;
 public class ChoppableTree : NetworkBehaviour
 {
 
+    // TODO: Move to TreeSpawner
     [SerializeField]
-    private TreeGrowSettings defaultTreeSettings;
+    private TreeBranchLayerSettings[] defaultTreeSettings;
 
     private readonly SyncVar<float> age = new();
     public float Age => age.Value;
-    private TreeGrowSettings settings;
+    private TreeBranchLayerSettings[] settings;
     public TreeLogGroup LogGroup { get; private set; }
 
     public bool HasGrown => LogGroup != null;
@@ -82,37 +83,46 @@ public class ChoppableTree : NetworkBehaviour
     /// <summary>
     /// Spawns all of the TreeLogs
     /// </summary>
-    public void Grow(TreeGrowSettings settings) 
+    public void Grow(TreeBranchLayerSettings[] settings) 
     {
-        TreeLogData GenerateData(int layerNum, int siblingIndex) 
+        TreeLogData GenerateData(float parentRadius, int layerNum, int siblingIndex) 
         {
+            TreeBranchLayerSettings layerSettings = settings[layerNum];
 
             int childBranchCount = 0;
-            if(layerNum < settings.maxNumBranches.Length) {
-                Vector2 branchCountRange = settings.maxNumBranches[layerNum];
-                childBranchCount = Mathf.FloorToInt(UnityEngine.Random.Range(branchCountRange.x, branchCountRange.y));
-            }
+            Vector2 numBranchesRange = layerSettings.childCountRange;
+            childBranchCount = Mathf.FloorToInt(UnityEngine.Random.Range(numBranchesRange.x, numBranchesRange.y));
 
-            Vector2 branchLengthRange = settings.maxBranchLength[layerNum];
+            Vector2 branchLengthRange = layerSettings.lengthRange;
             float branchLength = UnityEngine.Random.Range(branchLengthRange.x, branchLengthRange.y);
 
-            Vector3 angle = GenerateVector(Vector3.up, layerNum == 0 ? 15f : 80f);
+            Vector2 branchRadiusRange = layerSettings.radiusRange;
+            float branchRadius = UnityEngine.Random.Range(branchRadiusRange.x, branchRadiusRange.y);
+            if(layerNum > 0) {
+                // The branch radius values for branches other than the trunk are scale values for the parent branch radius
+                branchRadius *= parentRadius;
+            }
 
-            TreeLogData[] children = new TreeLogData[childBranchCount];
-            for(int i = 0; i < children.Length; i++) {
-                children[i] = GenerateData(layerNum+1, i);
+            Vector3 angle = GenerateVector(Vector3.up, layerNum == 0 ? 25f : 110f);
+
+            TreeLogData[] children = new TreeLogData[0];
+            if(layerNum < settings.Length) {
+                children = new TreeLogData[childBranchCount];
+                for(int i = 0; i < children.Length; i++) {
+                    children[i] = GenerateData(branchRadius, layerNum+1, i);
+                }
             }
 
             return new(
                 branchLength,
-                1,
+                branchRadius,
                 angle,
                 siblingIndex,
                 children
             );
         }
 
-        TreeLogData rootData = GenerateData(0, 0);
+        TreeLogData rootData = GenerateData(-1, 0, 0);
         LogGroup.SetRootData(rootData);
     }
 
@@ -185,14 +195,11 @@ public class ChoppableTree : NetworkBehaviour
 }
 
 [Serializable]
-public struct TreeGrowSettings 
+public struct TreeBranchLayerSettings 
 {
-    public int branchLayers;
-    public float timePerBranchSet;
-    public Vector2[] maxBranchLength;
-    /// <summary>
-    /// An array of Vector2s where the x coordinate is the minimum number of branches and the y
-    ///   coordinate is the maximum number of branches.
-    /// </summary>
-    public Vector2[] maxNumBranches;
+    public float timeToGrow;
+    public Vector2 lengthRange;
+    [Header("If root layer, values reflect actual units of length. If non-root layer, values reflect units of scale in terms of the parent branch.")]
+    public Vector2 radiusRange;
+    public Vector2 childCountRange;
 }
