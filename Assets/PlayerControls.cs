@@ -247,6 +247,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""ChangeToolbelt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab7bdeb1-6da4-4057-9f3a-4afad10119e4"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeToolbelt"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
