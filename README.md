@@ -2,6 +2,8 @@
 
 A tycoon/factory style game about moving some lumber around. Start by selling firewood and work your way up to manufacturing lumber in your own lumber mill. 
 
+#### [v0.1 Demo Video](https://youtu.be/ZvO9VPx8GT0?si=jYTOtr3RS7Tjy18j)
+
 ## How to play
 
 Controls:
