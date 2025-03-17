@@ -2,6 +2,10 @@ using EMullen.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Ported from a previous project, the PlayerMovement input listener class is a rudimentary first
+///   person view character controller using WASD controls. The movement can be greatly improved.
+/// </summary>
 [RequireComponent(typeof(NetworkedAudioController))]
 public class PlayerMovement : MonoBehaviour, IInputListener
 {

@@ -13,6 +13,10 @@ using FishNet.Object;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// The PlayerObjectManager is a network behaviour class that keeps track of the spawned Player
+///   prefabs and keeps them connected to a uid.
+/// </summary>
 public class PlayerObjectManager : NetworkBehaviour
 {
     [SerializeField]

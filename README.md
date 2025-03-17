@@ -26,6 +26,9 @@ The build instructions assume you have:
 - The [EMullen packages](https://drive.google.com/file/d/1FLOMNzrzfUfUotHyN5g3abZDlzj5hizf/view?usp=sharing) file downloaded.
 - The [large assets](https://drive.google.com/file/d/1WJ3VFdEEOhBZz_m-w06kim2S0X_U8ezq/view?usp=sharing) file downloaded; version __v1__.
 
+_Builds aren't working right now due to a dependency issue with net.emullen.playermgmt referencing Editor scripts from a runtime .asmdef. This will be justified ASAP!_<br>
+_In-editor gameplay still works._
+
 1. Clone the Git repo:
 ```
 git clone https://github.com/east-01/LumberSim.git

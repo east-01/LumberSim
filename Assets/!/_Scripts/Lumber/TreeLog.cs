@@ -15,6 +15,8 @@ using UnityEngine;
 public class TreeLog : MonoBehaviour
 {
 
+    [SerializeField]
+    private bool drawGizmos;
     // private ChoppableTree tree;
     // public GameObject LogObject { get; private set;}
     /// <summary>
@@ -98,13 +100,7 @@ public class TreeLog : MonoBehaviour
 
     public void UpdatePosition() 
     {
-        if(Parent == null) {
-            transform.localPosition = Vector3.zero;
-            LogGroup.SetRoot(this);
-        } else {
-            // transform.position = LogGroup.GetFrontEndpoint(Parent.GetIdentifierPath());
-            transform.localPosition = Parent.Data.angle.normalized*Parent.Data.length;
-        }
+        transform.localPosition = Parent == null ? Vector3.zero : Parent.Data.angle.normalized*Parent.Data.length;
     }
 
     /// <summary>
@@ -127,6 +123,8 @@ public class TreeLog : MonoBehaviour
 
     private void OnDrawGizmos() 
     {
+        if(!drawGizmos)
+            return;
         if(!gameObject.activeSelf || logObject == null || LogGroup == null)
             return;
 
@@ -141,6 +139,11 @@ public class TreeLog : MonoBehaviour
     }
 }
 
+/// <summary>
+/// The TreeLogData class is a container for all data pertaining to a specific log. Data values
+///   include length, radius, angle, children, and sibling index. It's a class so operations like
+///   remove child, clone, and Equals can be performed.
+/// </summary>
 [Serializable]
 public class TreeLogData 
 {

@@ -4,25 +4,26 @@ using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Component.Transforming;
+using FishNet.Connection;
 using FishNet.Managing.Scened;
 using FishNet.Object;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Player))]
 [RequireComponent(typeof(NetworkedAudioController))]
 public class ToolBelt : NetworkBehaviour, IInputListener, IS3
 {
 
     [SerializeField]
     private new Camera camera;
-    [SerializeField]
-    private TMP_Text toolbeltText;
 
+    private Player player;
     private NetworkedAudioController audioController;
     private GameplayManager gameplayManager;
-    int toolbeltIndex = 0;
-    string[] toolbeltOptions = new string[] {"hands", "axe"};
+    public int ToolbeltIndex { get; private set; }= 0;
+    public readonly string[] ToolbeltOptions = new string[] {"hands", "axe"};
 
     // Hand tool
     [SerializeField]
@@ -34,14 +35,23 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
     private Vector3 grabOffset;
     private Vector3 targetPosition;
 
+    // Axe tool
+    [SerializeField]
+    private AxeStats[] axeStats;
+    public AxeStats[] AxeStatsArr => axeStats;
+    private float lastAxeSwingTime;
+    public AxeStats CurrentAxeStats => axeStats[player.PlayerData.GetData<GeneralPlayerData>().axeLevel];
+    public float AxeSwingProgress => (Time.time-lastAxeSwingTime)/CurrentAxeStats.rechargeTime;
+
     private void Awake()
     {
+        player = GetComponent<Player>();
         audioController = GetComponent<NetworkedAudioController>();
     }
 
     private void Start()
     {
-        UpdateText();   
+        lastAxeSwingTime = float.NegativeInfinity;   
     }
 
     public void SingletonRegistered(Type type, object singleton)
@@ -88,20 +98,13 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
         grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/3f);
     }
     [ServerRpc(RequireOwnership = false)]
-    public void ServerRpcUpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) 
-    {
-
-        // if (InstanceFinder.NetworkManager..Spawn().SpawnedObjects.TryGetValue(objectId, out NetworkObject grabbedGroup))
-        // {
-            UpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
-        // }
-    }
+    public void ServerRpcUpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) => UpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
 
     public void InputEvent(InputAction.CallbackContext context)
     {
         switch(context.action.name) {
             case "Primary":
-                switch(toolbeltIndex) {
+                switch(ToolbeltIndex) {
                     case 0:
                         PickupLog(context.performed);
                         break;
@@ -112,16 +115,13 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
                 }
                 break;
             case "ChangeToolbelt":
-                toolbeltIndex = (toolbeltIndex+1)%toolbeltOptions.Length;
-                UpdateText();
+                ToolbeltIndex = (ToolbeltIndex+1)%ToolbeltOptions.Length;
                 break;
         }
     }
 
     // InputPolling is toggled off
-    public void InputPoll(InputAction action) 
-    {
-    }
+    public void InputPoll(InputAction action) {}
 
     /// <summary>
     /// Given the player's camera pick a Log object
@@ -151,18 +151,35 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
         return new(hit, hitPointLocal, log, group);
     }
 
+    /// <summary>
+    /// Swing the axe tool.
+    /// </summary>
     private void SwingAxe() 
     {
+        // Ensure axe is ready
+        if(AxeSwingProgress < 1)
+            return;
+
         audioController.PlaySound("swingaxe");
 
+        // Try to pick a log, if we miss return
         LogPickArgs args = PickLog();
         if(args == null)
             return;
 
+        lastAxeSwingTime = Time.time;
+
         int[] identifierPath = args.log.GetIdentifierPath();
-        args.group.HitLog(identifierPath, args.hit.point, LocalConnection);
+        TreeLogGroup.SingleHitData hitData = new TreeLogGroup.SingleHitData(identifierPath, args.hit.point, CurrentAxeStats.hitPower, LocalConnection);
+        args.group.HitLog(hitData);
     }
 
+    /// <summary>
+    /// Pick up/drop a log, has separate actions for 
+    ///   performed=true: Try to pick up a log and store a grabbedGroup
+    ///   performed=false: Drop the current grabbedGroup if it exists
+    /// </summary>
+    /// <param name="performed">Performed boolean</param>
     private void PickupLog(bool performed) 
     {
         if(performed) {
@@ -184,11 +201,11 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
 
             audioController.PlaySound("pickup");
 
-            grabbedRB.useGravity = false;
-
             grabbedGroup = args.group;
-            grabOffset = /*args.hit.point-args.group.transform.position*/Vector3.zero;
+            grabOffset = Vector3.zero;
+            // grabOffset = args.hit.point-args.group.transform.position; // TODO: Implement offset and rotation
 
+            grabbedRB.useGravity = false;
             ServerSetPickedUp(args.group.ObjectId, performed);
         } else {
             if(grabbedGroup != null && grabbedGroup.TryGetComponent(out Rigidbody grabbedRB))
@@ -217,14 +234,8 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
     [ServerRpc(RequireOwnership = false)]
     private void ServerRpcServerSetPickedUp(int logNetID, bool performed) => ServerSetPickedUp(logNetID, performed);
 
-    private void UpdateText() 
-    {
-        if(toolbeltText != null)
-            toolbeltText.text = toolbeltOptions[toolbeltIndex];
-    }
-
     /// <summary>
-    /// Class for 
+    /// Class for when the user clicks on a log.
     /// </summary>
     private class LogPickArgs {
         public RaycastHit hit;
@@ -239,6 +250,14 @@ public class ToolBelt : NetworkBehaviour, IInputListener, IS3
             this.log = log;
             this.group = group;
         }
+    }
+
+    [Serializable]
+    public struct AxeStats 
+    {
+        public float price;
+        public float hitPower;
+        public float rechargeTime;
     }
 
 }

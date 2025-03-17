@@ -80,6 +80,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Upgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""e654a893-c0ea-4126-a978-a327410c4e17"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,6 +267,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""ChangeToolbelt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""563886c1-6ad9-4b3d-a5eb-d9cde3fd9aab"",
+                    ""path"": ""<Keyboard>/u"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Upgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -300,6 +320,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Primary = m_Gameplay.FindAction("Primary", throwIfNotFound: true);
         m_Gameplay_ChangeToolbelt = m_Gameplay.FindAction("ChangeToolbelt", throwIfNotFound: true);
+        m_Gameplay_Upgrade = m_Gameplay.FindAction("Upgrade", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -365,6 +386,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Primary;
     private readonly InputAction m_Gameplay_ChangeToolbelt;
+    private readonly InputAction m_Gameplay_Upgrade;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -375,6 +397,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
         public InputAction @Primary => m_Wrapper.m_Gameplay_Primary;
         public InputAction @ChangeToolbelt => m_Wrapper.m_Gameplay_ChangeToolbelt;
+        public InputAction @Upgrade => m_Wrapper.m_Gameplay_Upgrade;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -402,6 +425,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @ChangeToolbelt.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
                 @ChangeToolbelt.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
                 @ChangeToolbelt.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnChangeToolbelt;
+                @Upgrade.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
+                @Upgrade.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
+                @Upgrade.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -424,6 +450,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @ChangeToolbelt.started += instance.OnChangeToolbelt;
                 @ChangeToolbelt.performed += instance.OnChangeToolbelt;
                 @ChangeToolbelt.canceled += instance.OnChangeToolbelt;
+                @Upgrade.started += instance.OnUpgrade;
+                @Upgrade.performed += instance.OnUpgrade;
+                @Upgrade.canceled += instance.OnUpgrade;
             }
         }
     }
@@ -454,5 +483,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnPrimary(InputAction.CallbackContext context);
         void OnChangeToolbelt(InputAction.CallbackContext context);
+        void OnUpgrade(InputAction.CallbackContext context);
     }
 }

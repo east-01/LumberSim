@@ -2,6 +2,11 @@ using EMullen.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// The FirstPersonCamera class is an input listener monobehaviour that controls a camera attached
+///   to the player with the standard first person camera controls.
+/// Uses input polling.
+/// </summary>
 public class FirstPersonCamera : MonoBehaviour, IInputListener
 {
     // Public input variable for mouse movement (set from another script or the Inspector)

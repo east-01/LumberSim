@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// The LumberEvaluatorClass is a an extension class that provides additional calculations for
+///   TreeLogGroups: length, weight, and lumber price.
+/// </summary>
 public static class LumberEvaluator {
 
     public static float EvaluateTotalLength(this TreeLogGroup group) 

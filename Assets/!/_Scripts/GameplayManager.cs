@@ -14,6 +14,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// The GameplayManager class is a networked scene singleton that controls general gameplay actions.
+/// It mainly controlls TreeLogGroups at the moment, but that should be split to its own manager soon.
+/// </summary>
 public class GameplayManager : NetworkBehaviour
 {
 
@@ -36,37 +40,17 @@ public class GameplayManager : NetworkBehaviour
         }
 
         SceneSingleton.Add(gameObject.scene.GetSceneLookupData(), this);
-
-        // if(!InstanceFinder.IsServerStarted) {
-        //     Debug.LogWarning("Gameplay manager is enabled without server being active, disabling.");
-        //     gameObject.SetActive(false);
-        //     return;
-        // }
-
-        if(InstanceFinder.IsClientStarted)
-            InstanceFinder.ClientManager.RegisterBroadcast<ClientNetworkedScene>(OnClientNetworkedScene);
     }
 
     private void OnDisable() 
     {
         if(SceneSingleton.ContainsKey(gameObject.scene.GetSceneLookupData()))
             SceneSingleton.Remove(gameObject.scene.GetSceneLookupData());
-            
-        if(InstanceFinder.IsClientStarted)
-            InstanceFinder.ClientManager.UnregisterBroadcast<ClientNetworkedScene>(OnClientNetworkedScene);
     }
 
     private void Update() 
     {
 
-    }
-
-    private void OnClientNetworkedScene(ClientNetworkedScene msg, Channel channel)
-    {
-        if(msg.scene.Name != "GameplayScene")
-            return;
-
-        // GameplayScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName(msg.scene.Name);
     }
 
     // TODO: Below probably should go in its own TreeManager
@@ -75,6 +59,16 @@ public class GameplayManager : NetworkBehaviour
     [SerializeField]
     private GameObject choppableTreePrefab;
 
+    /// <summary>
+    /// Spawn a TreeLogGroup game object.
+    /// </summary>
+    /// <param name="position">The position to spawn the TreeLogGroup at.</param>
+    /// <param name="rotation">The rotation to spawn the TreeLogGroup with.</param>
+    /// <param name="rootData">The root data to spawn the TreeLogGroup with.</param>
+    /// <param name="ownerConnection">The owning connection of this TreeLogGroup. Mandatory to 
+    ///    track sale payouts.</param>
+    /// <returns>The spawned TreeLogGroup</returns>
+    /// <exception cref="InvalidOperationException">The server isn't started.</exception>
     public TreeLogGroup SpawnLogObject(Vector3 position, Quaternion rotation, TreeLogData rootData, NetworkConnection ownerConnection = null) 
     {
         if(!InstanceFinder.IsServerStarted) 
@@ -88,13 +82,16 @@ public class GameplayManager : NetworkBehaviour
 
         InstanceFinder.ServerManager.Spawn(logObject, ownerConnection, gameObject.scene);
 
-        // logObject.transform.position = position;
-
         treeLogGroups.Add(log.NetworkObject.ObjectId, log);
 
         return log;
     }
 
+    /// <summary>
+    /// Spawn the ChoppableTree prefab at the Vector3 position.
+    /// </summary>
+    /// <returns>The spawned ChoppableTree.</returns>
+    /// <exception cref="InvalidOperationException">The server isn't started.</exception>
     public ChoppableTree SpawnTree(Vector3 position) 
     {
         if(!InstanceFinder.IsServerStarted)

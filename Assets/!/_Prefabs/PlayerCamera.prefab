@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {x: 0, y: 0}
   playerTransform: {fileID: 0}
-  sensitivity: 2
+  sensitivity: 0.35
   verticalRotationLimit: 90
 --- !u!20 &6380617917662249056
 Camera:

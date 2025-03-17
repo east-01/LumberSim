@@ -11,6 +11,10 @@ using FishNet.Transporting;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// The GameplayBootstrapper class is responsible for ensuring the lobby exists, the player is in
+///   it, and is in the proper scene. You can see the phases in the GameplayBootstrapper#Status enum.
+/// </summary>
 public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
 {
 
@@ -18,7 +22,6 @@ public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
     private TMP_Text statusText;
 
     private Status status;
-    private float lastConnectTime;
     [SerializeField]
     private float connectCooldown = 10f;
 

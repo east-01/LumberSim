@@ -8,6 +8,10 @@ using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
+/// <summary>
+/// The LogSellPoint can go on any collider (make collider isTrigger=true) to make it a sell point
+///   for lumber. You can change the value of the lumber.
+/// </summary>
 [RequireComponent(typeof(LumberEvaluator))]
 [RequireComponent(typeof(NetworkedAudioController))]
 public class LogSellPoint : NetworkBehaviour
@@ -40,6 +44,10 @@ public class LogSellPoint : NetworkBehaviour
         // Destroy(other.GetComponentInParent<TreeLogGroup>().gameObject);
     }
 
+    /// <summary>
+    /// Sell a log NetworkObject. Runs on the server via an auto ServerRpc.
+    /// </summary>
+    /// <param name="logGroupNetworkObject">The log group NetworkObject to sell.</param>
     private void SellLog(NetworkObject logGroupNetworkObject) 
     {
         if(logGroupNetworkObject == null) {

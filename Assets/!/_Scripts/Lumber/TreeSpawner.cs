@@ -7,11 +7,19 @@ using FishNet;
 using FishNet.Managing.Scened;
 using UnityEngine;
 
+/// <summary>
+/// The TreeSpawner class is responsible for spawning a tree at this transform's position once the
+///   server starts. In the future the settings can be applied here instead of on the ChoppableTree
+///   prefab.
+/// </summary>
 public class TreeSpawner : MonoBehaviour, IS3
 {
+    /// <summary>
+    /// Has sent the warning for destroying self if on client instance.
+    /// </summary>
     private static bool hasWarned = false;
-    private GameplayManager gameplayManager;
 
+    private GameplayManager gameplayManager;
     private ChoppableTree tree;
 
     // Start is called before the first frame update
@@ -33,14 +41,6 @@ public class TreeSpawner : MonoBehaviour, IS3
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(gameplayManager != null && tree == null) {
-            tree = gameplayManager.SpawnTree(transform.position);
-        }
-    }
-
     public void SingletonRegistered(Type type, object singleton)
     {
         if(type != typeof(GameplayManager))
@@ -54,5 +54,13 @@ public class TreeSpawner : MonoBehaviour, IS3
         if(type != typeof(GameplayManager))
             return;
 
+    }
+
+    void Update()
+    {
+        // Spawn the tree if the gameplay manager exists and it hasn't already been spawned.
+        if(gameplayManager != null && tree == null) {
+            tree = gameplayManager.SpawnTree(transform.position);
+        }
     }
 }
