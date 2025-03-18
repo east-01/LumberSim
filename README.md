@@ -4,6 +4,13 @@ A tycoon/factory style game about moving some lumber around. Start by selling fi
 
 #### [v0.1 Demo Video](https://youtu.be/ZvO9VPx8GT0?si=jYTOtr3RS7Tjy18j)
 
+## Get the game
+
+[Downloads](https://drive.google.com/drive/folders/1RLs5GTHi1n1WWJeCwzsjZQ_pqcQiGAX6?usp=sharing)
+
+Pre-compiled versions (for Windows) are served from the above link. Download the latest version, extract it, and run LumberSim.exe.<br>
+Or you can compile the game yourself- see [build instructions](#build-instructions).
+
 ## How to play
 
 Controls:

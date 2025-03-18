@@ -634,6 +634,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4338066785846636676, guid: 6ab4ee2a2d17e0f4b860d82d13d88bdf, type: 3}
+      propertyPath: networkConfig
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4338066785846636680, guid: 6ab4ee2a2d17e0f4b860d82d13d88bdf, type: 3}
       propertyPath: m_RootOrder
       value: 4

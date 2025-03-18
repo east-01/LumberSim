@@ -44,7 +44,9 @@ public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
         if(!NetworkController.Instance.IsNetworkRunning()/* && Time.time-lastConnectTime >= connectCooldown*/) { 
             status = Status.CONNECTING;
             // BLog.Highlight($"Client: {NetworkController.Instance.IsClientActive} Server: {NetworkController.Instance.IsServerActive}");
-            if(NetworkController.Instance.CanStartNetwork()) {
+            if(NetworkController.Instance.NetworkConfig == null && !NetworkController.Instance.NetworkConfiguratorMenuController.IsOpen) {
+                NetworkController.Instance.NetworkConfiguratorMenuController.Open();
+            } else if(NetworkController.Instance.CanStartNetwork()) {
                 NetworkController.Instance.StartNetwork();
             }
         } else if(!PlayerDataRegistry.Instance.Networked) {
