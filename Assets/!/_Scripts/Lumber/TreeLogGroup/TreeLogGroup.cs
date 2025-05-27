@@ -17,7 +17,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(NetworkTransform))]
 [RequireComponent(typeof(NetworkedAudioController))]
-public partial class TreeLogGroup : NetworkBehaviour, IS3
+public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
 {
     [SerializeField]
     private GameObject logPrefab;
@@ -78,6 +78,7 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
         HitSplitUpdate();
 
         if(ShouldPrune && gameplayManager != null) {
+            ShouldPrune = false;
             PruneTinyLogs();
         }
 
@@ -117,4 +118,10 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
         return position;
     }
 
+    public Dictionary<string, string> GetVariables()
+    {
+        return new Dictionary<string, string>() {
+            {"%PRICE%", LumberEvaluator.EvaluateLumber(this, 3f, 1f).ToString()},
+        };
+    }
 }

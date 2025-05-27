@@ -25,7 +25,15 @@ public class GameplayManager : NetworkBehaviour
 
     public Scene GameplayScene => gameObject.scene;
 
-    public Dictionary<int, TreeLogGroup> treeLogGroups = new();
+    public Dictionary<int, Grabbable> grabbables = new();
+    /// <summary>
+    /// A list of grabbables that have yet to be stored in the grabbables dict. This can happen
+    ///   when you try to register a grabbable before it is spawned (meaning network object id = 0).
+    /// </summary>
+    private List<Grabbable> unregisteredGrabbables = new();
+
+    public LumberLobby Lobby;
+
 
     private void Start() 
     {
@@ -50,7 +58,15 @@ public class GameplayManager : NetworkBehaviour
 
     private void Update() 
     {
-
+        List<Grabbable> registeredGrabbables = new(); // List of grabbables that successfully registered
+        foreach(Grabbable grabbable in unregisteredGrabbables) {
+            if(grabbable.IsSpawned) {
+                if(RegisterGrabbable(grabbable))
+                    registeredGrabbables.Add(grabbable);
+            }
+        }
+        if(registeredGrabbables.Count > 0)
+            unregisteredGrabbables = unregisteredGrabbables.Except(registeredGrabbables).ToList();
     }
 
     // TODO: Below probably should go in its own TreeManager
@@ -58,6 +74,65 @@ public class GameplayManager : NetworkBehaviour
     private GameObject logObjectPrefab;
     [SerializeField]
     private GameObject choppableTreePrefab;
+
+    public Grabbable SpawnGrabbable(SpawnGrabbaleArgs args) 
+    {
+        Vector3 position = args.position;
+        Quaternion rotation = args.rotation;
+        GameObject grabbablePrefab = args.grabbablePrefab;
+        NetworkConnection ownerConnection = args.ownerConnection;
+
+        if(!grabbablePrefab.TryGetComponent(out Grabbable grabbableOnPrefab)) 
+            throw new InvalidOperationException("Can't spawn prefab as Grabbable, it does not have Grabbable component.");
+
+        GameObject grabbableObject = Instantiate(grabbablePrefab);
+        grabbableObject.transform.SetPositionAndRotation(position, rotation);
+        grabbableObject.GetComponent<Rigidbody>().velocity = args.initialVelocity;
+        InstanceFinder.ServerManager.Spawn(grabbableObject, ownerConnection, gameObject.scene);
+
+        Grabbable grabbable = grabbableObject.GetComponent<Grabbable>();
+        RegisterGrabbable(grabbable);
+
+        return grabbable;
+    }
+    
+    public struct SpawnGrabbaleArgs 
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 initialVelocity;
+        public GameObject grabbablePrefab;
+        public NetworkConnection ownerConnection;
+
+        public SpawnGrabbaleArgs(Vector3 position, Quaternion rotation, Vector3 initialVelocity, GameObject grabbablePrefab, NetworkConnection ownerConnection = null) 
+        {
+            this.position = position;
+            this.rotation = rotation;
+            this.initialVelocity = initialVelocity;
+            this.grabbablePrefab = grabbablePrefab;
+            this.ownerConnection = ownerConnection;
+        }
+    }
+
+    /// <summary>
+    /// Register a grabbable's network id in the grabbables dictionary. The NetworkObject must be
+    ///   spawned for success.
+    /// </summary>
+    /// <param name="grabbable">The grabbable to register.</param>
+    /// <returns>Success status, registering fails if the grabbable hasn't spawned yet.</returns>
+    public bool RegisterGrabbable(Grabbable grabbable) 
+    {
+        if(!grabbable.IsSpawned) {
+            if(!unregisteredGrabbables.Contains(grabbable))
+                unregisteredGrabbables.Add(grabbable);
+            return false;
+        }
+
+        int id = grabbable.NetworkObject.ObjectId;
+
+        grabbables.Add(id, grabbable);
+        return true;
+    }
 
     /// <summary>
     /// Spawn a TreeLogGroup game object.
@@ -80,9 +155,13 @@ public class GameplayManager : NetworkBehaviour
         logObject.transform.SetPositionAndRotation(position, rotation);
         log.SetRootData(rootData);
 
-        InstanceFinder.ServerManager.Spawn(logObject, ownerConnection, gameObject.scene);
+        if(logObject.TryGetComponent(out Grabbable grabbable)) {
+            RegisterGrabbable(grabbable);
+        } else {
+            Debug.LogWarning("Failed to get Grabbable component on the TreeLogGroup prefab we're spawning.");
+        }
 
-        treeLogGroups.Add(log.NetworkObject.ObjectId, log);
+        InstanceFinder.ServerManager.Spawn(logObject, ownerConnection, gameObject.scene);
 
         return log;
     }
@@ -106,8 +185,8 @@ public class GameplayManager : NetworkBehaviour
         return treeObject.GetComponent<ChoppableTree>();
     }
 
-    public TreeLogGroup GetLogGroupFromNetworkID(int netID) {
-        return treeLogGroups[netID];
+    public Grabbable GetGrabbableFromNetworkID(int netID) {
+        return grabbables[netID];
     }
 
 }

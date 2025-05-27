@@ -13,6 +13,10 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(NetworkedAudioController))]
 public class PlayerActions : MonoBehaviour, IInputListener
 {
+
+    [SerializeField]
+    private GameObject grabbableItemPrefab; // For item drops
+
     private Player player;
     private ToolBelt toolBelt;
     private NetworkedAudioController audioController;
@@ -26,32 +30,82 @@ public class PlayerActions : MonoBehaviour, IInputListener
 
     public void InputEvent(InputAction.CallbackContext context)
     {
+        PlayerData pd = player.PlayerData;
+        pd.EnsureLumberData();
+
         switch(context.action.name) {
-            case "Upgrade":
-                if(!context.performed)
-                    break;
-
-                PlayerData pd = player.PlayerData;
-                if(!pd.HasData<GeneralPlayerData>())
-                    break;
-
-                // Ensure there is a level to upgrade to
-                GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
-                if(gpd.axeLevel > toolBelt.AxeStatsArr.Length-1)
-                    break;
-
-                // Get the target price and check if the player can afford
-                float targPrice = toolBelt.AxeStatsArr[gpd.axeLevel+1].price;
-                if(gpd.balance >= targPrice) {
-                    gpd.balance -= targPrice;
-                    gpd.axeLevel += 1;
-                    pd.SetData(gpd);
-
-                    audioController.PlaySound("bing");
-                }
-
-                break;
+            case "Interact":
+                HandleInteract(context);
+                break;       
+            case "DropHotbar":
+                HandleDropHotbar(context);
+                break;       
         }
+    }
+
+    private void HandleInteract(InputAction.CallbackContext context) 
+    {
+        if(!context.performed)
+            return;
+
+        Grabbable grabbable = player.GrabbablePicker.PickGrabbable(5f);
+        if(grabbable == null)
+            return;
+
+        if(!grabbable.TryGetComponent(out GrabbableItem grabbableItem))
+            return;
+
+        Item item = grabbableItem.item.Value;
+
+        if(item == Item.NONE)
+            return;
+
+        // Add item to hotbar, if not successful break early
+        PlayerData pd = player.PlayerData;
+        pd.EnsureLumberData();
+
+        InventoryData inventoryData = pd.GetData<InventoryData>();
+        if(!inventoryData.AddItemToHotbar(item))
+            return;
+
+        pd.SetData(inventoryData);
+
+        grabbableItem.GrabbedItem();
+        toolBelt.UpdateRenderer();
+    }
+
+    private void HandleDropHotbar(InputAction.CallbackContext context) 
+    {
+        if(!context.performed)
+            return;
+
+        PlayerData pd = player.PlayerData;
+        pd.EnsureLumberData();
+
+        InventoryData id = pd.GetData<InventoryData>();
+        Item[] hotbarItems = id.hotbarItems;
+        int idx = toolBelt.ToolbeltIndex;
+
+        if(hotbarItems[idx] == Item.NONE)
+            return;
+
+        // Spawn the GrabbableItem
+        Transform camTransform = player.Camera.transform;
+        Vector3 initPosition = camTransform.position + camTransform.forward.normalized * 0.3f;
+        Vector3 initVelocity = camTransform.forward.normalized * 5f;
+        GameplayManager.SpawnGrabbaleArgs args = new(initPosition, camTransform.rotation, initVelocity, grabbableItemPrefab);
+        Grabbable grabbable = player.GameplayManager.SpawnGrabbable(args);
+
+        GrabbableItem grabbableItem = grabbable.GetComponent<GrabbableItem>();
+
+        grabbableItem.SetItem(hotbarItems[idx]);
+
+        // Update player's inventory
+        hotbarItems[idx] = Item.NONE;
+        id.hotbarItems = hotbarItems;
+        pd.SetData(id);
+
+        toolBelt.UpdateRenderer();
     }
 
     public void InputPoll(InputAction action) {}

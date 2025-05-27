@@ -57,13 +57,12 @@ public class GameplayBootstrapper : MonoBehaviour, IBootstrapComponent
             BootstrapSequenceManager.Instance.AbortSequence();
 
             if(InstanceFinder.IsServerStarted) {
-
-                SceneController.Instance.LoadServerScene(new("GameplayScene"));
-                SceneController.Instance.AddClientToScene(InstanceFinder.ClientManager.Connection, new("GameplayScene"));
+                // SceneController.Instance.AddClientToScene(InstanceFinder.ClientManager.Connection, new("GameplayScene"));
             } else {
-                ClientNetworkedScene request = new(new SceneLookupData("GameplayScene"), ClientNetworkedScene.Action.ADD);
-                InstanceFinder.ClientManager.Broadcast(request);
-                UnityEngine.SceneManagement.SceneManager.LoadScene("GameplayScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
+                
+                // ClientNetworkedScene request = new(new SceneLookupData("GameplayScene"), ClientNetworkedScene.Action.ADD);
+                // InstanceFinder.ClientManager.Broadcast(request);
+                // UnityEngine.SceneManagement.SceneManager.LoadScene("GameplayScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
             }
         }
 

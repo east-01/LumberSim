@@ -33,8 +33,6 @@ public class ChoppableTree : NetworkBehaviour
 
     private void Start() 
     {
-        Destroy(GetComponent<Rigidbody>());
-
         if(!InstanceFinder.IsServerStarted) {
             return;
         }

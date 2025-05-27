@@ -89,6 +89,24 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""014811d0-4cc5-4b21-b131-54f1cd3fd5ec"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropHotbar"",
+                    ""type"": ""Button"",
+                    ""id"": ""9af0f619-3d53-4f99-8c40-c95db93a397a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -278,6 +296,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Upgrade"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b80e5647-45d5-460d-b57b-6ed501481683"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a04fa98d-2b70-4578-a9bd-52cce4f37ad0"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropHotbar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -321,6 +361,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Gameplay_Primary = m_Gameplay.FindAction("Primary", throwIfNotFound: true);
         m_Gameplay_ChangeToolbelt = m_Gameplay.FindAction("ChangeToolbelt", throwIfNotFound: true);
         m_Gameplay_Upgrade = m_Gameplay.FindAction("Upgrade", throwIfNotFound: true);
+        m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+        m_Gameplay_DropHotbar = m_Gameplay.FindAction("DropHotbar", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -387,6 +429,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Primary;
     private readonly InputAction m_Gameplay_ChangeToolbelt;
     private readonly InputAction m_Gameplay_Upgrade;
+    private readonly InputAction m_Gameplay_Interact;
+    private readonly InputAction m_Gameplay_DropHotbar;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -398,6 +442,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Primary => m_Wrapper.m_Gameplay_Primary;
         public InputAction @ChangeToolbelt => m_Wrapper.m_Gameplay_ChangeToolbelt;
         public InputAction @Upgrade => m_Wrapper.m_Gameplay_Upgrade;
+        public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+        public InputAction @DropHotbar => m_Wrapper.m_Gameplay_DropHotbar;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -428,6 +474,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Upgrade.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
                 @Upgrade.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
                 @Upgrade.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUpgrade;
+                @Interact.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @DropHotbar.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDropHotbar;
+                @DropHotbar.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDropHotbar;
+                @DropHotbar.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDropHotbar;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -453,6 +505,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Upgrade.started += instance.OnUpgrade;
                 @Upgrade.performed += instance.OnUpgrade;
                 @Upgrade.canceled += instance.OnUpgrade;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
+                @DropHotbar.started += instance.OnDropHotbar;
+                @DropHotbar.performed += instance.OnDropHotbar;
+                @DropHotbar.canceled += instance.OnDropHotbar;
             }
         }
     }
@@ -484,5 +542,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnPrimary(InputAction.CallbackContext context);
         void OnChangeToolbelt(InputAction.CallbackContext context);
         void OnUpgrade(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnDropHotbar(InputAction.CallbackContext context);
     }
 }

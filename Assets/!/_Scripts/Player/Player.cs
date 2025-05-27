@@ -28,13 +28,20 @@ public class Player : NetworkBehaviour, IS3
     public bool HasPlayerData => PlayerDataRegistry.Instance != null && uid.Value != null && PlayerDataRegistry.Instance.Contains(uid.Value);
     public PlayerData PlayerData => PlayerDataRegistry.Instance.GetPlayerData(uid.Value);
 
-    private GameplayManager gameplayManager;
+    public GameplayManager GameplayManager { get; private set; }
     private LocalPlayer localPlayer;
 
     private PlayerInputManager playerInputManager;
 
     [SerializeField]
     private new Camera camera;
+    public Camera Camera => camera;
+    [SerializeField]
+    private GrabbablePicker grabbablePicker;
+    public GrabbablePicker GrabbablePicker => grabbablePicker;
+
+    public PlayerHUDMenuController GetHUD() => GetComponentInChildren<PlayerHUDMenuController>();
+    public NetworkedAudioController GetNetworkedAudioController() => GetComponent<NetworkedAudioController>();
 
 #region Initializers
     private void Awake()
@@ -48,8 +55,7 @@ public class Player : NetworkBehaviour, IS3
         if(type != typeof(GameplayManager))
             return;
 
-        gameplayManager = singleton as GameplayManager;
-        gameplayManager.GetComponent<PlayerObjectManager>().PlayerConnectedEvent += PlayerObjectManager_PlayerConnectedEvent;
+        GameplayManager = singleton as GameplayManager;
     }
 
     public void SingletonDeregistered(Type type, object singleton)
@@ -57,7 +63,6 @@ public class Player : NetworkBehaviour, IS3
         if(type != typeof(GameplayManager))
             return;
 
-        gameplayManager.GetComponent<PlayerObjectManager>().PlayerConnectedEvent -= PlayerObjectManager_PlayerConnectedEvent;
     }
 #endregion
 
@@ -82,14 +87,6 @@ public class Player : NetworkBehaviour, IS3
         if(!localPlayerExists && gameObject.GetComponentInChildren<AudioListener>() != null) {
             gameObject.GetComponentInChildren<AudioListener>().gameObject.SetActive(false);
         }
-    }
-
-    private void PlayerObjectManager_PlayerConnectedEvent(string uuid, Player player)
-    {
-        if(uuid != uid.Value)
-            return;
-
-        ConnectPlayer(uuid, player);
     }
 
     public void ConnectPlayer(string uuid, Player player) 

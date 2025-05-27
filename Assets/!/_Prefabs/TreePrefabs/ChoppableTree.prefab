@@ -71,7 +71,9 @@ PrefabInstance:
       propertyPath: NetworkBehaviours.Array.data[2]
       value: 
       objectReference: {fileID: 5890653367779140982}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6769835273039330212, guid: dec67fce942f2504092b84e24e71d198, type: 3}
+    - {fileID: 2493312488100928114, guid: dec67fce942f2504092b84e24e71d198, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dec67fce942f2504092b84e24e71d198, type: 3}
 --- !u!1 &1106611762162071542 stripped
 GameObject:
@@ -106,6 +108,7 @@ MonoBehaviour:
     lengthRange: {x: 2, y: 4}
     radiusRange: {x: 0.5, y: 0.7}
     childCountRange: {x: 0, y: 0}
+  drawGizmos: 0
 --- !u!114 &3180197479215652024 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8853704450417640882, guid: dec67fce942f2504092b84e24e71d198, type: 3}

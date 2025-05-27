@@ -11,6 +11,13 @@ using UnityEngine;
 /// </summary>
 public class PlayerHUDMenuController : MenuController
 {
+
+    [Header("References")]
+    [SerializeField]
+    private GrabbableRenderer grabbableRenderer;
+    public GrabbableRenderer GrabbableRenderer => grabbableRenderer;
+
+    [Header("UI Elements")]
     [SerializeField]
     private TMP_Text toolbeltText;
     [SerializeField]
@@ -46,7 +53,7 @@ public class PlayerHUDMenuController : MenuController
         if(toolBelt == null) {
             Debug.LogError("Failed to get ToolBelt on Player component, it is assumed that the ToolBelt component is on the same GameObject as the Player.");
             return;
-        }
+        }        
     }
 
     private void Update()
@@ -57,32 +64,29 @@ public class PlayerHUDMenuController : MenuController
         // ----- Load player info -----
         string uid = player.uid.Value;
         PlayerData pd = PlayerDataRegistry.Instance.GetPlayerData(uid);
-        GeneralPlayerData gpd;
-        if(!pd.HasData<GeneralPlayerData>()) {
-            gpd = new(20);
-            pd.SetData(gpd);
-        } else
-            gpd = pd.GetData<GeneralPlayerData>();
+        pd.EnsureLumberData();
+        GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
 
         // ----- Update toolbelt text -----
-        switch(toolBelt.ToolbeltOptions[toolBelt.ToolbeltIndex]) {
-            case "hands":
-                toolbeltText.text = "Hands";
-                toolbeltTextSecondary.text = "";
-                break;
-            case "axe":
-                int axeTier = gpd.axeLevel;
-                string axeSwingProgressText = toolBelt.AxeSwingProgress < 1 ? (toolBelt.AxeSwingProgress*100).ToString("F0") + "%" : "Ready";
-                toolbeltText.text = $"Axe T{axeTier+1} ({axeSwingProgressText})"; 
+        // switch(toolBelt.ToolbeltOptions[toolBelt.ToolbeltIndex]) {
+        //     case "hands":
+        //         toolbeltText.text = "Hands";
+        //         toolbeltTextSecondary.text = "";
+        //         break;
+                
+        //     case "axe":
+        //         int axeTier = gpd.axeLevel;
+        //         string axeSwingProgressText = toolBelt.AxeSwingProgress < 1 ? (toolBelt.AxeSwingProgress*100).ToString("F0") + "%" : "Ready";
+        //         toolbeltText.text = $"Axe T{axeTier+1} ({axeSwingProgressText})"; 
 
-                string secondaryText = "";
-                if(axeTier < toolBelt.AxeStatsArr.Length-1) {
-                    float targPrice = toolBelt.AxeStatsArr[axeTier+1].price;
-                    secondaryText = gpd.balance < targPrice ? $"Price to upgrade: ${targPrice}" : "Press U to upgrade.";
-                }
-                toolbeltTextSecondary.text = secondaryText;
-                break;
-        }
+        //         string secondaryText = "";
+        //         if(axeTier < toolBelt.AxeStatsArr.Length-1) {
+        //             float targPrice = toolBelt.AxeStatsArr[axeTier+1].price;
+        //             secondaryText = gpd.balance < targPrice ? $"Price to upgrade: ${targPrice}" : "Press U to upgrade.";
+        //         }
+        //         toolbeltTextSecondary.text = secondaryText;
+        //         break;
+        // }
 
         // ----- Display balance text -----
         balanceText.text = "$" + gpd.balance.ToString("F2");
