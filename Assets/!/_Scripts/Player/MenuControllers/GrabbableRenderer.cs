@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using EMullen.Core;
 using TMPro;
 using UnityEngine;
 
@@ -23,19 +24,42 @@ public class GrabbableRenderer : MonoBehaviour
         Hide();    
     }
 
-    public void Show() => canvasGroup.alpha = 1f;
-    public void Hide()  => canvasGroup.alpha = 0f;
+    // public void Show() => canvasGroup.alpha = 1f;
+    // public void Hide()  => canvasGroup.alpha = 0f;
+    public void Show(bool animate = false) 
+    {
+        BLog.Highlight($"Grabbable renderer shown animate={animate}");
+        if (animate) {
+            canvasGroup.alpha = 1f; // ensure visible before anim
+            var animator = GetComponent<Animator>();
+            animator.Play("GrabbableRendererShow", 0, 0f);
+            animator.SetTrigger("GrabbableRendererShow");
+        } else {
+            canvasGroup.alpha = 1f;
+        }
+    }
+
+    public void Hide(bool animate = false) 
+    {
+        BLog.Highlight($"Grabbable renderer hidden animate={animate}");
+        var animator = GetComponent<Animator>();
+        if (animate) {
+            animator.SetTrigger("GrabbableRendererHide");
+        } else {
+            canvasGroup.alpha = 0f;
+        }
+    }
 
     public void Render(Grabbable grabbable) 
     {
         if(grabbable == null) {
-            Hide();
+            Hide(true);
             nameText.text = "";
             descriptionText.text = "";
             return;
         }
 
-        Show();
+        Show(true);
 
         GrabbableInfo info = grabbable.Info;
         IGrabbable iGrabbable = grabbable.GetIGrabbable();

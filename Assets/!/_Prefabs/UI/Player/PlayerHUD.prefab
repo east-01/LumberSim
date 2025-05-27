@@ -418,6 +418,7 @@ GameObject:
   - component: {fileID: 6323092328098649232}
   - component: {fileID: 3268276404693528451}
   - component: {fileID: 6390627192558009420}
+  - component: {fileID: 664436566734848670}
   m_Layer: 5
   m_Name: GrabbableRenderer
   m_TagString: Untagged
@@ -444,7 +445,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 228, y: -175}
+  m_AnchoredPosition: {x: 228, y: -200}
   m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2145585727108218778
@@ -511,6 +512,26 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!95 &664436566734848670
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4426626685279638403}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 99ec1f3eed933464691f177823b316e5, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &4427015922815036184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1373,6 +1394,8 @@ MonoBehaviour:
   - {fileID: 4139946333648583531}
   - {fileID: 7245243560358931177}
   - {fileID: 7164418111339966695}
+  highlightedAlpha: 0.8
+  normalAlpha: 0.35
 --- !u!114 &4317757588424679091
 MonoBehaviour:
   m_ObjectHideFlags: 0

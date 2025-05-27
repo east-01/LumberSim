@@ -65,14 +65,11 @@ public class HotbarController : MonoBehaviour
             col.a = i == selectedIndex ? highlightedAlpha : normalAlpha; 
             img.color = col;
         }   
-    }
 
-    private void PlayerDataRegistry_PlayerDataUpdatedEvent(PlayerData playerData, PlayerDataClass newData)
-    {
-        if(newData.GetType() != typeof(InventoryData))
-            return;
+        PlayerData playerData = player.PlayerData;
+        playerData.EnsureLumberData();
 
-        InventoryData data = newData as InventoryData;
+        InventoryData data = playerData.GetData<InventoryData>();
 
         if(data.hotbarItems.Length != itemRenderers.Length)
             Debug.LogError("Hot bar items in InventoryData length is different from the amount of itemRenderers in HotbarController.");
@@ -82,7 +79,14 @@ public class HotbarController : MonoBehaviour
 
             SetLayerRecursively(itemRenderers[i].CurrentItemMesh, LayerMask.NameToLayer("UI"));    
         }
-    
+    }
+
+    private void PlayerDataRegistry_PlayerDataUpdatedEvent(PlayerData playerData, PlayerDataClass newData)
+    {
+        if(newData.GetType() != typeof(InventoryData))
+            return;
+
+        UpdateToolbelt();
     }
 
     void SetLayerRecursively(GameObject obj, int newLayer)
