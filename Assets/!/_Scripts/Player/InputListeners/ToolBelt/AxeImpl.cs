@@ -1,3 +1,4 @@
+using EMullen.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -74,6 +75,9 @@ public class AxeImpl : ToolBeltImpl
 
         Vector3 hitPointLocal = hit.transform.InverseTransformPoint(hit.point);
         // We do this because we know that the TreeLogVisuals are a child of the TreeLog GameObject
+
+        if(hit.collider == null || hit.collider.transform.parent == null)
+            return null;
 
         TreeLog log = hit.collider.transform.parent.gameObject.GetComponent<TreeLog>();
 

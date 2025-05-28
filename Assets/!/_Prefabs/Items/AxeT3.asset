@@ -17,6 +17,9 @@ MonoBehaviour:
   DescriptionLines:
   - Power 1.5
   - Recharges in 0.9s
+  OutlineColors:
+  - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
+  - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}
   cost: 250
   hitPower: 1.5
   rechargeTime: 0.9

@@ -16,3 +16,6 @@ MonoBehaviour:
   Icon: {fileID: 0}
   DescriptionLines:
   - Logs
+  OutlineColors:
+  - {r: 0, g: 0.8962264, b: 0.08964499, a: 0.78431374}
+  - {r: 0, g: 0.6037736, b: 0.06064102, a: 0.39215687}

@@ -24,11 +24,8 @@ public class GrabbableRenderer : MonoBehaviour
         Hide();    
     }
 
-    // public void Show() => canvasGroup.alpha = 1f;
-    // public void Hide()  => canvasGroup.alpha = 0f;
     public void Show(bool animate = false) 
     {
-        BLog.Highlight($"Grabbable renderer shown animate={animate}");
         if (animate) {
             canvasGroup.alpha = 1f; // ensure visible before anim
             var animator = GetComponent<Animator>();
@@ -41,9 +38,8 @@ public class GrabbableRenderer : MonoBehaviour
 
     public void Hide(bool animate = false) 
     {
-        BLog.Highlight($"Grabbable renderer hidden animate={animate}");
         var animator = GetComponent<Animator>();
-        if (animate) {
+        if(animate) {
             animator.SetTrigger("GrabbableRendererHide");
         } else {
             canvasGroup.alpha = 0f;

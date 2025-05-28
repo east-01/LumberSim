@@ -79,4 +79,6 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
         
         return itemAssignments.Get(item.Value);
     }
+
+    public GameObject GetOutlineObject() => GetComponentInChildren<ItemMeshRenderer>().CurrentItemMesh;
 }

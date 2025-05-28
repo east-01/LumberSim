@@ -21,10 +21,21 @@ public class GrabbablePicker : MonoBehaviour
         Grabbable newGrabbable = PickGrabbable(viewRange);
 
         if(newGrabbable != lastSelectedGrabbable) {
+            ToggleOutlineView(lastSelectedGrabbable, false);
+            ToggleOutlineView(newGrabbable, true);
+
             lastSelectedGrabbable = newGrabbable;
 
             player.GetHUD().GrabbableRenderer.Render(newGrabbable);
         }
+    }
+
+    private void ToggleOutlineView(Grabbable grabbable, bool selected) 
+    {
+        if(grabbable == null)
+            return;
+
+        grabbable.UpdateOutline(selected);
     }
 
     public Grabbable PickGrabbable(float range) => PickGrabbable(range, out RaycastHit hit);
