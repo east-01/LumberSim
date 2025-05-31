@@ -49,6 +49,11 @@ public class ToolBelt : NetworkBehaviour, IInputListener
         }
     }
 
+    private void Start()
+    {
+        UpdateRenderer();    
+    }
+
     public void InputEvent(InputAction.CallbackContext context)
     {
         PlayerData pd = player.PlayerData;
@@ -57,8 +62,6 @@ public class ToolBelt : NetworkBehaviour, IInputListener
             return;
         }
         InventoryData id = pd.GetData<InventoryData>();
-
-        Item GetCurrentItem() => id.hotbarItems[ToolbeltIndex];
 
         if(context.action.name == "ChangeToolbelt") {
 
@@ -79,6 +82,24 @@ public class ToolBelt : NetworkBehaviour, IInputListener
 
             implementationsSorted[item].HandleInput(item, context);
         }
+    }
+
+    public Item GetCurrentItem() 
+    {
+        PlayerData pd = player.PlayerData;
+        if(pd == null) {
+            Debug.LogError("Can't execute InputEvent player doesn't have PlayerData.");
+            return Item.NONE;
+        }
+        InventoryData id = pd.GetData<InventoryData>();
+
+        return id.hotbarItems[ToolbeltIndex];
+    }
+
+    public ToolBeltImpl GetCurrentImplementation() 
+    {
+        Item currentItem = GetCurrentItem();
+        return implementationsSorted[currentItem];
     }
 
     public void UpdateRenderer() 

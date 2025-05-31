@@ -4,5 +4,6 @@ using UnityEngine;
 public class AxeInfo : ItemInfo 
 {
     public float hitPower;
+    public float swingTime;
     public float rechargeTime;
 }

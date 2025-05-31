@@ -90,7 +90,7 @@ public class Grabbable : NetworkBehaviour
         }
 
         SelectOutline.OutlineColor = selected ? selectColor : normalColor;
-        SelectOutline.OutlineWidth = selected ? 12 : 6;
+        SelectOutline.OutlineWidth = selected ? 8 : 4;
         SelectOutline.OutlineMode = Outline.Mode.OutlineVisible;
     }
 

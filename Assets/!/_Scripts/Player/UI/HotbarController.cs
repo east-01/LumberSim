@@ -41,7 +41,6 @@ public class HotbarController : MonoBehaviour
     private void Start()
     {
         UpdateToolbelt();
-
     }
 
     private void Update()

@@ -17,6 +17,10 @@ public class PlayerHUDMenuController : MenuController
     private GrabbableRenderer grabbableRenderer;
     public GrabbableRenderer GrabbableRenderer => grabbableRenderer;
 
+    [SerializeField]
+    private AxeCriticalBarController axeCriticalBarController;
+    public AxeCriticalBarController AxeCriticalBarController => axeCriticalBarController;
+
     [Header("UI Elements")]
     [SerializeField]
     private TMP_Text toolbeltText;

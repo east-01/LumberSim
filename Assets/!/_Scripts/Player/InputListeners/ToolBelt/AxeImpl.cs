@@ -1,4 +1,6 @@
+using System;
 using EMullen.Core;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,13 +8,32 @@ public class AxeImpl : ToolBeltImpl
 {
     [SerializeField]
     private ItemAssignments itemAssignments;
+    [SerializeField]
+    private AnimationCurve swingSpeedCurve;
+    [SerializeField]
+    private float defaultHitPowerMultiplier = 0.5f;
 
     // Timestamps marking the beginning/end of the axe swing
     private float axeSwingStart;
     private float axeSwingEnd;
-    public float AxeSwingProgress => Mathf.Clamp01((Time.time-axeSwingStart)/(axeSwingEnd-axeSwingStart));
+    public float AxeSwingProgress;
+    public bool AxeSwingActive { get; private set; }
 
     private Player player;
+
+    private AxePhase phase;
+    public AxePhase Phase {
+        get => phase;
+        set {
+            phaseSetTime = Time.time;
+            phase = value;
+        }
+    }
+    private float phaseSetTime;
+    public float TimeInPhase => Time.time - phaseSetTime;
+    private float rechargeEndTime;
+
+    private float targetCriticalValue;
 
     private void Awake()
     {
@@ -22,6 +43,27 @@ public class AxeImpl : ToolBeltImpl
     private void Start()
     {
         axeSwingStart = axeSwingEnd = float.NegativeInfinity;   
+        Phase = AxePhase.READY;
+    }
+
+    private void Update()
+    {
+        AxeSwingProgress = Mathf.Clamp01((Time.time-axeSwingStart)/(axeSwingEnd-axeSwingStart));
+        AxeSwingActive = Time.time >= axeSwingStart && Time.time <= axeSwingEnd;
+
+        AxeCriticalBarController axeController = player.GetHUD().AxeCriticalBarController;
+
+        if(Phase == AxePhase.SWINGING) {
+            axeController.cursorValue = swingSpeedCurve.Evaluate(AxeSwingProgress);
+            axeController.targetValue = targetCriticalValue;
+
+            if(Time.time > axeSwingEnd)
+                Phase = AxePhase.COOLDOWN;
+        } else if(Phase == AxePhase.COOLDOWN) {
+            if(TimeInPhase >= rechargeEndTime)
+                Phase = AxePhase.READY;
+        } 
+
     }
 
     public override void HandleInput(Item item, InputAction.CallbackContext context)
@@ -34,28 +76,67 @@ public class AxeImpl : ToolBeltImpl
         AxeInfo axeInfo = itemInfo as AxeInfo;
 
         if(context.action.name == "Primary" && context.performed) {
-            Primary(axeInfo.hitPower, axeInfo.rechargeTime);
+            Primary(axeInfo);
+        } else if(context.action.name == "Secondary" && context.performed) {
+            Secondary(axeInfo);
         }
     }
 
     /// <summary>
     /// Swing the axe tool.
     /// </summary>
-    private void Primary(float hitPower, float rechargeTime) 
+    private void Primary(AxeInfo axeInfo) 
     {
-        // Ensure axe is ready
-        if(AxeSwingProgress < 1)
-            return;
+        HandleSwing(axeInfo, false);   
+    }
 
-        player.GetNetworkedAudioController().PlaySound("swingaxe");
+    private void Secondary(AxeInfo axeInfo) 
+    {
+        BLog.Highlight($"Swung with axe progess: {AxeSwingProgress}");
+        BLog.Highlight($"Swung in state: {Phase}");
 
+        switch (Phase)
+        {
+            case AxePhase.READY:
+                axeSwingStart = Time.time;
+                axeSwingEnd = Time.time + axeInfo.swingTime;
+
+                targetCriticalValue = UnityEngine.Random.Range(0.55f, 0.8f);
+
+                Phase = AxePhase.SWINGING;
+                BLog.Highlight($"Phase is now {Phase}");
+                break;
+
+            case AxePhase.SWINGING:
+                HandleSwing(axeInfo, true);
+                rechargeEndTime = axeInfo.rechargeTime;
+
+                player.GetNetworkedAudioController().PlaySound("swingaxe");
+        
+                Phase = AxePhase.COOLDOWN;
+                break;
+
+            case AxePhase.COOLDOWN:
+                
+                break;
+        }
+
+    }
+
+    private void HandleSwing(AxeInfo axeInfo, bool isPrecise) 
+    {
         // Try to pick a log, if we miss return
         LogPickArgs args = PickLog();
         if(args == null)
             return;
 
-        axeSwingStart = Time.time;
-        axeSwingEnd = Time.time + rechargeTime;
+        float hitPower = axeInfo.hitPower;
+        if(isPrecise) {
+            hitPower *= 1 - Mathf.Clamp01(Mathf.Abs(targetCriticalValue - AxeSwingProgress));
+            BLog.Highlight("hitPower: " + hitPower + " TODO: Make this a particle effect");
+        } else {
+            hitPower *= defaultHitPowerMultiplier;
+        }            
 
         int[] identifierPath = args.log.GetIdentifierPath();
         TreeLogGroup.SingleHitData hitData = new TreeLogGroup.SingleHitData(identifierPath, args.hit.point, hitPower, LocalConnection);
@@ -93,6 +174,8 @@ public class AxeImpl : ToolBeltImpl
 
         return new(hit, hitPointLocal, log, group);
     }
+
+    public enum AxePhase { READY, SWINGING, COOLDOWN }
 
     /// <summary>
     /// Class for when the user clicks on a log.
