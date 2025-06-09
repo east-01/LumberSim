@@ -156,6 +156,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
       "depth": 1,
@@ -257,6 +264,48 @@
       "source": "git",
       "dependencies": {},
       "hash": "d1ef610e9fe3ad0b490cce91594449fc0af809a6"
+    },
+    "net.emullen.bootstrapper": {
+      "version": "https://github.com/east-01/net.emullen.bootstrapper.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "421a6795ceacf9ac4b9405260e42ee75cddf5e4d"
+    },
+    "net.emullen.core": {
+      "version": "https://github.com/east-01/net.emullen.core.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ba74ca4097a1f3eb184426eaa9f43b6b6f71d69c"
+    },
+    "net.emullen.menucontroller": {
+      "version": "https://github.com/east-01/net.emullen.menucontroller.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "4035ace18819a23a21f11d47e71899365b74e189"
+    },
+    "net.emullen.networking": {
+      "version": "https://github.com/east-01/net.emullen.networking.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "7f15cb1c40f503038cff1e2cc5da228f728dd292"
+    },
+    "net.emullen.playermgmt": {
+      "version": "https://github.com/east-01/net.emullen.playermgmt.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b1e264d4bde8864151b13521afd5bd4593468997"
+    },
+    "net.emullen.scenemgmt": {
+      "version": "https://github.com/east-01/net.emullen.scenemgmt.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "cb4ee276eb8916c96ed2d759713277c0c696522a"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
