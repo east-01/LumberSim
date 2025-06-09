@@ -2,11 +2,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using EMullen.Core;
+using MoreMountains.Feedbacks;
 using TMPro;
 using UnityEngine;
 
 public class GrabbableRenderer : MonoBehaviour 
 {
+    [SerializeField]
+    private MMF_Player mmfPlayer;
     [SerializeField]
     private TMP_Text nameText;
     [SerializeField]
@@ -26,21 +29,16 @@ public class GrabbableRenderer : MonoBehaviour
 
     public void Show(bool animate = false) 
     {
-        if (animate) {
-            canvasGroup.alpha = 1f; // ensure visible before anim
-            var animator = GetComponent<Animator>();
-            animator.Play("GrabbableRendererShow", 0, 0f);
-            animator.SetTrigger("GrabbableRendererShow");
-        } else {
+        if(animate)
+            mmfPlayer.PlayFeedbacks();
+        else
             canvasGroup.alpha = 1f;
-        }
     }
 
     public void Hide(bool animate = false) 
     {
-        var animator = GetComponent<Animator>();
         if(animate) {
-            animator.SetTrigger("GrabbableRendererHide");
+            mmfPlayer.PlayFeedbacksInReverse();
         } else {
             canvasGroup.alpha = 0f;
         }

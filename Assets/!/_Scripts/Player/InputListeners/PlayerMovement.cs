@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
     public float jumpPower = 40f;
     public float jumpDecay = 0.65f;
-    public float jumpPowerRemaining { get; private set; }
+    public float VerticalVelocity { get; private set; }
 
     private CharacterController characterController;
 
@@ -74,8 +74,11 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
         // Check if the jump button was just pressed
         JumpDown = !lastJump && jumpInput && cc.isGrounded;
-        if(JumpDown)
-            jumpPowerRemaining = 13f;
+        if(JumpDown) {
+            VerticalVelocity = jumpPower;
+        }
+
+        VerticalVelocity += Physics.gravity.y * Time.deltaTime;
 
         if(Time.time - targetSpeedChangeTime < speedTransitionTime) {
             speed = Mathf.Lerp(targetSpeedChangeInitialSpeed, targetSpeed, (Time.time-targetSpeedChangeTime)/speedTransitionTime);
@@ -89,17 +92,9 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
         Vector3 forward = movementInput.y * transform.forward * speed * Time.deltaTime;
         Vector3 horizontal = movementInput.x * (Quaternion.Euler(0, 90, 0)*transform.forward) * speed * Time.deltaTime;
-        Vector3 vertical = (Physics.gravity + transform.up*jumpPowerRemaining) * Time.deltaTime;
+        Vector3 vertical = (Physics.gravity + transform.up*VerticalVelocity) * Time.deltaTime;
         characterController.Move(forward+horizontal+vertical);
         
-        // Reduce jump power over time
-        if (jumpPowerRemaining > 0)
-        {
-            jumpPowerRemaining -= jumpDecay * Time.deltaTime;
-            if (jumpPowerRemaining < 0)
-                jumpPowerRemaining = 0;
-        }
-
         lastJump = jumpInput;
 
         // Play step sound        

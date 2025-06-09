@@ -385,7 +385,7 @@ MonoBehaviour:
   sprintSpeed: 12
   speedTransitionTime: 0.35
   stepLength: 4.575
-  jumpPower: 80
+  jumpPower: 39.75
   jumpDecay: 10
 --- !u!114 &6160719718300331586
 MonoBehaviour:
@@ -450,12 +450,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.7415912
+      outSlope: 0.7415912
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.048068672
     - serializedVersion: 3
       time: 1
       value: 1
@@ -1024,6 +1024,10 @@ PrefabInstance:
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8035167601836715939, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8400428602486854070, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_AnchorMax.y

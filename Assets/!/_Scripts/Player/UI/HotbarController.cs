@@ -3,15 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
+using MoreMountains.Feedbacks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class HotbarController : MonoBehaviour
 {
 
+    [Header("References")]
+    [SerializeField]
+    private MMF_Player mmfPlayer;
+    [SerializeField]
+    private ItemAssignments itemAssignments;
     [SerializeField]
     private ItemMeshRenderer[] itemRenderers;
+    [SerializeField]
+    private TMP_Text itemText;
 
+    [Header("Settings")]
     [SerializeField]
     private float highlightedAlpha = 0.8f;
     [SerializeField]
@@ -52,11 +62,11 @@ public class HotbarController : MonoBehaviour
         int idx = toolBelt.ToolbeltIndex;
         if(selectedIndex != idx) {
             selectedIndex = idx;
-            UpdateToolbelt();
+            UpdateToolbelt(true);
         }
     }
 
-    private void UpdateToolbelt() 
+    private void UpdateToolbelt(bool playsAnimations = false) 
     {
         for(int i = 0; i < itemRenderers.Length; i++) {
             UnityEngine.UI.Image img = itemRenderers[i].GetComponentInParent<UnityEngine.UI.Image>();
@@ -78,6 +88,12 @@ public class HotbarController : MonoBehaviour
 
             SetLayerRecursively(itemRenderers[i].CurrentItemMesh, LayerMask.NameToLayer("UI"));    
         }
+
+        Item selectedItem = data.hotbarItems[selectedIndex];
+        itemText.text = selectedItem == Item.NONE ? "" : itemAssignments.Get(selectedItem).name; 
+
+        if(playsAnimations)
+            mmfPlayer.PlayFeedbacks();
     }
 
     private void PlayerDataRegistry_PlayerDataUpdatedEvent(PlayerData playerData, PlayerDataClass newData)
