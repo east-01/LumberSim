@@ -16,6 +16,7 @@ public class AxeImpl : ToolBeltImpl
     // Timestamps marking the beginning/end of the axe swing
     private float axeSwingStart;
     private float axeSwingEnd;
+    private bool isPrecise;
     public float AxeSwingProgress;
     public bool AxeSwingActive { get; private set; }
 
@@ -87,11 +88,14 @@ public class AxeImpl : ToolBeltImpl
     /// </summary>
     private void Primary(AxeInfo axeInfo) 
     {
-        HandleSwing(axeInfo, false);   
+        isPrecise = false;
+        HandleSwing(axeInfo);   
     }
 
     private void Secondary(AxeInfo axeInfo) 
     {
+        isPrecise = true;
+
         BLog.Highlight($"Swung with axe progess: {AxeSwingProgress}");
         BLog.Highlight($"Swung in state: {Phase}");
 
@@ -108,7 +112,7 @@ public class AxeImpl : ToolBeltImpl
                 break;
 
             case AxePhase.SWINGING:
-                HandleSwing(axeInfo, true);
+                HandleSwing(axeInfo);
                 rechargeEndTime = axeInfo.rechargeTime;
 
                 player.GetNetworkedAudioController().PlaySound("swingaxe");
@@ -123,7 +127,7 @@ public class AxeImpl : ToolBeltImpl
 
     }
 
-    private void HandleSwing(AxeInfo axeInfo, bool isPrecise) 
+    private void HandleSwing(AxeInfo axeInfo) 
     {
         // Try to pick a log, if we miss return
         LogPickArgs args = PickLog();
