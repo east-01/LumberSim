@@ -41,7 +41,7 @@ git clone https://github.com/east-01/LumberSim.git
 ```
 2. Place the __extracted__ (not .zip versions) in the Assets directory, your file structure should look like: 
 ```
-<lumbersim install>\Assets\LargeAssetsvX
+<lumbersim install>\Assets\LargeAssets
 <lumbersim install>\Assets\EMullenPackages
 ```
 3. The game can be built as normal now.
