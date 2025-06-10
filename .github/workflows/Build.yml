@@ -37,7 +37,7 @@ jobs:
         run: |
           # adjust the zip filename and target subfolder as needed
           mkdir -p Assets/ExternalAssets
-          unzip -o drive_assets/LargeAssets.zip -d Assets/LargeAssets
+          unzip -o drive_assets -d Assets/LargeAssets
       - uses: actions/cache@v3
         with:
           path: Library
