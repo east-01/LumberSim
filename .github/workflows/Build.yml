@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p drive_assets
           # gdown will detect folder link/ID and recursively fetch files
-          gdown --folder "$GDRIVE_FOLDER" -O drive_assets
+          gdown "$GDRIVE_FOLDER" -O drive_assets
       - name: Unzip Drive assets into Assets/
         run: |
           # adjust the zip filename and target subfolder as needed
