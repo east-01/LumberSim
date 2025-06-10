@@ -28,7 +28,7 @@ jobs:
 
       - name: Download Google Drive directory
         env:
-          GDRIVE_FOLDER: https://drive.google.com/file/d/1WJ3VFdEEOhBZz_m-w06kim2S0X_U8ezq/view?usp=sharing
+          GDRIVE_FOLDER: https://drive.google.com/uc?id=1WJ3VFdEEOhBZz_m-w06kim2S0X_U8ezq
         run: |
           mkdir -p drive_assets
           # gdown will detect folder link/ID and recursively fetch files
