@@ -15,10 +15,17 @@ public class GrabbableRenderer : MonoBehaviour
     [SerializeField]
     private TMP_Text descriptionText;
 
+    private Player player;
     private CanvasGroup canvasGroup;
 
     private void Awake()
     {
+        player = GetComponentInParent<Player>();
+        if(player == null) {
+            Debug.LogError("Failed to get player in parent. It is assumed that the PlayerHUDMenuController is on a canvas that's a child of a Player GameObject.");
+            return;
+        }
+
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
@@ -58,19 +65,27 @@ public class GrabbableRenderer : MonoBehaviour
         GrabbableInfo info = grabbable.Info;
         IGrabbable iGrabbable = grabbable.GetIGrabbable();
 
-        string ApplyVariables(string text) 
-        {
-            if(iGrabbable == null)
-                return text;
-           
-            Dictionary<string, string> variables = grabbable.GetIGrabbable().GetVariables();
-            foreach(string key in variables.Keys) {
-                text = text.Replace(key, variables[key]);
-            }
-            return text;
+        GrabbableRenderArgs args = GrabbableRenderArgs.DefaultRenderArgs(info);
+        if(iGrabbable != null) {
+            GrabbableRenderArgs? renderResult = iGrabbable.Render(player.uid.Value.ToString());
+            if(renderResult.HasValue) args = renderResult.Value;
         }
 
-        nameText.text = ApplyVariables(info.DisplayName);
-        descriptionText.text = string.Join("\n", info.DescriptionLines.Select(line => ApplyVariables(line)));
+        nameText.text = args.name;
+        descriptionText.text = string.Join("\n", args.descriptionLines);
     }
+}
+
+public struct GrabbableRenderArgs 
+{
+    public string name;
+    public string[] descriptionLines;
+
+    public GrabbableRenderArgs(string name, string[] descriptionLines) 
+    {
+        this.name = name;
+        this.descriptionLines = descriptionLines;
+    }
+
+    public static GrabbableRenderArgs DefaultRenderArgs(GrabbableInfo input) { return new(input.DisplayName, input.DescriptionLines); }
 }

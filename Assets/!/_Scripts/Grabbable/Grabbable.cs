@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using EMullen.Core;
+using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
@@ -109,7 +111,9 @@ public class Grabbable : NetworkBehaviour
 
 public interface IGrabbable 
 {
+    public GrabbableRenderArgs? Render(string viewingPlayer = null) => null;
     public Dictionary<string, string> GetVariables();
+    public bool CanPickup(NetworkConnection pickupConnection);
     public GrabbableInfo OverrideGrabbableInfo() => null;
     public GameObject GetOutlineObject() => null;
 }

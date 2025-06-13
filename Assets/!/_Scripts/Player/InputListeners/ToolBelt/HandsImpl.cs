@@ -73,6 +73,12 @@ public class HandsImpl : ToolBeltImpl
             if(grabbable == null)
                 return;
 
+            IGrabbable grabbableInterface = grabbable.GetIGrabbable();
+            if(grabbableInterface != null && !grabbableInterface.CanPickup(LocalConnection)) {
+                player.GetHUD().ShowWarning("Can't pickup", 2f);
+                return;
+            }
+
             player.GetNetworkedAudioController().PlaySound("pickup");
 
             grabbed = grabbable;

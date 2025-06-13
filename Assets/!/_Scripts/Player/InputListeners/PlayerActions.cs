@@ -1,5 +1,6 @@
 using EMullen.Core;
 using EMullen.PlayerMgmt;
+using FishNet;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,6 +17,8 @@ public class PlayerActions : MonoBehaviour, IInputListener
 
     [SerializeField]
     private GameObject grabbableItemPrefab; // For item drops
+    [SerializeField]
+    private ItemAssignments itemAssignments;
 
     private Player player;
     private ToolBelt toolBelt;
@@ -52,25 +55,30 @@ public class PlayerActions : MonoBehaviour, IInputListener
         if(grabbable == null)
             return;
 
-        if(!grabbable.TryGetComponent(out GrabbableItem grabbableItem))
-            return;
+        if(grabbable.TryGetComponent(out GrabbableItem grabbableItem))
+            HandleInteractWithGrabbableItem(grabbableItem);
+    }
 
+    private void HandleInteractWithGrabbableItem(GrabbableItem grabbableItem) 
+    {
         Item item = grabbableItem.item.Value;
-
         if(item == Item.NONE)
             return;
 
-        // Add item to hotbar, if not successful break early
+        if(grabbableItem.Owner.IsValid && grabbableItem.Owner != InstanceFinder.ClientManager.Connection)
+            return;
+
         PlayerData pd = player.PlayerData;
         pd.EnsureLumberData();
 
-        InventoryData inventoryData = pd.GetData<InventoryData>();
-        if(!inventoryData.AddItemToHotbar(item))
+        ItemInfo info = itemAssignments.Get(item);
+
+        if(!grabbableItem.Owner.IsValid && pd.GetData<GeneralPlayerData>().balance < info.cost) {
+            player.GetHUD().ShowWarning($"Can't afford", 2f);
             return;
+        }
 
-        pd.SetData(inventoryData);
-
-        grabbableItem.GrabbedItem();
+        grabbableItem.GrabbedItem(InstanceFinder.ClientManager.Connection, player.uid.Value);
         toolBelt.UpdateRenderer();
     }
 
@@ -93,7 +101,7 @@ public class PlayerActions : MonoBehaviour, IInputListener
         Transform camTransform = player.Camera.transform;
         Vector3 initPosition = camTransform.position + camTransform.forward.normalized * 0.3f;
         Vector3 initVelocity = camTransform.forward.normalized * 5f;
-        GameplayManager.SpawnGrabbaleArgs args = new(initPosition, camTransform.rotation, initVelocity, grabbableItemPrefab);
+        GameplayManager.SpawnGrabbaleArgs args = new(initPosition, camTransform.rotation, initVelocity, grabbableItemPrefab, player.LocalConnection);
         Grabbable grabbable = player.GameplayManager.SpawnGrabbable(args);
 
         GrabbableItem grabbableItem = grabbable.GetComponent<GrabbableItem>();

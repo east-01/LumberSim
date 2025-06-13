@@ -21,6 +21,6 @@ MonoBehaviour:
   - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
   - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}
   cost: 5
-  hitPower: 0.5
-  swingTime: 1.4
-  rechargeTime: 0.4
+  hitPower: 0.85
+  swingTime: 1
+  rechargeTime: 1.5

@@ -1,3 +1,4 @@
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,18 @@ public class AxeCriticalBarController : MonoBehaviour
     private RectTransform cursor;
     [SerializeField]
     private Image backgroundImage;
+    [SerializeField]
+    private MMF_Player criticalHitPlayer;
+    public void PlayCriticalHit() => criticalHitPlayer.PlayFeedbacks();
+    [SerializeField]
+    private MMF_Player mediumHitPlayer;
+    public void PlayMediumHit() => mediumHitPlayer.PlayFeedbacks();
+    [SerializeField]
+    private MMF_Player smallHitPlayer;
+    public void PlaySmallHit() => smallHitPlayer.PlayFeedbacks();
+    [SerializeField]
+    private MMF_Player missPlayer;
+    public void PlayMiss() => missPlayer.PlayFeedbacks();
 
     [Header("Settings")]
     [SerializeField]

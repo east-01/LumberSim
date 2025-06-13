@@ -124,4 +124,6 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
             {"%PRICE%", LumberEvaluator.EvaluateLumber(this, 3f, 1f).ToString()},
         };
     }
+
+    public bool CanPickup(NetworkConnection conn) => true;
 }

@@ -34,6 +34,17 @@ public class InventoryData : PlayerDatabaseDataClass
         return false;
     }
 
+    public bool CanAddItemToHotbar() 
+    {
+        for(int i = 0; i < hotbarItems.Length; i++) {
+            if(hotbarItems[i] == Item.NONE) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public static Item[] CreateHotbar(int size) 
     {
         Item[] hotbar = new Item[size];

@@ -450,12 +450,21 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0.7415912
-      outSlope: 0.7415912
+      inSlope: -0.041279122
+      outSlope: -0.041279122
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.048068672
+      outWeight: 0.05686695
+    - serializedVersion: 3
+      time: 0.1
+      value: 0.074178405
+      inSlope: 1.7748365
+      outSlope: 1.7748365
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.059370525
     - serializedVersion: 3
       time: 1
       value: 1
@@ -469,6 +478,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   defaultHitPowerMultiplier: 0.5
+  criticalWindowSize: 0.5
   AxeSwingProgress: 0
 --- !u!114 &6521357351895008424
 MonoBehaviour:
@@ -483,6 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbableItemPrefab: {fileID: 4260847268684243727, guid: 2fa20489cda0c904bb7049ff0244f9da, type: 3}
+  itemAssignments: {fileID: 11400000, guid: 7d5e65c1dd8fc83448ed9fadca9468bc, type: 2}
 --- !u!114 &3402678452535200333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -731,6 +742,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4718917724592500}
+  - component: {fileID: 5395799833079310587}
   m_Layer: 0
   m_Name: CameraAttachPoint
   m_TagString: Untagged
@@ -754,6 +766,84 @@ Transform:
   - {fileID: 6676772040513922740}
   m_Father: {fileID: 4898694727102280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5395799833079310587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854746833484672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a82a086afdc494db67a8b50f091d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ChannelMode: 0
+  Channel: 0
+  MMChannelDefinition: {fileID: 0}
+  ShakeDuration: 0.5
+  PlayOnAwake: 0
+  PermanentShake: 0
+  Interruptible: 1
+  AlwaysResetTargetValuesAfterShake: 0
+  OnlyUseShakerValues: 0
+  CooldownBetweenShakes: 0
+  Shaking: 0
+  ForwardDirection: 1
+  TimescaleMode: 0
+  Mode: 0
+  TargetTransform: {fileID: 4718917724592500}
+  TargetRectTransform: {fileID: 0}
+  ShakeSpeed: 20
+  ShakeRange: 0.5
+  OscillationOffset: 0
+  ShakeMainDirection: {x: 0, y: 1, z: 0}
+  RandomizeDirection: 0
+  ShakeAltDirection: {x: 0, y: 1, z: 0}
+  RandomizeDirectionOnPlay: 0
+  RandomizeDirectionX: 1
+  RandomizeDirectionY: 1
+  RandomizeDirectionZ: 1
+  AddDirectionalNoise: 1
+  DirectionalNoiseStrengthMin: {x: 0.25, y: 0.25, z: 0.25}
+  DirectionalNoiseStrengthMax: {x: 0.25, y: 0.25, z: 0.25}
+  RandomnessSeed: {x: 0, y: 0, z: 0}
+  RandomizeSeedOnShake: 1
+  UseAttenuation: 1
+  AttenuationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  StartShakingButton: 0
 --- !u!1 &5128671780649996347
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,6 +935,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4898694727102280}
     m_Modifications:
+    - target: {fileID: 1351739160447706255, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: ShakeRange
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1740518195517169917, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -908,6 +1002,50 @@ PrefabInstance:
     - target: {fileID: 5034986947807490431, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: PlayCount
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: KeepPlayModeChanges
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168776].TargetShaker
+      value: 
+      objectReference: {fileID: 5395799833079310587}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542665065463809].Timing.PlayCount
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168768].Timing.PlayCount
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168769].Timing.PlayCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168774].Timing.PlayCount
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168776].Timing.PlayCount
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168774].CameraShakeProperties.Duration
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168774].CameraShakeProperties.Amplitude
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5397695058414840215, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: managedReferences[2801542682587168774].CameraShakeProperties.Frequency
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5468742207107676110, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: managedReferences[0].AnimateX
@@ -1076,6 +1214,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4718917724592500}
     m_Modifications:
+    - target: {fileID: 4911104156556628646, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+      propertyPath: PositionActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911104156556628646, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+      propertyPath: RotationActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911104156556628646, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+      propertyPath: PositionWiggleProperties.WiggleType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911104156556628646, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+      propertyPath: RotationWiggleProperties.WiggleType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5056558041594089104, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -1128,7 +1282,8 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 4898694727102280}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6715690710555706299, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

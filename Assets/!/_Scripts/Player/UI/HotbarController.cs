@@ -90,7 +90,7 @@ public class HotbarController : MonoBehaviour
         }
 
         Item selectedItem = data.hotbarItems[selectedIndex];
-        itemText.text = selectedItem == Item.NONE ? "" : itemAssignments.Get(selectedItem).name; 
+        itemText.text = selectedItem == Item.NONE ? "" : itemAssignments.Get(selectedItem).DisplayName; 
 
         if(playsAnimations)
             mmfPlayer.PlayFeedbacks();

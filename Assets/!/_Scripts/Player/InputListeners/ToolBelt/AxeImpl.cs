@@ -6,12 +6,20 @@ using UnityEngine.InputSystem;
 
 public class AxeImpl : ToolBeltImpl 
 {
+    [Header("References")]
     [SerializeField]
     private ItemAssignments itemAssignments;
+    [Header("Settings")]
     [SerializeField]
     private AnimationCurve swingSpeedCurve;
     [SerializeField]
     private float defaultHitPowerMultiplier = 0.5f;
+    /// <summary>
+    /// What % of swing (in [0,1] range) will yield a critical hit.
+    /// If the value is 0.05 (5%), then precise multipliers of 0.95 or better are critical.
+    /// </summary>
+    [SerializeField]
+    private float criticalWindowSize = 0.5f;
 
     // Timestamps marking the beginning/end of the axe swing
     private float axeSwingStart;
@@ -21,6 +29,7 @@ public class AxeImpl : ToolBeltImpl
     public bool AxeSwingActive { get; private set; }
 
     private Player player;
+    private AxeCriticalBarController axeCriticalBarController => player.GetHUD().AxeCriticalBarController;
 
     private AxePhase phase;
     public AxePhase Phase {
@@ -49,17 +58,21 @@ public class AxeImpl : ToolBeltImpl
 
     private void Update()
     {
-        AxeSwingProgress = Mathf.Clamp01((Time.time-axeSwingStart)/(axeSwingEnd-axeSwingStart));
+        float raw01Progress = Mathf.Clamp01((Time.time-axeSwingStart)/(axeSwingEnd-axeSwingStart));
+        AxeSwingProgress = swingSpeedCurve.Evaluate(raw01Progress);
         AxeSwingActive = Time.time >= axeSwingStart && Time.time <= axeSwingEnd;
 
         AxeCriticalBarController axeController = player.GetHUD().AxeCriticalBarController;
 
         if(Phase == AxePhase.SWINGING) {
-            axeController.cursorValue = swingSpeedCurve.Evaluate(AxeSwingProgress);
+            axeController.cursorValue = AxeSwingProgress;
             axeController.targetValue = targetCriticalValue;
 
-            if(Time.time > axeSwingEnd)
+            if(Time.time > axeSwingEnd) {
                 Phase = AxePhase.COOLDOWN;
+            
+                axeCriticalBarController.PlayMiss();
+            }
         } else if(Phase == AxePhase.COOLDOWN) {
             if(TimeInPhase >= rechargeEndTime)
                 Phase = AxePhase.READY;
@@ -88,14 +101,24 @@ public class AxeImpl : ToolBeltImpl
     /// </summary>
     private void Primary(AxeInfo axeInfo) 
     {
-        isPrecise = false;
-        HandleSwing(axeInfo);   
+        switch(Phase) 
+        {
+            case AxePhase.READY:
+        
+                isPrecise = false;
+                HandleSwing(axeInfo);   
+
+                rechargeEndTime = axeInfo.rechargeTime;
+                
+                player.GetNetworkedAudioController().PlaySound("swingaxe");
+                
+                Phase = AxePhase.COOLDOWN;
+                break;
+        }
     }
 
     private void Secondary(AxeInfo axeInfo) 
     {
-        isPrecise = true;
-
         BLog.Highlight($"Swung with axe progess: {AxeSwingProgress}");
         BLog.Highlight($"Swung in state: {Phase}");
 
@@ -112,7 +135,9 @@ public class AxeImpl : ToolBeltImpl
                 break;
 
             case AxePhase.SWINGING:
+                isPrecise = true;
                 HandleSwing(axeInfo);
+
                 rechargeEndTime = axeInfo.rechargeTime;
 
                 player.GetNetworkedAudioController().PlaySound("swingaxe");
@@ -135,12 +160,21 @@ public class AxeImpl : ToolBeltImpl
             return;
 
         float hitPower = axeInfo.hitPower;
-        if(isPrecise) {
-            hitPower *= 1 - Mathf.Clamp01(Mathf.Abs(targetCriticalValue - AxeSwingProgress));
-            BLog.Highlight("hitPower: " + hitPower + " TODO: Make this a particle effect");
-        } else {
-            hitPower *= defaultHitPowerMultiplier;
-        }            
+        float preciseMultiplier = 1 - Mathf.Clamp01(Mathf.Abs(targetCriticalValue - AxeSwingProgress));
+        if(preciseMultiplier >= 1 - criticalWindowSize)
+            preciseMultiplier = 1.25f;
+        float powerMultiplier = isPrecise ? preciseMultiplier : defaultHitPowerMultiplier;
+
+        hitPower *= powerMultiplier;
+
+        if(powerMultiplier == 1.25f)
+            axeCriticalBarController.PlayCriticalHit();
+        else if(powerMultiplier >= 0.7f)
+            axeCriticalBarController.PlayMediumHit();
+        else 
+            axeCriticalBarController.PlaySmallHit();
+
+        BLog.Highlight("hitPower multiplier: " + powerMultiplier + " TODO: Make this a particle effect");
 
         int[] identifierPath = args.log.GetIdentifierPath();
         TreeLogGroup.SingleHitData hitData = new TreeLogGroup.SingleHitData(identifierPath, args.hit.point, hitPower, LocalConnection);
