@@ -77,6 +77,9 @@ public class GameplayManager : NetworkBehaviour
 
     public Grabbable SpawnGrabbable(SpawnGrabbaleArgs args) 
     {
+        if(!InstanceFinder.IsServerStarted) 
+            throw new InvalidOperationException("Can't spawn grabbable. Server isn't started.");
+
         Vector3 position = args.position;
         Quaternion rotation = args.rotation;
         GameObject grabbablePrefab = args.grabbablePrefab;
@@ -96,6 +99,7 @@ public class GameplayManager : NetworkBehaviour
         return grabbable;
     }
     
+    [Serializable]
     public struct SpawnGrabbaleArgs 
     {
         public Vector3 position;

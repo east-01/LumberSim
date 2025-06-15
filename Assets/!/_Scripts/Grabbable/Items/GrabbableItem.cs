@@ -22,19 +22,29 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
     private bool hasSetItem;
 
     public readonly SyncVar<Item> item = new();
+    [SerializeField]
+    private Item itemReadout;
 
-    private void Start()
+    private void Awake()
     {
         item.OnChange += Item_OnChange;
     }
 
+    public override void OnStartClient() 
+    {
+        base.OnStartClient();
+        UpdateItemMesh();
+    }
+
     private void OnDestroy()
     {
-        item.OnChange += Item_OnChange;        
+        item.OnChange -= Item_OnChange;        
     }
 
     private void Update()
     {
+        itemReadout = item.Value;
+
         if(!InstanceFinder.IsServerStarted)
             return;
         
@@ -84,7 +94,7 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
     public void SetItem(Item item) 
     {
         if(!InstanceFinder.IsServerStarted) {
-            SetItem(item);
+            ServerRPCSetItem(item);
             return;
         }
 
@@ -95,8 +105,10 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
 
     private void Item_OnChange(Item prev, Item next, bool asServer)
     {
-        GetComponentInChildren<ItemMeshRenderer>().ShowItemMesh(next);
+        UpdateItemMesh();
     }
+
+    public void UpdateItemMesh() => GetComponentInChildren<ItemMeshRenderer>().ShowItemMesh(item.Value);
 
     public Dictionary<string, string> GetVariables() => new();
     public bool CanPickup(NetworkConnection pickupConnection) => pickupConnection == Owner; 
@@ -111,8 +123,6 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
         ItemInfo info = itemAssignments.Get(item.Value);
         GrabbableRenderArgs args = GrabbableRenderArgs.DefaultRenderArgs(info);
         List<string> descriptionLines = args.descriptionLines.ToList();
-
-        BLog.Highlight($"is owner valid: {Owner.IsValid}");
 
         if(!Owner.IsValid) {
             descriptionLines.Add("");

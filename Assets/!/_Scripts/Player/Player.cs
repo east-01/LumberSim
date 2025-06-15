@@ -17,6 +17,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 [RequireComponent(typeof(PlayerInputManager))]
 [RequireComponent(typeof(ToolBelt))]
+[RequireComponent(typeof(AttachBehaviourController))]
 public class Player : NetworkBehaviour, IS3
 {
     public readonly SyncVar<string> uid = new();
@@ -29,8 +30,9 @@ public class Player : NetworkBehaviour, IS3
     public PlayerData PlayerData => PlayerDataRegistry.Instance.GetPlayerData(uid.Value);
 
     public GameplayManager GameplayManager { get; private set; }
-    private LocalPlayer localPlayer;
+    public LocalPlayer LocalPlayer { get; private set; }
 
+    private AttachBehaviourController attachBehaviourController;
     private PlayerInputManager playerInputManager;
 
     [SerializeField]
@@ -40,6 +42,8 @@ public class Player : NetworkBehaviour, IS3
     private GrabbablePicker grabbablePicker;
     public GrabbablePicker GrabbablePicker => grabbablePicker;
 
+    public bool IsPaused { get; private set; }
+
     public PlayerHUDMenuController GetHUD() => GetComponentInChildren<PlayerHUDMenuController>();
     public NetworkedAudioController GetNetworkedAudioController() => GetComponent<NetworkedAudioController>();
 
@@ -47,7 +51,7 @@ public class Player : NetworkBehaviour, IS3
     private void Awake()
     {
         playerInputManager = GetComponent<PlayerInputManager>();
-        UpdateActiveComponents();
+        attachBehaviourController = GetComponentInChildren<AttachBehaviourController>();
     }
 
     public void SingletonRegistered(Type type, object singleton)
@@ -82,7 +86,7 @@ public class Player : NetworkBehaviour, IS3
         }
 
         // Mute AudioListener if there's no player.
-        bool localPlayerExists = localPlayer != null && localPlayer.Input != null;
+        bool localPlayerExists = LocalPlayer != null && LocalPlayer.Input != null;
 
         if(!localPlayerExists && gameObject.GetComponentInChildren<AudioListener>() != null) {
             gameObject.GetComponentInChildren<AudioListener>().gameObject.SetActive(false);
@@ -92,12 +96,12 @@ public class Player : NetworkBehaviour, IS3
     public void ConnectPlayer(string uuid, Player player) 
     {
         int? idx = PlayerManager.Instance.GetLocalIndex(uuid);
-        if(!idx.HasValue) {
-            Debug.LogError("Failed to connect player locally, couldn't resolve index.");
-            return;
+        if(idx.HasValue) {
+            ConnectPlayer(PlayerManager.Instance.LocalPlayers[idx.Value]);
+        } else {
+            attachBehaviourController.UpdateAttachBehaviours();
+            gameObject.name = "Player unattached";
         }
-
-        ConnectPlayer(PlayerManager.Instance.LocalPlayers[idx.Value]);
     }
 
     public void ConnectPlayer(LocalPlayer localPlayer) 
@@ -107,25 +111,11 @@ public class Player : NetworkBehaviour, IS3
             return;
         }
 
-        this.localPlayer = localPlayer;
+        LocalPlayer = localPlayer;
         GetComponent<PlayerInputManager>().ConnectPlayer(localPlayer.Input);       
 
-        UpdateActiveComponents(); 
-    }
+        attachBehaviourController.UpdateAttachBehaviours();
 
-    /// <summary>
-    /// Update the components related to having a localplayer attached or not
-    /// </summary>
-    private void UpdateActiveComponents() 
-    {
-        for(int childIdx = 0; childIdx < transform.childCount; childIdx++) {
-            GameObject child = transform.GetChild(childIdx).gameObject;
-            if(child.name == "Root")
-                continue;
-            child.SetActive(localPlayer != null);
-        }
-
-        GetComponent<PlayerMovement>().enabled = localPlayer != null;
-        // GetComponent<ToolBelt>().enabled = localPlayer != null;
+        gameObject.name = $"Player (LocalPlayer {localPlayer.Input.playerIndex})";
     }
 }

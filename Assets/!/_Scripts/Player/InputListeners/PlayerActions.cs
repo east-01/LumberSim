@@ -1,6 +1,8 @@
 using EMullen.Core;
 using EMullen.PlayerMgmt;
 using FishNet;
+using FishNet.Connection;
+using FishNet.Object;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,7 +14,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Player))]
 [RequireComponent(typeof(ToolBelt))]
 [RequireComponent(typeof(NetworkedAudioController))]
-public class PlayerActions : MonoBehaviour, IInputListener
+public class PlayerActions : NetworkBehaviour, IInputListener
 {
 
     [SerializeField]
@@ -97,16 +99,7 @@ public class PlayerActions : MonoBehaviour, IInputListener
         if(hotbarItems[idx] == Item.NONE)
             return;
 
-        // Spawn the GrabbableItem
-        Transform camTransform = player.Camera.transform;
-        Vector3 initPosition = camTransform.position + camTransform.forward.normalized * 0.3f;
-        Vector3 initVelocity = camTransform.forward.normalized * 5f;
-        GameplayManager.SpawnGrabbaleArgs args = new(initPosition, camTransform.rotation, initVelocity, grabbableItemPrefab, player.LocalConnection);
-        Grabbable grabbable = player.GameplayManager.SpawnGrabbable(args);
-
-        GrabbableItem grabbableItem = grabbable.GetComponent<GrabbableItem>();
-
-        grabbableItem.SetItem(hotbarItems[idx]);
+        SpawnDropItem(hotbarItems[idx]);        
 
         // Update player's inventory
         hotbarItems[idx] = Item.NONE;
@@ -115,6 +108,32 @@ public class PlayerActions : MonoBehaviour, IInputListener
 
         toolBelt.UpdateRenderer();
     }
+
+    /// <summary>
+    /// Part of the hotbar drop process that involves actually spawning the dropped item
+    /// </summary>
+    private void SpawnDropItem(Item item, NetworkConnection owner = null) 
+    {
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRPCSpawnDropItem(item, InstanceFinder.ClientManager.Connection);
+            return;
+        }
+        
+        owner ??= LocalConnection;
+
+        // Spawn the GrabbableItem
+        Transform camTransform = player.Camera.transform;
+        Vector3 initPosition = camTransform.position + camTransform.forward.normalized * 0.3f;
+        Vector3 initVelocity = camTransform.forward.normalized * 5f;
+        GameplayManager.SpawnGrabbaleArgs args = new(initPosition, camTransform.rotation, initVelocity, grabbableItemPrefab, owner);
+        Grabbable grabbable = player.GameplayManager.SpawnGrabbable(args);
+
+        GrabbableItem grabbableItem = grabbable.GetComponent<GrabbableItem>();
+
+        grabbableItem.SetItem(item);
+    }
+    [ServerRpc(RequireOwnership =false)]
+    private void ServerRPCSpawnDropItem(Item item, NetworkConnection owner) => SpawnDropItem(item, owner);
 
     public void InputPoll(InputAction action) {}
 

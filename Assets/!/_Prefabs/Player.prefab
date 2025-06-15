@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 1450876365604900663}
   - component: {fileID: 2852433896393889197}
   - component: {fileID: 2962174201918927279}
+  - component: {fileID: 7978867648418830402}
   - component: {fileID: 8230513912879713399}
   - component: {fileID: 4172409528695446178}
   - component: {fileID: 8554514546108795878}
@@ -311,6 +312,35 @@ MonoBehaviour:
   uidReadout: 
   camera: {fileID: 4758240217155741764}
   grabbablePicker: {fileID: 8230513912879713399}
+--- !u!114 &7978867648418830402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398904762131290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a5d95b87f66bec429281f23abb840a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachSettings:
+  - obj: {fileID: 8554514546108795878}
+    behaviour: 1
+  - obj: {fileID: 8870151851350553682}
+    behaviour: 1
+  - obj: {fileID: 6160719718300331586}
+    behaviour: 1
+  - obj: {fileID: 4483839338802965044}
+    behaviour: 1
+  - obj: {fileID: 43330285}
+    behaviour: 2
+  - obj: {fileID: 8630927277330227509}
+    behaviour: 0
+  - obj: {fileID: 5128671780649996347}
+    behaviour: 0
+  - obj: {fileID: 1854746833484672}
+    behaviour: 0
 --- !u!114 &8230513912879713399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,6 +522,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2994de8bd79def24aba56730aa034de2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 1450876365604900663}
+  _networkObjectCache: {fileID: 0}
   grabbableItemPrefab: {fileID: 4260847268684243727, guid: 2fa20489cda0c904bb7049ff0244f9da, type: 3}
   itemAssignments: {fileID: 11400000, guid: 7d5e65c1dd8fc83448ed9fadca9468bc, type: 2}
 --- !u!114 &3402678452535200333
@@ -1199,6 +1232,11 @@ PrefabInstance:
 --- !u!224 &8486213600568540397 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7304526735355538556, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+  m_PrefabInstance: {fileID: 1196816292314353809}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8630927277330227509 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7448044156367368612, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
   m_PrefabInstance: {fileID: 1196816292314353809}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &9041591637700775042 stripped

@@ -15,6 +15,8 @@ public class ItemSpawner : GrabbableSpawner
 {
     [SerializeField]
     private Item spawnAs;
+    [SerializeField]
+    private bool spawnWithRB;
 
     protected override Grabbable Spawn() {
         Grabbable grabbable = base.Spawn();
@@ -22,6 +24,9 @@ public class ItemSpawner : GrabbableSpawner
             Debug.LogError($"Can't spawn item from grabbale prefab \"{grabbablePrefab}\" it does not have a GrabbableItem component on it!");
             return null;
         }
+
+        if(grabbable.TryGetComponent(out Rigidbody rb) && !spawnWithRB)
+            Destroy(rb);
 
         grabbableItem.SetItem(spawnAs);
         return grabbable;

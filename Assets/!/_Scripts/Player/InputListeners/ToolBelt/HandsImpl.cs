@@ -45,7 +45,7 @@ public class HandsImpl : ToolBeltImpl
     public void UpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) 
     {
         if(!InstanceFinder.IsServerStarted) {
-            // grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/10f);
+            grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/10f);
             ServerRpcUpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
             return;
         }
