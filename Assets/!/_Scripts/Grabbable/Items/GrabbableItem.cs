@@ -111,7 +111,11 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
     public void UpdateItemMesh() => GetComponentInChildren<ItemMeshRenderer>().ShowItemMesh(item.Value);
 
     public Dictionary<string, string> GetVariables() => new();
-    public bool CanPickup(NetworkConnection pickupConnection) => pickupConnection == Owner; 
+    public bool CanPickup(NetworkConnection pickupConnection, string uid, out string reason) 
+    {
+        reason = $"Item owned by {Owner}";
+        return pickupConnection == Owner;
+    } 
     public GrabbableInfo OverrideGrabbableInfo() => itemAssignments.Contains(item.Value) ? itemAssignments.Get(item.Value) : null;
     public GameObject GetOutlineObject() => GetComponentInChildren<ItemMeshRenderer>().CurrentItemMesh;
 

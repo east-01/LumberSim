@@ -329,6 +329,8 @@ MonoBehaviour:
     behaviour: 1
   - obj: {fileID: 8870151851350553682}
     behaviour: 1
+  - obj: {fileID: 8230513912879713399}
+    behaviour: 1
   - obj: {fileID: 6160719718300331586}
     behaviour: 1
   - obj: {fileID: 4483839338802965044}
@@ -887,6 +889,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6435171355526366693}
   - component: {fileID: 1764122138198902720}
+  - component: {fileID: 7623555861531817008}
   m_Layer: 0
   m_Name: CanvasCamera
   m_TagString: Untagged
@@ -944,7 +947,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 20
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -960,6 +963,19 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &7623555861531817008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128671780649996347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 520960fa5ef15dc4b891faafb8c1cb34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCanvas: {fileID: 7489579865687123510}
 --- !u!1001 &1196816292314353809
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1130,23 +1146,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1920
+      value: 1821.4719
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1079.2258
+      value: 1138.4199
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.0092659015
+      value: 0.01756821
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.0092659015
+      value: 0.01756821
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0092659015
+      value: 0.01756821
       objectReference: {fileID: 0}
     - target: {fileID: 7917853312135732243, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1216,6 +1232,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8551604704108049911, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8605155301114443431, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1224,11 +1244,24 @@ PrefabInstance:
       propertyPath: m_RenderMode
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8605155301114443431, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8605155301114443431, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+      propertyPath: m_UpdateRectTransformForStandalone
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+--- !u!223 &7489579865687123510 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 8605155301114443431, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}
+  m_PrefabInstance: {fileID: 1196816292314353809}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8486213600568540397 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7304526735355538556, guid: 241bfc94904b1bd438300aec161c80c1, type: 3}

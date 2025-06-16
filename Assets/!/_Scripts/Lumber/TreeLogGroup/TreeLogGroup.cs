@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using EMullen.Core;
+using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Component.Transforming;
@@ -125,5 +126,13 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
         };
     }
 
-    public bool CanPickup(NetworkConnection conn) => true;
+    public bool CanPickup(NetworkConnection conn, string uid, out string reason) 
+    {
+        PlayerData pd = PlayerDataRegistry.Instance.GetPlayerData(uid);
+        pd.EnsureLumberData();
+
+        float carryCapacity = pd.GetData<GeneralPlayerData>().maxCarryWeight;
+        reason = "Lumber too heavy";
+        return LumberEvaluator.EvaluateTotalWeight(this) <= carryCapacity;
+    }
 }

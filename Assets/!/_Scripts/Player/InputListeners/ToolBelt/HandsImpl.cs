@@ -44,19 +44,57 @@ public class HandsImpl : ToolBeltImpl
 
     public void UpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) 
     {
-        if(!InstanceFinder.IsServerStarted) {
-            grabbedGroup.transform.position = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Vector3.Distance(grabbedGroup.transform.position, targetPosition)/10f);
-            ServerRpcUpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
-            return;
-        }
 
         Rigidbody rb = grabbedGroup.GetComponent<Rigidbody>();
-        Vector3 newPos = Vector3.Lerp(grabbedGroup.transform.position, targetPosition, Mathf.Max(Vector3.Distance(grabbedGroup.transform.position, targetPosition)/10f, 0.5f));
-        rb.MovePosition(newPos);
-        // rb.AddForce((targetPosition - grabbedGroup.transform.position).normalized * moveSpeed * Time.deltaTime, ForceMode.VelocityChange);
+        Vector3 startPos = grabbedGroup.transform.position;
+        float distToTarget = Vector3.Distance(grabbedGroup.transform.position, targetPosition);
+        Vector3 newPos = Vector3.Lerp(startPos, targetPosition, Mathf.Max(distToTarget/10f, 0.05f));
+        Vector3 travelVec = newPos-startPos;
+
+        bool CheckForHits(Vector3 vec, out Vector3 adjustedVec) 
+        {
+            RaycastHit[] hits = rb.SweepTestAll(vec.normalized, vec.magnitude, QueryTriggerInteraction.Ignore);
+
+            if(hits.Length == 0) {
+                adjustedVec = vec;
+                return false;
+            }
+
+            if (hits.Length > 1)
+                System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            adjustedVec = vec;
+            foreach (var hit in hits) {
+                adjustedVec = Vector3.ProjectOnPlane(adjustedVec, hit.normal);
+            }
+
+            return true;
+        }
+
+        Vector3 remaining = travelVec;
+        float stepSize = 0.5f;  // half-meter steps
+        Vector3 movement = rb.position;
+        while (remaining.sqrMagnitude > 0.0001f)
+        {
+            Vector3 step = Vector3.ClampMagnitude(remaining, stepSize);
+            if (CheckForHits(step, out Vector3 safe))
+                movement += safe;
+                // rb.MovePosition(rb.position + safe);
+            else
+                movement += step;
+                // rb.MovePosition(rb.position + step);
+            remaining -= step;
+        }
+
+        rb.MovePosition(movement);
+
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRpcUpdateGrabbedGroupPosition(grabbedGroup, movement);
+            return;
+        }
     }
     [ServerRpc(RequireOwnership = false)]
-    public void ServerRpcUpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) => UpdateGrabbedGroupPosition(grabbedGroup, targetPosition);
+    public void ServerRpcUpdateGrabbedGroupPosition(NetworkObject grabbedGroup, Vector3 targetPosition) => grabbedGroup.GetComponent<Rigidbody>().MovePosition(targetPosition);
 
     /// <summary>
     /// Pick up/drop a log, has separate actions for 
@@ -74,15 +112,16 @@ public class HandsImpl : ToolBeltImpl
                 return;
 
             IGrabbable grabbableInterface = grabbable.GetIGrabbable();
-            if(grabbableInterface != null && !grabbableInterface.CanPickup(LocalConnection)) {
-                player.GetHUD().ShowWarning("Can't pickup", 2f);
+            if(grabbableInterface != null && !grabbableInterface.CanPickup(LocalConnection, player.uid.Value, out string reason)) {
+                bool hasReason = reason != null && reason.Length > 0;
+                player.GetHUD().ShowWarning("Can't pickup" + (hasReason ? $": {reason}" : ""), 2f);
                 return;
             }
 
             player.GetNetworkedAudioController().PlaySound("pickup");
 
             grabbed = grabbable;
-            grabOffset = hit.point-grabbed.transform.position; // TODO: Implement offset and rotation
+            grabOffset = hit.point-grabbed.transform.position;
 
             if(grabbed.TryGetComponent(out Rigidbody grabbedRB))
                 grabbedRB.useGravity = false;

@@ -1,3 +1,4 @@
+using EMullen.Core;
 using UnityEngine;
 
 public class GrabbablePicker : MonoBehaviour 
@@ -21,6 +22,7 @@ public class GrabbablePicker : MonoBehaviour
         Grabbable newGrabbable = PickGrabbable(viewRange);
 
         if(newGrabbable != lastSelectedGrabbable) {
+            BLog.Highlight($"Set grabbable to \"{newGrabbable}\"");
             ToggleOutlineView(lastSelectedGrabbable, false);
             ToggleOutlineView(newGrabbable, true);
 

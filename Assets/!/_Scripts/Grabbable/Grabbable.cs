@@ -113,7 +113,7 @@ public interface IGrabbable
 {
     public GrabbableRenderArgs? Render(string viewingPlayer = null) => null;
     public Dictionary<string, string> GetVariables();
-    public bool CanPickup(NetworkConnection pickupConnection);
+    public bool CanPickup(NetworkConnection pickupConnection, string pickupUID, out string reason);
     public GrabbableInfo OverrideGrabbableInfo() => null;
     public GameObject GetOutlineObject() => null;
 }

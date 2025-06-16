@@ -10,15 +10,14 @@ public class GeneralPlayerData : PlayerDatabaseDataClass
     public string _uid;
     public override string UID => _uid;
     public float balance;
-    public int axeLevel;
+    public float maxCarryWeight = 60;
 
     public GeneralPlayerData() {}
 
-    public GeneralPlayerData(string uid, float balance, int axeLevel = 0) 
+    public GeneralPlayerData(string uid, float balance) 
     {
         this._uid = uid;
         this.balance = balance;
-        this.axeLevel = axeLevel;
     }
 
     public static GeneralPlayerData CreateDefault(string uid) => new(uid, 20);
