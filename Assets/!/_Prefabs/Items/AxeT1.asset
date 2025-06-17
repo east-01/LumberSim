@@ -15,8 +15,8 @@ MonoBehaviour:
   DisplayName: Tier 1 Axe
   Icon: {fileID: 0}
   DescriptionLines:
-  - 'Power: 0.5'
-  - Recharges in 1.6s
+  - 'Power: <color=#eb5038>0.85</color>'
+  - Recharges in <color=#eb5038>1.5s</color>
   OutlineColors:
   - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
   - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}

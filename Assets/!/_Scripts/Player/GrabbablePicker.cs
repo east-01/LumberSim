@@ -9,7 +9,12 @@ public class GrabbablePicker : MonoBehaviour
     [SerializeField]
     private float viewRange = 5f;
 
-    private Grabbable lastSelectedGrabbable;
+    public Grabbable SelectedGrabbable { get; private set; }
+    /// <summary>
+    /// Is the SelectedGrabbable manually selected, manual selection comes from HandsImpl picking
+    ///   up a grabbable.
+    /// </summary>
+    private bool manuallySelected;
 
     private Player player;
     
@@ -21,23 +26,33 @@ public class GrabbablePicker : MonoBehaviour
     private void Update() {
         Grabbable newGrabbable = PickGrabbable(viewRange);
 
-        if(newGrabbable != lastSelectedGrabbable) {
-            BLog.Highlight($"Set grabbable to \"{newGrabbable}\"");
-            ToggleOutlineView(lastSelectedGrabbable, false);
-            ToggleOutlineView(newGrabbable, true);
+        if(SelectedGrabbable != null && !SelectedGrabbable.IsSpawned)
+            ClearSelectedGrabbable();
 
-            lastSelectedGrabbable = newGrabbable;
-
-            player.GetHUD().GrabbableRenderer.Render(newGrabbable);
+        if(newGrabbable != SelectedGrabbable && !manuallySelected) {
+            SetSelectedGrabbable(newGrabbable);
         }
     }
 
-    private void ToggleOutlineView(Grabbable grabbable, bool selected) 
+    public void SetSelectedGrabbable(Grabbable grabbable, bool manuallySelected = false) 
     {
-        if(grabbable == null)
-            return;
+        if(SelectedGrabbable != null)
+            SelectedGrabbable.UpdateOutline(false);
 
-        grabbable.UpdateOutline(selected);
+        if(grabbable != null)
+            grabbable.UpdateOutline(true);
+
+        SelectedGrabbable = grabbable;
+        this.manuallySelected = manuallySelected;
+    }
+
+    public void ClearSelectedGrabbable() 
+    {
+        if(SelectedGrabbable != null)
+            SelectedGrabbable.UpdateOutline(false);
+
+        SelectedGrabbable = null;
+        manuallySelected = false;
     }
 
     public Grabbable PickGrabbable(float range) => PickGrabbable(range, out RaycastHit hit);

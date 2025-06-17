@@ -21,7 +21,6 @@ public class PlayerHUDMenuController : MenuController
     private AxeCriticalBarController axeCriticalBarController;
     public AxeCriticalBarController AxeCriticalBarController => axeCriticalBarController;
 
-    [Header("UI Elements")]
     [SerializeField]
     private TMP_Text toolbeltText;
     [SerializeField]
@@ -40,6 +39,12 @@ public class PlayerHUDMenuController : MenuController
     [SerializeField]
     private TMP_Text warningText;
     private float warningHideTime;
+
+    [Header("Settings")]
+    [SerializeField]
+    private Color positiveCashFlowColor;
+    [SerializeField]
+    private Color negativeCashFlowColor;
 
     private Player player;
     private ToolBelt toolBelt;
@@ -71,40 +76,24 @@ public class PlayerHUDMenuController : MenuController
         pd.EnsureLumberData();
         GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
 
-        // ----- Update toolbelt text -----
-        // switch(toolBelt.ToolbeltOptions[toolBelt.ToolbeltIndex]) {
-        //     case "hands":
-        //         toolbeltText.text = "Hands";
-        //         toolbeltTextSecondary.text = "";
-        //         break;
-                
-        //     case "axe":
-        //         int axeTier = gpd.axeLevel;
-        //         string axeSwingProgressText = toolBelt.AxeSwingProgress < 1 ? (toolBelt.AxeSwingProgress*100).ToString("F0") + "%" : "Ready";
-        //         toolbeltText.text = $"Axe T{axeTier+1} ({axeSwingProgressText})"; 
-
-        //         string secondaryText = "";
-        //         if(axeTier < toolBelt.AxeStatsArr.Length-1) {
-        //             float targPrice = toolBelt.AxeStatsArr[axeTier+1].price;
-        //             secondaryText = gpd.balance < targPrice ? $"Price to upgrade: ${targPrice}" : "Press U to upgrade.";
-        //         }
-        //         toolbeltTextSecondary.text = secondaryText;
-        //         break;
-        // }
-
         // ----- Display balance text -----
         balanceText.text = "$" + gpd.balance.ToString("F2");
 
         // Cash flash
-        if(gpd.balance > cfLastBalance) { // Detect cash increase
+        if(gpd.balance != cfLastBalance) { // Detect cash changes
             cfAccumulatedBalance += gpd.balance - cfLastBalance;
             cfLastAccumulatedTime = Time.time;
         }
 
-        cashFlashText.gameObject.SetActive(Time.time - cfLastAccumulatedTime <= cashFlashTimeout);
-        if(cashFlashText.gameObject.activeSelf)
-            cashFlashText.text = $"+${cfAccumulatedBalance.ToString("F2")}";
-        else
+        bool isCashFlashActive = Time.time - cfLastAccumulatedTime <= cashFlashTimeout;
+        cashFlashText.gameObject.SetActive(isCashFlashActive);
+        if(isCashFlashActive) {
+            bool isPositiveCashFlow = Mathf.Sign(cfAccumulatedBalance) != -1;
+            string prefix = isPositiveCashFlow ? "+" : "-";
+            string cashAmt = Mathf.Abs(cfAccumulatedBalance).ToString("F2");
+            cashFlashText.text = $"{prefix}${cashAmt}";
+            cashFlashText.color = isPositiveCashFlow ? positiveCashFlowColor : negativeCashFlowColor;
+        } else
             cfAccumulatedBalance = 0;
 
         // ----- Warning text -----

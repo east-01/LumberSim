@@ -22,7 +22,7 @@ public class FirstPersonCamera : MonoBehaviour, IInputListener
     // Internal state to track vertical rotation
     private float verticalRotation = 0f;
 
-    private bool locked = false;
+    public bool Locked = false;
 
     private void Start() 
     {
@@ -32,11 +32,11 @@ public class FirstPersonCamera : MonoBehaviour, IInputListener
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape)) {
-            locked = !locked;
-            Debug.Log("Locked: " + locked);
+            Locked = !Locked;
+            Debug.Log("Locked: " + Locked);
         }
 
-        if(locked)
+        if(Locked)
             return;
 
         // TODO: Remove, temp input- true input in InputPoll

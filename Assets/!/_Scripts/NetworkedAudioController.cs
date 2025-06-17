@@ -34,7 +34,7 @@ public class NetworkedAudioController : NetworkBehaviour
         });
     }
 
-    public void PlaySound(string soundID, bool propogate = true) 
+    public void PlaySound(string soundID, bool propogate = true, float pitch=1f) 
     {
         if(!audioClips.ContainsKey(soundID)) {
             Debug.LogError($"Can't play sound \"{soundID}\"");
@@ -44,6 +44,7 @@ public class NetworkedAudioController : NetworkBehaviour
         AudioClip sound = audioClips[soundID];
 
         source.clip = sound;
+        source.pitch = pitch;
         source.Play();
 
         if(propogate)

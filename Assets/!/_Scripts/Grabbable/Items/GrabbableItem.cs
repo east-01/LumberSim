@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
+using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Connection;
+using FishNet.Managing.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class GrabbableItem : NetworkBehaviour, IGrabbable
+public class GrabbableItem : NetworkBehaviour, IGrabbable, IS3
 {
     [SerializeField]
     private ItemAssignments itemAssignments;
@@ -24,6 +26,8 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
     public readonly SyncVar<Item> item = new();
     [SerializeField]
     private Item itemReadout;
+
+    private GameplayManager gameplayManager;
 
     private void Awake()
     {
@@ -41,9 +45,32 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
         item.OnChange -= Item_OnChange;        
     }
 
+    public void SingletonRegistered(Type type, object singleton)
+    {
+        if(type != typeof(GameplayManager))
+            return;
+
+        gameplayManager = singleton as GameplayManager;
+    }
+
+    public void SingletonDeregistered(Type type, object singleton)
+    {
+        if(type != typeof(GameplayManager))
+            return;
+
+    }
+    
     private void Update()
     {
         itemReadout = item.Value;
+
+        if(gameObject.scene.name == "GameplayScene") {
+            SceneLookupData lookupData = gameObject.scene.GetSceneLookupData();
+
+            if(!SceneSingletons.IsSubscribed(this, lookupData, typeof(GameplayManager))) {
+                SceneSingletons.SubscribeToSingleton(this, lookupData, typeof(GameplayManager));
+            }
+        }
 
         if(!InstanceFinder.IsServerStarted)
             return;
@@ -87,6 +114,8 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
 
         if(!isPurchasing)
             InstanceFinder.ServerManager.Despawn(gameObject);
+        else
+            gameplayManager.PlayerObjectManager.GetPlayer(uid).GetNetworkedAudioController().PlaySound("purchased");
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCGrabbedItem(NetworkConnection grabber, string uid) => GrabbedItem(grabber, uid);
@@ -130,7 +159,7 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
 
         if(!Owner.IsValid) {
             descriptionLines.Add("");
-            descriptionLines.Add($"[E] Buy: ${info.cost}");
+            descriptionLines.Add($"[E] Buy: <color=green>${info.cost}</color>");
         } else if(Owner != InstanceFinder.ClientManager.Connection) {
             descriptionLines.Add("");
             descriptionLines.Add($"Owner: {OwnerId}");

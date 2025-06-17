@@ -382,6 +382,9 @@ MonoBehaviour:
   - actionName: Look
     listener: {fileID: 8870151851350553682}
     pollInput: 1
+  - actionName: Look
+    listener: {fileID: 1042140060325308792}
+    pollInput: 1
   - actionName: Primary
     listener: {fileID: 6160719718300331586}
     pollInput: 1
@@ -460,6 +463,9 @@ MonoBehaviour:
   camera: {fileID: 4758240217155741764}
   grabDistance: 5
   maxCarryWeight: 60
+  rotationSpeed: 1.75
+  rotationSensitivity: 15
+  rotationAcceleration: 0.25
 --- !u!114 &4483839338802965044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -563,6 +569,8 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: f55a53b13e409804b951a923b1a459db, type: 3}
   - id: bing
     audioClip: {fileID: 8300000, guid: 2906488173aba9344b5e750fefbeeea0, type: 3}
+  - id: purchased
+    audioClip: {fileID: 8300000, guid: cd3e0b4e747816b4983d3315accdc57a, type: 3}
 --- !u!143 &9139026534003978452
 CharacterController:
   m_ObjectHideFlags: 0

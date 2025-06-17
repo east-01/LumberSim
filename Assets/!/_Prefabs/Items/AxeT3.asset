@@ -15,8 +15,8 @@ MonoBehaviour:
   DisplayName: Tier 3 Axe
   Icon: {fileID: 0}
   DescriptionLines:
-  - Power 1.5
-  - Recharges in 0.9s
+  - Power <color=#6ecc2f>1.8</color>
+  - Recharges in <color=#6ecc2f>0.9s</color>
   OutlineColors:
   - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
   - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}

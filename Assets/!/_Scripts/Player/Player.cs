@@ -38,6 +38,7 @@ public class Player : NetworkBehaviour, IS3
     [SerializeField]
     private new Camera camera;
     public Camera Camera => camera;
+    public FirstPersonCamera FirstPersonCamera => Camera.GetComponent<FirstPersonCamera>();
     [SerializeField]
     private GrabbablePicker grabbablePicker;
     public GrabbablePicker GrabbablePicker => grabbablePicker;

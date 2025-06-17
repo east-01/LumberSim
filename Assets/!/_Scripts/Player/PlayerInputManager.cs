@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
@@ -24,10 +25,10 @@ public class PlayerInputManager : MonoBehaviour
     private List<InputListenerListItem> inputListeners;
 
     private PlayerInput input;
-    private Dictionary<string, IInputListener> listeners = new();
-    private List<string> pollingListeners = new();
+    private Dictionary<string, List<IInputListener>> listeners = new();
+    private Dictionary<string, List<IInputListener>> pollingListeners = new();
 
-    private void Awake() 
+    private void Awake()
     {
         inputListeners.ForEach(listItem => {
             if(listItem.listener is not IInputListener) {
@@ -49,7 +50,11 @@ public class PlayerInputManager : MonoBehaviour
         if(input == null)
             return;
             
-        pollingListeners.ForEach(actionName => listeners[actionName].InputPoll(input.actions[actionName]));
+        foreach(string actionName in pollingListeners.Keys) {
+            foreach(IInputListener il in pollingListeners[actionName]) {
+                il.InputPoll(input.actions[actionName]);
+            }
+        }
     }
 
     private void PlayerControls_OnActionTriggered(InputAction.CallbackContext context)
@@ -58,18 +63,26 @@ public class PlayerInputManager : MonoBehaviour
         if(!listeners.ContainsKey(actionName))
             return;
 
-        listeners[actionName].InputEvent(context);
+        listeners[actionName].ForEach(il => il.InputEvent(context));
     }
 
     public void SubscribeListener(string actionName, IInputListener listener, bool pollInput = false) 
     {
-        if(listeners.ContainsKey(actionName)) 
-            throw new InvalidOperationException($"Tried to subscribe listener to action \"{actionName}\" but it's already registered.");
+        if(!listeners.ContainsKey(actionName))
+            listeners.Add(actionName, new());
 
-        listeners.Add(actionName, listener);
+        List<IInputListener> list = listeners[actionName];
+        list.Add(listener);
+        listeners[actionName] = list;
 
-        if(pollInput)
-            pollingListeners.Add(actionName);
+        if(pollInput) {
+            if(!pollingListeners.ContainsKey(actionName))
+                pollingListeners.Add(actionName, new());
+
+            List<IInputListener> list2 = pollingListeners[actionName];
+            list2.Add(listener);
+            pollingListeners[actionName] = list2;
+        }
     }
 
     public void UnsubscribeListener(string actionName) 
@@ -77,8 +90,8 @@ public class PlayerInputManager : MonoBehaviour
         if(listeners.ContainsKey(actionName))
             listeners.Remove(actionName);
         
-        if(pollingListeners.Contains(actionName))
-            listeners.Remove(actionName);
+        if(pollingListeners.ContainsKey(actionName))
+            pollingListeners.Remove(actionName);
     }
 }
 

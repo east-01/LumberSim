@@ -121,8 +121,9 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
 
     public Dictionary<string, string> GetVariables()
     {
+        float value = LumberEvaluator.EvaluateLumber(this, 3f, 1f);
         return new Dictionary<string, string>() {
-            {"%PRICE%", LumberEvaluator.EvaluateLumber(this, 3f, 1f).ToString()},
+            {"%PRICE%", $"<color=\"green\">${value.ToString("F2")}</color>"},
         };
     }
 

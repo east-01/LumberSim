@@ -34,10 +34,13 @@ public class GameplayManager : NetworkBehaviour
 
     public LumberLobby Lobby;
 
+    public PlayerObjectManager PlayerObjectManager { get; private set; }
 
     private void Start() 
     {
         SceneSingletons.Register(this);
+
+        PlayerObjectManager = GetComponent<PlayerObjectManager>();
     }
 
     private void OnEnable() 

@@ -391,7 +391,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 50}
+  m_SizeDelta: {x: 170, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3974626589012992028
 CanvasRenderer:
@@ -421,10 +421,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: $0
+  m_text: $0000000
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 35ba95ab0c9d02b439b3589069b16cad, type: 2}
+  m_sharedMaterial: {fileID: -1119018162053827466, guid: 35ba95ab0c9d02b439b3589069b16cad, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -448,12 +448,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
+  m_fontSize: 50
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 10
-  m_fontSizeMax: 22
+  m_fontSizeMax: 50
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -609,7 +609,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 10}
+  m_AnchoredPosition: {x: 0, y: 25}
   m_SizeDelta: {x: 200, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8147090550917432616
@@ -1388,8 +1388,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 690, y: 120}
-  m_SizeDelta: {x: 300, y: 200}
+  m_AnchoredPosition: {x: 690, y: 144.81738}
+  m_SizeDelta: {x: 300, y: 175.1827}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2145585727108218778
 MonoBehaviour:
@@ -1406,6 +1406,9 @@ MonoBehaviour:
   mmfPlayer: {fileID: 3295269630971924639}
   nameText: {fileID: 2686254468149763907}
   descriptionText: {fileID: 3831200371859401919}
+  heightNoDesc: 90
+  heightWithDesc: 135
+  descLineHeight: 40
 --- !u!222 &6323092328098649232
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3150,8 +3153,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 10, y: 10}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 30, y: 30}
+  m_SizeDelta: {x: 150, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &5288964137760465428
 GameObject:
@@ -3338,7 +3341,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 20.000017, y: -79.99997}
-  m_SizeDelta: {x: 260, y: 100}
+  m_SizeDelta: {x: 260, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8223923091362614629
 CanvasRenderer:
@@ -3462,16 +3465,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6770988191103940565}
-  m_LocalRotation: {x: -0, y: -0, z: -0.063748576, w: 0.99796605}
+  m_LocalRotation: {x: 0, y: 0, z: 0.09263129, w: 0.9957005}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3800936264395733465}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -7.31}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 10.63}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 33.900085, y: 25.199982}
+  m_AnchoredPosition: {x: 0, y: 43}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1698551657630804443
@@ -3504,8 +3507,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: CashFlow
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 35ba95ab0c9d02b439b3589069b16cad, type: 2}
+  m_sharedMaterial: {fileID: -1119018162053827466, guid: 35ba95ab0c9d02b439b3589069b16cad, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3529,13 +3532,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.3
-  m_fontSizeBase: 20.3
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -3647,6 +3650,8 @@ MonoBehaviour:
   cashFlashText: {fileID: 1005519208483724395}
   cashFlashTimeout: 5
   warningText: {fileID: 5294281916522315498}
+  positiveCashFlowColor: {r: 0.11176343, g: 0.81960785, b: 0, a: 1}
+  negativeCashFlowColor: {r: 0.6509804, g: 0, b: 0, a: 1}
 --- !u!223 &8605155301114443431
 Canvas:
   m_ObjectHideFlags: 0
@@ -3941,10 +3946,10 @@ MonoBehaviour:
         Owner: {fileID: 6838318398392995664}
         DebugActive: 0
         AnimatePositionTarget: {fileID: 2948513584776643387}
-        Mode: 0
+        Mode: 1
         Space: 1
         RandomizeRemap: 0
-        AnimatePositionDuration: 0.2
+        AnimatePositionDuration: 0.45
         AnimatePositionTween:
           MMTweenDefinitionType: 1
           MMTweenCurve: 4
@@ -3961,8 +3966,17 @@ MonoBehaviour:
               inWeight: 0
               outWeight: 0.051502146
             - serializedVersion: 3
-              time: 1
+              time: 0.95
               value: 1
+              inSlope: 0
+              outSlope: 0.74456286
+              tangentMode: 1
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0.9186039
+            - serializedVersion: 3
+              time: 1
+              value: 0
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -3975,7 +3989,7 @@ MonoBehaviour:
           Initialized: 0
         RemapCurveZero: 0
         RemapCurveZeroAlt: 0
-        RemapCurveOne: 1
+        RemapCurveOne: -20
         RemapCurveOneAlt: 1
         AnimateX: 0
         AnimatePositionTweenX:
@@ -4024,7 +4038,7 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           Initialized: 0
-        AnimateY: 0
+        AnimateY: 1
         AnimatePositionTweenY:
           MMTweenDefinitionType: 1
           MMTweenCurve: 4
@@ -4041,17 +4055,8 @@ MonoBehaviour:
               inWeight: 0
               outWeight: 0
             - serializedVersion: 3
-              time: 0.3
+              time: 0.7
               value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 0.6
-              value: -1
               inSlope: 0
               outSlope: 0
               tangentMode: 0
@@ -4122,7 +4127,7 @@ MonoBehaviour:
         RelativePosition: 1
         DeterminePositionsOnPlay: 0
         InitialPosition: {x: 0, y: 0, z: 0}
-        DestinationPosition: {x: 0, y: -20, z: 0}
+        DestinationPosition: {x: 0, y: 0, z: 0}
         InitialPositionTransform: {fileID: 0}
         DestinationPositionTransform: {fileID: 0}
         AnimatePositionCurveX:
@@ -4226,9 +4231,9 @@ MonoBehaviour:
         AnimateRotationTarget: {fileID: 7304526735355538556}
         Mode: 0
         RotationSpace: 1
-        AnimateRotationDuration: 0.3
+        AnimateRotationDuration: 0.45
         RemapCurveZero: 0
-        RemapCurveOne: -25
+        RemapCurveOne: 7.5
         AnimateX: 0
         AnimateRotationTweenX:
           MMTweenDefinitionType: 1
@@ -4322,7 +4327,7 @@ MonoBehaviour:
               inWeight: 0
               outWeight: 0
             - serializedVersion: 3
-              time: 0.89742494
+              time: 0.7
               value: 1
               inSlope: 0
               outSlope: 0
