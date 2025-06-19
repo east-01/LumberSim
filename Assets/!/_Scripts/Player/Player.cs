@@ -1,9 +1,11 @@
 using System;
 using EMullen.Core;
+using EMullen.Networking;
 using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Component.Transforming;
+using FishNet.Connection;
 using FishNet.Managing.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -47,6 +49,7 @@ public class Player : NetworkBehaviour, IS3
 
     public PlayerHUDMenuController GetHUD() => GetComponentInChildren<PlayerHUDMenuController>();
     public NetworkedAudioController GetNetworkedAudioController() => GetComponent<NetworkedAudioController>();
+    public ToolBelt GetToolBelt() => GetComponent<ToolBelt>();
 
 #region Initializers
     private void Awake()
@@ -119,4 +122,18 @@ public class Player : NetworkBehaviour, IS3
 
         gameObject.name = $"Player (LocalPlayer {localPlayer.Input.playerIndex})";
     }
+
+    public void ShowHUDWarning(string message, float time) 
+    {
+        if(LocalPlayer == null) {
+            NetworkConnection targ = PlayerDataRegistry.Instance.GetPlayerData(uid.Value).GetData<NetworkIdentifierData>().GetNetworkConnection();
+            TargetRPCShowHUDWarning(targ, message, time);
+            return;
+        }
+
+        GetHUD().ShowWarning(message, time);
+    }
+    [TargetRpc]
+    private void TargetRPCShowHUDWarning(NetworkConnection targ, string message, float time) => ShowHUDWarning(message, time);
+
 }

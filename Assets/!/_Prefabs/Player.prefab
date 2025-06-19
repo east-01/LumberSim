@@ -215,9 +215,9 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 2852433896393889197}
-  - {fileID: 2962174201918927279}
-  - {fileID: 6160719718300331586}
-  - {fileID: 3402678452535200333}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -331,8 +331,8 @@ MonoBehaviour:
     behaviour: 1
   - obj: {fileID: 8230513912879713399}
     behaviour: 1
-  - obj: {fileID: 6160719718300331586}
-    behaviour: 1
+  - obj: {fileID: 4172409528695446178}
+    behaviour: 0
   - obj: {fileID: 4483839338802965044}
     behaviour: 1
   - obj: {fileID: 43330285}
@@ -463,9 +463,9 @@ MonoBehaviour:
   camera: {fileID: 4758240217155741764}
   grabDistance: 5
   maxCarryWeight: 60
-  rotationSpeed: 1.75
-  rotationSensitivity: 15
-  rotationAcceleration: 0.25
+  rotationSpeed: 3
+  rotationSensitivity: 10
+  rotationAcceleration: 0.45
 --- !u!114 &4483839338802965044
 MonoBehaviour:
   m_ObjectHideFlags: 0

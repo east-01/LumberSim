@@ -119,6 +119,8 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
         newAttachedData.children = new TreeLogData[0];
         TreeOpSet(identifierPath, newAttachedData);
 
+        estimatedValue = null;
+
         // ----- Part of the tree that's just been detached -----
         // Create the data for the new log group to be spawned
         float newLogLength = origLogLength-attachedLength;

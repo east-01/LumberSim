@@ -18,7 +18,7 @@ public class ToolBelt : NetworkBehaviour, IInputListener
 {
     [Header("List of events passed to ToolBeltImpl classes")]
     [SerializeField]
-    private List<string> passedThroughEvents = new() {"Primary"};
+    private List<string> passedThroughEvents = new() {"Primary", "Secondary"};
     [SerializeField]
     private List<ItemImplementations> implementations;
     private Dictionary<Item, ToolBeltImpl> implementationsSorted;
@@ -26,7 +26,7 @@ public class ToolBelt : NetworkBehaviour, IInputListener
     private Player player;
     private ItemMeshRenderer itemRenderer;
 
-    public int ToolbeltIndex { get; private set; } = 0;    
+    public int ToolbeltIndex { get; private set; } = 0;
 
     private void Awake()
     {
@@ -96,11 +96,8 @@ public class ToolBelt : NetworkBehaviour, IInputListener
         return id.hotbarItems[ToolbeltIndex];
     }
 
-    public ToolBeltImpl GetCurrentImplementation() 
-    {
-        Item currentItem = GetCurrentItem();
-        return implementationsSorted[currentItem];
-    }
+    public ToolBeltImpl GetImplementation(Item item) => implementationsSorted[item];
+    public ToolBeltImpl GetCurrentImplementation() => GetImplementation(GetCurrentItem());
 
     public void UpdateRenderer() 
     {

@@ -119,11 +119,18 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
         return position;
     }
 
+    private int? estimatedValue;
+
     public Dictionary<string, string> GetVariables()
     {
-        float value = LumberEvaluator.EvaluateLumber(this, 3f, 1f);
+        if(!estimatedValue.HasValue) {
+            float value = LumberEvaluator.EvaluateLumber(this, 3f, 1f);
+            float maxError = LumberEvaluator.EvaluateTotalLength(this)/5f;
+            estimatedValue = Mathf.RoundToInt(value + UnityEngine.Random.Range(-maxError, maxError));
+        }
+        
         return new Dictionary<string, string>() {
-            {"%PRICE%", $"<color=\"green\">${value.ToString("F2")}</color>"},
+            {"%PRICE%", $"<color=\"green\">~${estimatedValue.Value}</color>"},
         };
     }
 
