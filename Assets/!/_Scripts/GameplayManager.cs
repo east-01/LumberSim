@@ -35,12 +35,14 @@ public class GameplayManager : NetworkBehaviour
     public LumberLobby Lobby;
 
     public PlayerObjectManager PlayerObjectManager { get; private set; }
+    public TradeMarket GlobalMarket { get; private set; }
 
     private void Start() 
     {
         SceneSingletons.Register(this);
 
         PlayerObjectManager = GetComponent<PlayerObjectManager>();
+        GlobalMarket = GetComponent<TradeMarket>();
     }
 
     private void OnEnable() 

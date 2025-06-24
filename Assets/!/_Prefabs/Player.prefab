@@ -462,7 +462,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   camera: {fileID: 4758240217155741764}
   grabDistance: 5
-  maxCarryWeight: 60
+  maxCarryWeight: 40
   rotationSpeed: 3
   rotationSensitivity: 10
   rotationAcceleration: 0.45

@@ -95,6 +95,16 @@ public class Player : NetworkBehaviour, IS3
         if(!localPlayerExists && gameObject.GetComponentInChildren<AudioListener>() != null) {
             gameObject.GetComponentInChildren<AudioListener>().gameObject.SetActive(false);
         }
+
+        // if(Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.I)) {
+        //     float delta = Input.GetKeyDown(KeyCode.U) ? 5 : -5;
+        //     PlayerData pd = PlayerDataRegistry.Instance.GetPlayerData(uid.Value);
+        //     pd.EnsureLumberData();
+        //     GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
+        //     gpd.maxCarryWeight = gpd.maxCarryWeight + delta;
+        //     pd.SetData(gpd);
+        //     BLog.Highlight($"Set carry weight to: {gpd.maxCarryWeight}");
+        // }
     }
 
     public void ConnectPlayer(string uuid, Player player) 

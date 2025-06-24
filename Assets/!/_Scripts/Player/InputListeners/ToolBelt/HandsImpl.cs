@@ -16,8 +16,6 @@ public class HandsImpl : ToolBeltImpl, IInputListener
     [SerializeField]
     private float grabDistance = 5;
     [SerializeField]
-    private float maxCarryWeight = 60;
-    [SerializeField]
     private float rotationSpeed = 5f;
     [SerializeField]
     private float rotationSensitivity = 15f;

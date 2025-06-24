@@ -18,7 +18,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(NetworkTransform))]
 [RequireComponent(typeof(NetworkedAudioController))]
-public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
+public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEvaluator
 {
     [SerializeField]
     private GameObject logPrefab;
@@ -124,7 +124,7 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
     public Dictionary<string, string> GetVariables()
     {
         if(!estimatedValue.HasValue) {
-            float value = LumberEvaluator.EvaluateLumber(this, 3f, 1f);
+            float value = EvaluateSalePrice(gameplayManager.GlobalMarket);
             float maxError = LumberEvaluator.EvaluateTotalLength(this)/5f;
             estimatedValue = Mathf.RoundToInt(value + UnityEngine.Random.Range(-maxError, maxError));
         }
@@ -143,4 +143,7 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable
         reason = "Lumber too heavy";
         return LumberEvaluator.EvaluateTotalWeight(this) <= carryCapacity;
     }
+
+    public float EvaluatePurchasePrice(TradeMarket market) => -1;
+    public float EvaluateSalePrice(TradeMarket market) => LumberEvaluator.EvaluateLumber(this, market.firewood_pricePerFt, market.firewood_radiusMultiplier);
 }
