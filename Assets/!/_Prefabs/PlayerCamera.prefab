@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5056558041594089104}
   - component: {fileID: 7033835814803872886}
+  - component: {fileID: 3427911814525015060}
   - component: {fileID: 6380617917662249056}
   - component: {fileID: 4618458042474039507}
   - component: {fileID: 7284728174683538811}
@@ -53,6 +54,24 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   sensitivity: 0.35
   verticalRotationLimit: 90
+--- !u!114 &3427911814525015060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6862097068055365215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c3bf67f7872db42a00923c3a9f576b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  distance: 5
+  height: 2
+  followSpeed: 10
+  rotationSpeed: 5
+  input: {x: 0, y: 0}
 --- !u!20 &6380617917662249056
 Camera:
   m_ObjectHideFlags: 0

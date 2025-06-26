@@ -1,6 +1,12 @@
 name: Build project
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - bleeding-edge  # Or any branch you want to exclude
+  pull_request:
+    branches-ignore:
+      - bleeding-edge
 
 jobs:
   buildForAllSupportedPlatforms:

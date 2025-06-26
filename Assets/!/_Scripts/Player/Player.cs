@@ -20,6 +20,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInputManager))]
 [RequireComponent(typeof(ToolBelt))]
 [RequireComponent(typeof(AttachBehaviourController))]
+[RequireComponent(typeof(CameraManager))]
 public class Player : NetworkBehaviour, IS3
 {
     public readonly SyncVar<string> uid = new();
@@ -40,6 +41,7 @@ public class Player : NetworkBehaviour, IS3
     [SerializeField]
     private new Camera camera;
     public Camera Camera => camera;
+    public CameraManager CameraManager { get; private set; }
     public FirstPersonCamera FirstPersonCamera => Camera.GetComponent<FirstPersonCamera>();
     [SerializeField]
     private GrabbablePicker grabbablePicker;
@@ -54,6 +56,7 @@ public class Player : NetworkBehaviour, IS3
 #region Initializers
     private void Awake()
     {
+        CameraManager = GetComponent<CameraManager>();
         playerInputManager = GetComponent<PlayerInputManager>();
         attachBehaviourController = GetComponentInChildren<AttachBehaviourController>();
     }

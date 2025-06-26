@@ -1,0 +1,14 @@
+flowchart LR
+    A[PlayerInputManager]-->|Movement inputs|B
+
+    subgraph Vehicle
+        B[VehicleDriver#InputPoll] -->
+        |Reads inputs|C[VehicleDriver#Update] -->
+        |Sets inputs|D[CarController]
+
+    end
+
+
+    a[PlayerActions] -->
+    |InteractAction|b[PlayerActions#HandleInteractWithVehicle] -->
+    E[VehicleDriver#SetDrivingVehicle]-->|Makes driver of|Vehicle

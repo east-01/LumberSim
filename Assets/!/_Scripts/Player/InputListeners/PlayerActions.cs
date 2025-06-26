@@ -13,6 +13,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 [RequireComponent(typeof(Player))]
 [RequireComponent(typeof(ToolBelt))]
+[RequireComponent(typeof(VehicleDriver))]
 [RequireComponent(typeof(NetworkedAudioController))]
 public class PlayerActions : NetworkBehaviour, IInputListener
 {
@@ -24,12 +25,14 @@ public class PlayerActions : NetworkBehaviour, IInputListener
 
     private Player player;
     private ToolBelt toolBelt;
+    private VehicleDriver vehicleDriver;
     private NetworkedAudioController audioController;
 
     private void Awake()
     {
         player = GetComponent<Player>();
         toolBelt = GetComponent<ToolBelt>();
+        vehicleDriver = GetComponent<VehicleDriver>();
         audioController = GetComponent<NetworkedAudioController>();
     }
 
@@ -40,6 +43,11 @@ public class PlayerActions : NetworkBehaviour, IInputListener
 
         switch(context.action.name) {
             case "Interact":
+                if(context.performed && vehicleDriver.isDriving) {
+                    vehicleDriver.ClearDrivingVehicle();
+                    break;
+                }
+    
                 HandleInteract(context);
                 break;       
             case "DropHotbar":
@@ -59,6 +67,8 @@ public class PlayerActions : NetworkBehaviour, IInputListener
 
         if(grabbable.TryGetComponent(out GrabbableItem grabbableItem))
             HandleInteractWithGrabbableItem(grabbableItem);
+        else if(grabbable.TryGetComponent(out Vehicle vehicle))
+            HandleInteractWithVehicle(vehicle);
     }
 
     private void HandleInteractWithGrabbableItem(GrabbableItem grabbableItem) 
@@ -82,6 +92,15 @@ public class PlayerActions : NetworkBehaviour, IInputListener
 
         grabbableItem.GrabbedItem(InstanceFinder.ClientManager.Connection, player.uid.Value);
         toolBelt.UpdateRenderer();
+    }
+
+    private void HandleInteractWithVehicle(Vehicle vehicle) 
+    {
+        BLog.Highlight("Interacted");
+        if(vehicle.HasDriver())
+            return;
+
+        vehicleDriver.SetDrivingVehicle(vehicle.NetworkObject);
     }
 
     private void HandleDropHotbar(InputAction.CallbackContext context) 

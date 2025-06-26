@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 ///   to the player with the standard first person camera controls.
 /// Uses input polling.
 /// </summary>
-public class FirstPersonCamera : MonoBehaviour, IInputListener
+public class FirstPersonCamera : MonoBehaviour
 {
     // Public input variable for mouse movement (set from another script or the Inspector)
     public Vector2 input;
@@ -22,8 +22,6 @@ public class FirstPersonCamera : MonoBehaviour, IInputListener
     // Internal state to track vertical rotation
     private float verticalRotation = 0f;
 
-    public bool Locked = false;
-
     private void Start() 
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -31,14 +29,6 @@ public class FirstPersonCamera : MonoBehaviour, IInputListener
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape)) {
-            Locked = !Locked;
-            Debug.Log("Locked: " + Locked);
-        }
-
-        if(Locked)
-            return;
-
         // TODO: Remove, temp input- true input in InputPoll
         // input = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
@@ -57,15 +47,5 @@ public class FirstPersonCamera : MonoBehaviour, IInputListener
         playerTransform.Rotate(0f, horizontalRotation, 0f);
     }
 
-    public void InputEvent(InputAction.CallbackContext context)
-    {
-
-    }
-
-    public void InputPoll(InputAction action)
-    {
-        if(action.name == "Look") {
-            input = action.ReadValue<Vector2>();
-        }
-    }
+    
 }

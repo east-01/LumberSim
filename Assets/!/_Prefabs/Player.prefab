@@ -168,6 +168,8 @@ GameObject:
   - component: {fileID: 1042140060325308792}
   - component: {fileID: 4483839338802965044}
   - component: {fileID: 6521357351895008424}
+  - component: {fileID: 5732589970795597249}
+  - component: {fileID: 8515082652897079188}
   - component: {fileID: 3402678452535200333}
   - component: {fileID: 9139026534003978452}
   - component: {fileID: 4727115018197788247}
@@ -373,14 +375,20 @@ MonoBehaviour:
   - actionName: Move
     listener: {fileID: 8554514546108795878}
     pollInput: 1
+  - actionName: Move
+    listener: {fileID: 5732589970795597249}
+    pollInput: 1
   - actionName: Sprint
     listener: {fileID: 8554514546108795878}
     pollInput: 1
   - actionName: Jump
     listener: {fileID: 8554514546108795878}
     pollInput: 1
+  - actionName: Jump
+    listener: {fileID: 5732589970795597249}
+    pollInput: 1
   - actionName: Look
-    listener: {fileID: 8870151851350553682}
+    listener: {fileID: 8515082652897079188}
     pollInput: 1
   - actionName: Look
     listener: {fileID: 1042140060325308792}
@@ -420,6 +428,7 @@ MonoBehaviour:
   sprintSpeed: 12
   speedTransitionTime: 0.35
   stepLength: 4.575
+  freezeMovement: 0
   jumpPower: 39.75
   jumpDecay: 10
 --- !u!114 &6160719718300331586
@@ -462,7 +471,6 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   camera: {fileID: 4758240217155741764}
   grabDistance: 5
-  maxCarryWeight: 40
   rotationSpeed: 3
   rotationSensitivity: 10
   rotationAcceleration: 0.45
@@ -535,6 +543,38 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   grabbableItemPrefab: {fileID: 4260847268684243727, guid: 2fa20489cda0c904bb7049ff0244f9da, type: 3}
   itemAssignments: {fileID: 11400000, guid: 7d5e65c1dd8fc83448ed9fadca9468bc, type: 2}
+--- !u!114 &5732589970795597249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398904762131290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b046a0ebcba3dbf4c80110b509bd4294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementInput: {x: 0, y: 0}
+  sprintingInput: 0
+  jumpInput: 0
+  drivingVehicleReadout: 
+--- !u!114 &8515082652897079188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398904762131290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c22f82a41e7a5a648b21b573472cff67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+  Locked: 0
+  firstPersonCamera: {fileID: 8870151851350553682}
+  thirdPersonCamera: {fileID: 3825328319959350320}
 --- !u!114 &3402678452535200333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,7 +827,7 @@ GameObject:
   - component: {fileID: 4718917724592500}
   - component: {fileID: 5395799833079310587}
   m_Layer: 0
-  m_Name: CameraAttachPoint
+  m_Name: FirsterPersonCameraAttachPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1293,6 +1333,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4718917724592500}
     m_Modifications:
+    - target: {fileID: 3427911814525015060, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 4898694727102280}
     - target: {fileID: 4911104156556628646, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
       propertyPath: PositionActive
       value: 1
@@ -1367,6 +1411,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+--- !u!114 &3825328319959350320 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3427911814525015060, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}
+  m_PrefabInstance: {fileID: 1910696623920113700}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c3bf67f7872db42a00923c3a9f576b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!20 &4758240217155741764 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6380617917662249056, guid: c113fbe44b62ae846a47f2e078fd7494, type: 3}

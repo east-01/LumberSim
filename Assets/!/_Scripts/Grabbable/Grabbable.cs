@@ -34,6 +34,10 @@ public class Grabbable : NetworkBehaviour, IS3
         
         return info;
     } }
+    [SerializeField]
+    private bool zeroGravity = true;
+    [SerializeField]
+    private bool allowRotation = true;
     [SerializeField] 
     private float velocitySmoothing = 0.1f;
     [SerializeField]
@@ -116,7 +120,7 @@ public class Grabbable : NetworkBehaviour, IS3
     }
 
 #region Grabbing/Movement
-    public void StartGrab(NetworkConnection grabber, string grabberUID, Vector3 hitPoint) 
+    public virtual void StartGrab(NetworkConnection grabber, string grabberUID, Vector3 hitPoint) 
     {
         IGrabbable grabbableInterface = GetIGrabbable();
         if(grabbableInterface != null && !grabbableInterface.CanPickup(grabber, grabberUID, out string reason)) {
@@ -129,7 +133,8 @@ public class Grabbable : NetworkBehaviour, IS3
         this.grabber = grabber;
         this.grabberUID = grabberUID;
         localGrabPointLocal = transform.InverseTransformPoint(hitPoint);
-        rb.useGravity = false;
+        if(zeroGravity)
+            rb.useGravity = false;
 
         if(!InstanceFinder.IsServerStarted) {
             ServerRPCStartGrab(grabber, grabberUID, hitPoint);
@@ -144,7 +149,7 @@ public class Grabbable : NetworkBehaviour, IS3
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCStartGrab(NetworkConnection grabber, string grabberUID, Vector3 hitPoint) => StartGrab(grabber, grabberUID, hitPoint);
 
-    public void StopGrab() 
+    public virtual void StopGrab() 
     {
         NetworkConnection grabberBackup = this.grabber;
         string grabberUIDBackup = this.grabberUID;
@@ -163,12 +168,14 @@ public class Grabbable : NetworkBehaviour, IS3
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCStopGrab() => StopGrab();
 
-    public void UpdatePositionAndRotation(Vector3 targetPosition, Quaternion rotationDelta)
+    public virtual void UpdatePositionAndRotation(Vector3 targetPosition, Quaternion rotationDelta)
     {
         if(grabber == null || !grabber.IsValid)
             return;
 
-        Quaternion newRot = UpdateRotation(rotationDelta);
+        Quaternion newRot = rb.rotation;
+        if(allowRotation)
+            newRot = UpdateRotation(rotationDelta);
         UpdatePosition(targetPosition, newRot);        
 
         if(!InstanceFinder.IsServerStarted)

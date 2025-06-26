@@ -27,42 +27,21 @@ public class CarController : MonoBehaviour
     private Transform rearLeftWheelTransform, rearRightWheelTransform;
 
     private void FixedUpdate() {
-        GetInput();
         HandleMotor();
         HandleSteering();
         UpdateWheels();
     }
 
-    private void GetInput() {
-        verticalInput = 0f;
-        horizontalInput = 0f;
-
-        Vector3 direction = Vector3.zero;
-        if(Input.GetKey(KeyCode.U)) {
-            verticalInput = 1f;
-        } 
-        
-        if(Input.GetKey(KeyCode.H)) {
-            horizontalInput = -1f;
-        } 
-        
-        if(Input.GetKey(KeyCode.J)) {
-            verticalInput = -1f;
-        } 
-        
-        if(Input.GetKey(KeyCode.K)) {
-            horizontalInput = 1f;
-        }
-
-        BLog.Highlight($"Hor: {horizontalInput} ver: {verticalInput}");
-
-        // Breaking Input
-        isBreaking = Input.GetKey(KeyCode.Space);
+    public void SetInput(float verticalInput, float horizontalInput, bool isBreaking) 
+    {
+        this.horizontalInput = horizontalInput;
+        this.verticalInput = verticalInput;
+        this.isBreaking = isBreaking;
     }
 
     private void HandleMotor() {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        rearLeftWheelCollider.motorTorque = verticalInput * motorForce;
+        rearRightWheelCollider.motorTorque = verticalInput * motorForce;
         currentbreakForce = isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }

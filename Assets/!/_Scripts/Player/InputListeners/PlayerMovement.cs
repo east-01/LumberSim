@@ -26,6 +26,8 @@ public class PlayerMovement : MonoBehaviour, IInputListener
     [Header("Other")]
     public float stepLength = 0.5f;
 
+    public bool freezeMovement = false;
+
     /// <summary>
     /// The actual speed of the player.
     /// </summary>
@@ -70,6 +72,9 @@ public class PlayerMovement : MonoBehaviour, IInputListener
 
     private void Update()
     {
+        if(GetComponent<VehicleDriver>().isDriving)
+            return;
+
         CharacterController cc = GetComponent<CharacterController>();
 
         // Check if the jump button was just pressed

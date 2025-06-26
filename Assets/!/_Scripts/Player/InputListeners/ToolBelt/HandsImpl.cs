@@ -63,7 +63,7 @@ public class HandsImpl : ToolBeltImpl, IInputListener
             PickupGrabbable(context.performed);
         } else if(context.action.name == "Secondary") {
             rotatingItem = context.performed;
-            player.FirstPersonCamera.Locked = context.performed;
+            player.CameraManager.Locked = context.performed;
         }
     }
 

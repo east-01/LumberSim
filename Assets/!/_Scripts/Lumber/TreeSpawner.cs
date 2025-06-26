@@ -63,4 +63,11 @@ public class TreeSpawner : MonoBehaviour, IS3
             tree = gameplayManager.SpawnTree(transform.position);
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Mesh mesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
+        Gizmos.DrawWireMesh(mesh, transform.position+new Vector3(0, mesh.bounds.size.y/2f, 0), transform.rotation, transform.localScale);
+    }
 }
