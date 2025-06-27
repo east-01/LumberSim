@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4c6f248bad24e46b9525f8fe652222, type: 3}
+  m_Name: WorkTruck
+  m_EditorClassIdentifier: 
+  DisplayName: Work Truck
+  Icon: {fileID: 0}
+  DescriptionLines: []
+  OutlineColors:
+  - {r: 0.9245283, g: 0.91058594, b: 0.17007834, a: 0.78431374}
+  - {r: 0.6981132, g: 0.6884902, b: 0.23380208, a: 0.4745098}

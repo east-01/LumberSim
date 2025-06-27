@@ -9,17 +9,16 @@ using UnityEngine;
 /// <summary>
 /// Connects players to control the vehicle.
 /// </summary>
-[RequireComponent(typeof(CarController))]
 public class Vehicle : NetworkBehaviour, IGrabbable
 {
     private readonly SyncVar<string> driverUID = new();
+    [SerializeField]
+    private Transform playerAttachPoint;
+    public Transform PlayerAttachPoint => playerAttachPoint;
 
-    public CarController CarController { get; private set; }
-
-    private void Awake() 
-    {
-        CarController = GetComponent<CarController>();
-    }
+    [SerializeField]
+    private CarController carController;
+    public CarController CarController => carController;
 
     private void Update()
     {

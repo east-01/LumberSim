@@ -32,10 +32,12 @@ public class VehicleDriver : MonoBehaviour, IInputListener
     {
         drivingVehicleReadout = drivingVehicle != null ? drivingVehicle.ToString() : "null";
         if(drivingVehicle != null) {
-            transform.position = drivingVehicle.transform.position;
+            Vehicle vehicle = drivingVehicle.GetComponent<Vehicle>();
+
+            transform.position = vehicle.PlayerAttachPoint.position;
             // characterController.Move(drivingVehicle.transform.position-transform.position);
 
-            drivingVehicle.GetComponent<Vehicle>().CarController.SetInput(movementInput.y, movementInput.x, jumpInput);
+            vehicle.CarController.SetInput(movementInput.y, movementInput.x, jumpInput);
         }
     }
 

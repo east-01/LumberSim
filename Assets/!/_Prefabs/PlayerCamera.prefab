@@ -67,11 +67,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  distance: 5
-  height: 2
-  followSpeed: 10
-  rotationSpeed: 5
   input: {x: 0, y: 0}
+  distance: 12.5
+  sensitivity: 1.5
+  smoothTime: 0.1
+  minVerticalAngle: -30
+  maxVerticalAngle: 60
 --- !u!20 &6380617917662249056
 Camera:
   m_ObjectHideFlags: 0

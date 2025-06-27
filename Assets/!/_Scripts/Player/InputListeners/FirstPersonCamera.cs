@@ -32,6 +32,8 @@ public class FirstPersonCamera : MonoBehaviour
         // TODO: Remove, temp input- true input in InputPoll
         // input = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
+        transform.localPosition = Vector3.zero;
+
         // Calculate the rotation amounts based on input and sensitivity
         float horizontalRotation = input.x * sensitivity;
         float verticalDelta = input.y * sensitivity;

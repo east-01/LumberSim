@@ -19,6 +19,12 @@ public class CameraManager : MonoBehaviour, IInputListener
         mode = Mode.FIRST_PERSON;   
     }
 
+    private void Update()
+    {
+        firstPersonCamera.enabled = mode == Mode.FIRST_PERSON;
+        thirdPersonCamera.enabled = mode == Mode.THIRD_PERSON;
+    }
+
     public void InputEvent(InputAction.CallbackContext context)
     {
 
@@ -30,6 +36,9 @@ public class CameraManager : MonoBehaviour, IInputListener
             Locked = !Locked;
             Debug.Log("Locked: " + Locked);
         }
+
+        firstPersonCamera.input = Vector2.zero;
+        thirdPersonCamera.input = Vector2.zero;
 
         if(Locked)
             return;
@@ -47,12 +56,6 @@ public class CameraManager : MonoBehaviour, IInputListener
                     break;
             }
         }
-    }
-
-    private void Update()
-    {
-        firstPersonCamera.enabled = mode == Mode.FIRST_PERSON;
-        thirdPersonCamera.enabled = mode == Mode.THIRD_PERSON;
     }
 
     public enum Mode { FIRST_PERSON, THIRD_PERSON, WORLD }

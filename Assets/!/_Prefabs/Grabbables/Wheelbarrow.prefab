@@ -362,9 +362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec91dc945131dc34b908c41b230e78ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6405428890844427173}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6405428890844427173}
   defaultSelectColor: {r: 0, g: 0, b: 0, a: 0}
   defaultNormalColor: {r: 0, g: 0, b: 0, a: 0}
   info: {fileID: 11400000, guid: 557a6a7020a4ac545808029149f4ba0b, type: 2}
@@ -373,8 +373,10 @@ MonoBehaviour:
   velocitySmoothing: 0.1
   maxPercievedVelocity: 10
   rotationAccel: 720
-  hingeAxisLocal: {x: 0, y: 1, z: 0}
-  hingeAnchorOverride: {fileID: 0}
+  usePointPivot: 1
+  useCharacterController: 0
+  controllerSkinWidth: 0.1
+  controllerSlopeLimit: 45
 --- !u!114 &818008477742373353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,9 +389,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 6405428890844427173}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6405428890844427173}
   _componentConfiguration: 0
   _synchronizeParent: 0
   _packing:
@@ -434,7 +436,9 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 3208614150814306520}
+  - {fileID: 818008477742373353}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -445,7 +449,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedValusSet: 0
+  _initializedValusSet: 1
   NetworkObserver: {fileID: 0}
   _enablePrediction: 0
   _predictionType: 0
@@ -460,14 +464,14 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 1019004873775739090
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    LocalScale: {x: 0, y: 0, z: 0}
+    Position: {x: 16.6, y: 1.38, z: 7.45}
+    Rotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+    LocalScale: {x: 3, y: 3, z: 3}
 --- !u!143 &3792853737670347224
 CharacterController:
   m_ObjectHideFlags: 0

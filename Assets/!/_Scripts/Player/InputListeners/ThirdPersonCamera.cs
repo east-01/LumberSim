@@ -2,61 +2,45 @@ using UnityEngine;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
-    [Header("Target")]
+    [Header("References")]
     public Transform target;
 
-    [Header("Offsets")]
+    [Header("Orbit Settings")]
+    public Vector2 input; // External input: (x = horizontal, y = vertical)
     public float distance = 5f;
-    public float height   = 2f;
+    public float sensitivity = 3f;
+    public float smoothTime = 0.1f;
 
-    [Header("Speeds")]
-    public float followSpeed   = 10f;
-    public float rotationSpeed = 5f;
+    [Header("Vertical Rotation Limits")]
+    public float minVerticalAngle = -30f;
+    public float maxVerticalAngle = 60f;
 
-    [Header("External Input")]
-    // Set this from any other script before LateUpdate runs
-    public Vector2 input;
+    private Vector2 currentRotation;
+    private Vector2 rotationVelocity;
 
-    private float yaw;
-    private float pitch;
-
-    void Start()
+    private void LateUpdate()
     {
-        if (target == null)
-        {
-            Debug.LogError("ThirdPersonCamera: No target assigned!");
-            enabled = false;
-            return;
-        }
+        if (!target) return;
 
-        // init from current orientation
-        Vector3 angles = transform.eulerAngles;
-        yaw   = angles.y;
-        pitch = angles.x;
+        // Add external input to rotation (scaled by sensitivity)
+        currentRotation.x += input.x * sensitivity;
+        currentRotation.y -= input.y * sensitivity; // invert Y if desired
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible   = false;
-    }
+        // Clamp vertical rotation
+        currentRotation.y = Mathf.Clamp(currentRotation.y, minVerticalAngle, maxVerticalAngle);
 
-    void LateUpdate()
-    {
-        // apply external input
-        Vector2 look = input;
+        // Smooth rotation
+        Vector2 smoothRotation = Vector2.SmoothDamp(
+            transform.eulerAngles, 
+            currentRotation, 
+            ref rotationVelocity, 
+            smoothTime);
 
-        // optionally clear so it doesn't accumulate if you forget to set it
-        input = Vector2.zero;
+        // Calculate rotation and position
+        Quaternion rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0f);
+        Vector3 offset = rotation * new Vector3(0f, 0f, -distance);
 
-        // orbit math
-        yaw   += look.x * rotationSpeed;
-        pitch  = Mathf.Clamp(pitch - look.y * rotationSpeed, -35f, 60f);
-
-        Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 desiredPos = target.position
-                             - rot * Vector3.forward * distance
-                             + Vector3.up * height;
-
-        // smooth follow
-        transform.position = Vector3.Lerp(transform.position, desiredPos, followSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rot,             followSpeed * Time.deltaTime);
+        transform.position = target.position + offset;
+        transform.LookAt(target);
     }
 }

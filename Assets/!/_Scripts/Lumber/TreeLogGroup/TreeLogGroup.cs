@@ -27,11 +27,13 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
 
     private GameplayManager gameplayManager;
     private NetworkedAudioController audioController;
+    private Rigidbody rb;
 
 #region Initializers
     private void Awake()
     {
         audioController = GetComponent<NetworkedAudioController>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnEnable() 
