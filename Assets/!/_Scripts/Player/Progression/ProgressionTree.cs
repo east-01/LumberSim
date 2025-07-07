@@ -128,7 +128,7 @@ public class ProgressionTree : ScriptableObject
                 // This progression has not been unlocked
                 // Get the missing metrics
                 List<string> missingMetrics = new();
-                foreach(ProgressionMetric targetMetric in PointByID[pointID].targetMetrics) {
+                foreach(ProgressionMetric targetMetric in PointByID[pointID].targetMetrics.Select(tm => tm.metric)) {
                     string targMetricName = targetMetric.GetName();
                     bool hasCompletedMetric = progression.HasMetric(targMetricName) && progression.GetMetric(targetMetric.GetName()).Evaluate(targetMetric);
                     if(!hasCompletedMetric)

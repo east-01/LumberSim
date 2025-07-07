@@ -15,6 +15,7 @@ public class ProgressionManager : NetworkBehaviour
 {
     [SerializeField]
     private ProgressionTree progressionTree;
+    public ProgressionTree ProgressionTree => progressionTree;
 
     public readonly SyncVar<ProgressionTree.EvaluationResults> ProgressionResults = new();
     private Player player;
@@ -55,7 +56,7 @@ public class ProgressionManager : NetworkBehaviour
         }
     }
 
-    private void UpdateProgressionResults() 
+    public void UpdateProgressionResults() 
     {
         if(!InstanceFinder.IsServerStarted) {
             ServerRPCUpdateProgressionResults();

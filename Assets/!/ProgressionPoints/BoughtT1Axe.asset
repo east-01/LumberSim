@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: BoughtT1Axe
   m_EditorClassIdentifier: 
   progressionID: BT1Axe
-  progressionDisplayName: Buy T1 Axe
+  progressionDisplayName: Getting started
   progressionDescription: Buy the first tier axe from the shack.
+  price: 0
   targetMetrics:
-  - type: 0
-    name: BoughtT1Axe
-    boolValue: 1
-    intValue: 0
-    floatValue: 0
+  - metric:
+      type: 0
+      name: BoughtT1Axe
+      boolValue: 1
+      intValue: 0
+      floatValue: 0
+    displayName: Buy Tier 1 Axe
+  predecessors: []

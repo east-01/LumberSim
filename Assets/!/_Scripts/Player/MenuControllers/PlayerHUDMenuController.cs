@@ -12,6 +12,9 @@ using UnityEngine;
 public class PlayerHUDMenuController : MenuController
 {
 
+    public static readonly string SUBMENU_IN_GAME = "InGame";
+    public static readonly string SUBMENU_PROGRESSION = "Progression";
+
     [Header("References")]
     [SerializeField]
     private GrabbableRenderer grabbableRenderer;

@@ -1,4 +1,5 @@
 using EMullen.Core;
+using EMullen.MenuController;
 using EMullen.PlayerMgmt;
 using FishNet;
 using FishNet.Connection;
@@ -54,6 +55,9 @@ public class PlayerActions : NetworkBehaviour, IInputListener
             case "DropHotbar":
                 HandleDropHotbar(context);
                 break;       
+            case "ToggleMenu":
+                HandleToggleMenu(context);
+                break;
         }
     }
 
@@ -152,6 +156,23 @@ public class PlayerActions : NetworkBehaviour, IInputListener
     }
     [ServerRpc(RequireOwnership =false)]
     private void ServerRPCSpawnDropItem(Item item, NetworkConnection owner) => SpawnDropItem(item, owner);
+
+    private void HandleToggleMenu(InputAction.CallbackContext context) 
+    {
+        if(!context.performed)
+            return; 
+
+        PlayerHUDMenuController hud = player.GetHUD();
+        MenuController progSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_PROGRESSION);
+        MenuController igSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_IN_GAME);
+        if(progSubmenu.IsOpen) {
+            progSubmenu.Close();
+            igSubmenu.Open();
+        } else {
+            igSubmenu.Close();
+            progSubmenu.Open();
+        }
+    }
 
     public void InputPoll(InputAction action) {}
 

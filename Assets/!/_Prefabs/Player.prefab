@@ -317,6 +317,7 @@ MonoBehaviour:
   camera: {fileID: 4758240217155741764}
   grabbablePicker: {fileID: 8230513912879713399}
   playerTransactionManager: {fileID: 5395464676223734802}
+  progressionManager: {fileID: 6082958737413595089}
 --- !u!114 &7978867648418830402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,6 +442,9 @@ MonoBehaviour:
     listener: {fileID: 6521357351895008424}
     pollInput: 0
   - actionName: DropHotbar
+    listener: {fileID: 6521357351895008424}
+    pollInput: 0
+  - actionName: ToggleMenu
     listener: {fileID: 6521357351895008424}
     pollInput: 0
 --- !u!114 &8554514546108795878

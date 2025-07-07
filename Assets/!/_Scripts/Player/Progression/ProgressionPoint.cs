@@ -10,11 +10,12 @@ public class ProgressionPoint : ScriptableObject
     public string progressionDescription;
     public float price;
 
-    public List<ProgressionMetric> targetMetrics;
+    public List<ProgressionMetricData> targetMetrics;
     public List<ProgressionPoint> predecessors;
 
-    public bool CanUnlock(ProgressionData data) 
-    {
-        return true;
+    [Serializable]
+    public struct ProgressionMetricData {
+        public ProgressionMetric metric;
+        public string displayName;
     }
 }

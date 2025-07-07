@@ -57,6 +57,9 @@ public class Player : NetworkBehaviour, IS3
     [SerializeField]
     private PlayerTransactionManager playerTransactionManager;
     public PlayerTransactionManager PlayerTransactionManager => playerTransactionManager;
+    [SerializeField]
+    private ProgressionManager progressionManager;
+    public ProgressionManager ProgressionManager => progressionManager;
 
 #region Initializers
     private void Awake()
