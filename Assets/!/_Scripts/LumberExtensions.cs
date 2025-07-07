@@ -9,5 +9,8 @@ public static class LumberExtensions
 
         if(!pd.HasData<InventoryData>())
             pd.SetData(InventoryData.CreateDefault(pd.GetUID()));
+        
+        if(!pd.HasData<ProgressionData>())
+            pd.SetData(ProgressionData.CreateDefault(pd.GetUID()));
     } 
 }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EMullen.Core;
+using EMullen.Networking;
+using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
 using FishNet;
 using FishNet.Component.Transforming;
@@ -90,8 +92,18 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
     [ServerRpc(RequireOwnership = false)]
     private void ServerRpcHitLog(SingleHitData hitPoint) => HitLog(hitPoint);
 
+    public float GetRequiredHitsToSplit(int[] treeLogIP) 
+    {
+        TreeLogData targLogData = TreeOpGet(treeLogIP).Data;
+        return targLogData.radius*2;
+    }
+
     public void SplitLog(SingleHitData hitPoint) 
     {
+        BLog.Highlight($"Should award split: {ShouldAwardSplit()}");
+        if(ShouldAwardSplit())
+            AwardSplit(hitPoint.owner);
+
         int[] identifierPath = hitPoint.identifierPath;
         Vector3 hitGlobal = hitPoint.location;
         TreeLog hitLog = TreeOpGet(identifierPath);
@@ -135,10 +147,27 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
         newGroup.ShouldPrune = true;
     }
 
-    public float GetRequiredHitsToSplit(int[] treeLogIP) 
+    public bool ShouldAwardSplit() 
     {
-        TreeLogData targLogData = TreeOpGet(treeLogIP).Data;
-        return targLogData.radius*2;
+        return TryGetComponent(out ChoppableTree tree) && rootData.Value.children.Length > 0;
+    }
+
+    public void AwardSplit(NetworkConnection owner) 
+    {
+        foreach(PlayerData pd in PlayerDataRegistry.Instance.GetAllData()) {            
+            if(pd.GetData<NetworkIdentifierData>().GetNetworkConnection() != owner)
+                continue;
+            
+            pd.EnsureLumberData();
+
+            ProgressionData progression = pd.GetData<ProgressionData>();
+            if(!progression.HasMetric(MetricNames.CHOPPED_TREES))
+                progression.AddMetric(new ProgressionMetric(MetricNames.CHOPPED_TREES, ProgressionMetric.MetricType.Integer, 0));
+            int treesChopped = progression.GetMetric(MetricNames.CHOPPED_TREES).GetIntValue();
+            progression.GetMetric(MetricNames.CHOPPED_TREES).SetValue(treesChopped + 1);
+            pd.SetData(progression);
+            BLog.Highlight($"Player {pd.GetUID()} chopped {progression.GetMetric(MetricNames.CHOPPED_TREES).GetIntValue()} tree(s)");
+        }
     }
 
     private void PruneTinyLogs() 

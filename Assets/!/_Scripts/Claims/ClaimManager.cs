@@ -10,7 +10,6 @@ public class ClaimManager : MonoBehaviour
     [SerializeField]
     private float targetLineSize;
 
-
     private void Update()
     {
         lineRenderer.SetPosition(0, new(-targetLineSize, 0, -targetLineSize));

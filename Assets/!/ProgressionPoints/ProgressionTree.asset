@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 614bc24d4ffe3294abd9440e21033917, type: 3}
+  m_Name: ProgressionTree
+  m_EditorClassIdentifier: 
+  progressionPoints:
+  - {fileID: 11400000, guid: 3b27bfaee0a2a4c46a0f4189a520c772, type: 2}
+  - {fileID: 11400000, guid: fd34e3165e8465246ac89a1e916710ec, type: 2}
+  - {fileID: 11400000, guid: 1b240f58d8ba1c74488938052c2a4f61, type: 2}

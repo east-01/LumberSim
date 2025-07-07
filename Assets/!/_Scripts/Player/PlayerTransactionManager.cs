@@ -1,0 +1,110 @@
+
+using System;
+using EMullen.PlayerMgmt;
+using FishNet;
+using FishNet.Connection;
+using FishNet.Object;
+using UnityEngine;
+
+/// <summary>
+/// Interacts with the GeneralPlayerData's balance value to purchase various things.
+/// For items, the player can purchase them to make the player the owner of the object.
+/// </summary>
+public class PlayerTransactionManager : NetworkBehaviour 
+{
+    [SerializeField]
+    private ItemAssignments itemAssignments;
+
+    private Player player;
+
+    private void Awake()
+    {
+        player = GetComponent<Player>();   
+    }
+
+    public void PurchaseGrabbableItem(NetworkObject grabbableItem) 
+    {
+        if(grabbableItem == null)
+            throw new InvalidOperationException($"Tried to purchase GrabbableItem, NetworkObject is null.");
+        if(!grabbableItem.TryGetComponent(out GrabbableItem item))
+            throw new InvalidOperationException($"Tried to purchase NetworkObject named \"{grabbableItem.name}\" as a GrabbableItem, no GrabbableItem found.");
+
+        // Perform checks on source of grab
+        if(grabbableItem.Owner == LocalConnection) {
+            Debug.LogError("Can't purchase grabbable item, already owner of it.");
+            return;
+        }
+
+        PlayerData pd = player.PlayerData;
+        GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
+        if(gpd.balance < itemAssignments.Get(item.item.Value).cost) {
+            player.GetHUD().ShowWarning($"Can't afford", 2f);
+            return;
+        }
+
+       InventoryData inventoryData = pd.GetData<InventoryData>();
+        if(!inventoryData.CanAddItemToHotbar()) {
+            player.GetHUD().ShowWarning($"No space", 2f);
+            return;
+        }
+
+        PerformPurchase(LocalConnection, player.uid.Value, grabbableItem);
+    }
+
+    private void PerformPurchase(NetworkConnection purchaseConn, string purchaseUID, NetworkObject grabbableItem) 
+    {
+        if(grabbableItem == null)
+            throw new InvalidOperationException($"Tried to purchase GrabbableItem, NetworkObject is null.");
+        if(!grabbableItem.TryGetComponent(out GrabbableItem item))
+            throw new InvalidOperationException($"Tried to purchase NetworkObject named \"{grabbableItem.name}\" as a GrabbableItem, no GrabbableItem found.");
+
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRPCPerformPurchase(purchaseConn, purchaseUID, grabbableItem);
+            return;
+        }
+
+        float cost = itemAssignments.Get(item.item.Value).cost;
+
+        PlayerData pd = PlayerDataRegistry.Instance.GetPlayerData(purchaseUID);
+        GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
+        if(gpd.balance < cost) {
+            Debug.LogError($"Player tried to purhcase item \"{item.item.Value}\" but couldn't afford.");
+            return;
+        }
+
+        InventoryData inventoryData = pd.GetData<InventoryData>();
+        if(!inventoryData.CanAddItemToHotbar()) {
+            Debug.LogError($"Player tried to purhcase item \"{item.item.Value}\" but had no room.");
+            return;
+        }
+
+        // Perform data changes
+        inventoryData.AddItemToHotbar(item.item.Value);
+        pd.SetData(inventoryData);
+
+        gpd.balance -= cost;
+        pd.SetData(gpd);
+
+        player.GetNetworkedAudioController().PlaySound("purchased");
+
+        // Update the progression for buying a type of item
+        UpdateProgression_ItemPurchased(pd, item.item.Value);
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerRPCPerformPurchase(NetworkConnection purhcaseConn, string purchaseUID, NetworkObject grabbableItem) => PerformPurchase(purhcaseConn, purchaseUID, grabbableItem);
+
+    private void UpdateProgression_ItemPurchased(PlayerData pd, Item item) 
+    {
+        pd.EnsureLumberData();
+        ProgressionData progression = pd.GetData<ProgressionData>();
+
+        if(item == Item.AXE_T1) {
+            if(!progression.HasMetric(MetricNames.BOUGHT_T1_AXE)) 
+                progression.AddMetric(new ProgressionMetric(MetricNames.BOUGHT_T1_AXE, ProgressionMetric.MetricType.Boolean, false));
+
+            progression.GetMetric(MetricNames.BOUGHT_T1_AXE).SetValue(true);           
+            pd.SetData(progression);
+        }
+    }
+}

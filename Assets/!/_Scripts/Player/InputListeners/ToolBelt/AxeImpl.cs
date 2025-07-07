@@ -119,8 +119,8 @@ public class AxeImpl : ToolBeltImpl
 
     private void Secondary(AxeInfo axeInfo) 
     {
-        BLog.Highlight($"Swung with axe progess: {AxeSwingProgress}");
-        BLog.Highlight($"Swung in state: {Phase}");
+        // BLog.Highlight($"Swung with axe progess: {AxeSwingProgress}");
+        // BLog.Highlight($"Swung in state: {Phase}");
 
         switch (Phase)
         {
@@ -131,7 +131,7 @@ public class AxeImpl : ToolBeltImpl
                 targetCriticalValue = UnityEngine.Random.Range(0.55f, 0.8f);
 
                 Phase = AxePhase.SWINGING;
-                BLog.Highlight($"Phase is now {Phase}");
+                // BLog.Highlight($"Phase is now {Phase}");s
                 break;
 
             case AxePhase.SWINGING:
@@ -174,7 +174,7 @@ public class AxeImpl : ToolBeltImpl
         else 
             axeCriticalBarController.PlaySmallHit();
 
-        BLog.Highlight("hitPower multiplier: " + powerMultiplier + " TODO: Make this a particle effect");
+        // BLog.Highlight("hitPower multiplier: " + powerMultiplier + " TODO: Make this a particle effect");
 
         int[] identifierPath = args.log.GetIdentifierPath();
         TreeLogGroup.SingleHitData hitData = new TreeLogGroup.SingleHitData(identifierPath, args.hit.point, hitPower, LocalConnection);

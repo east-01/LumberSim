@@ -1,0 +1,13 @@
+Progression metric: 
+ - Has a name to identify it
+ - A metric of progression in the game, can be a:
+   - boolean value (player bought something)
+   - int value (player chopped x trees)
+   - float value (player accumulated x money)
+Progression point:
+ - An unlockable point of progression in the game
+ - Has an arbitrary list of target progression metrics. Each progression metric must evaluate (see
+   ProgressionMetric#Evaluate for details) to true for it to be unlockable.
+Progression tree: 
+ - Dictates the order of ProgressionPoints, using ProgressionTreePoints.
+   - A ProgressionTreePoint holds a ProgressionPoint 

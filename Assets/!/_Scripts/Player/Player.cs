@@ -1,4 +1,5 @@
 using System;
+using System.Transactions;
 using EMullen.Core;
 using EMullen.Networking;
 using EMullen.PlayerMgmt;
@@ -52,6 +53,10 @@ public class Player : NetworkBehaviour, IS3
     public PlayerHUDMenuController GetHUD() => GetComponentInChildren<PlayerHUDMenuController>();
     public NetworkedAudioController GetNetworkedAudioController() => GetComponent<NetworkedAudioController>();
     public ToolBelt GetToolBelt() => GetComponent<ToolBelt>();
+    
+    [SerializeField]
+    private PlayerTransactionManager playerTransactionManager;
+    public PlayerTransactionManager PlayerTransactionManager => playerTransactionManager;
 
 #region Initializers
     private void Awake()

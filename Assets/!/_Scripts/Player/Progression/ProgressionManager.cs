@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using EMullen.Core;
+using EMullen.PlayerMgmt;
+using FishNet;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using UnityEngine;
+
+/// <summary>
+/// The ProgressionManager sits on the player and holds the progression tree and evaluation results 
+///   for this specific player.
+/// </summary>
+public class ProgressionManager : NetworkBehaviour 
+{
+    [SerializeField]
+    private ProgressionTree progressionTree;
+
+    public readonly SyncVar<ProgressionTree.EvaluationResults> ProgressionResults = new();
+    private Player player;
+
+    private void Awake()
+    {
+        player = GetComponent<Player>();
+    }
+
+    private void OnEnable()
+    {
+        PlayerDataRegistry.Instance.PlayerDataUpdatedEvent += PlayerDataRegistry_PlayerDataUpdated;        
+    }
+
+    private void OnDisable()
+    {
+        PlayerDataRegistry.Instance.PlayerDataUpdatedEvent -= PlayerDataRegistry_PlayerDataUpdated;
+    }
+
+    private void PlayerDataRegistry_PlayerDataUpdated(PlayerData playerData, PlayerDataClass newData)
+    {
+        List<Type> whitelistedTypes = new() { typeof(ProgressionData), typeof(GeneralPlayerData) };
+        if(playerData.GetUID() == player.uid.Value && whitelistedTypes.Contains(newData.GetType()))
+            UpdateProgressionResults();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.L)) {
+            UpdateProgressionResults();
+            BLog.Highlight($"Can unlock: {string.Join(", ", ProgressionResults.Value.canUnlock)}, next steps: {string.Join(", ", ProgressionResults.Value.nextSteps.Keys)}");
+        } else if(Input.GetKeyDown(KeyCode.K)) {
+            UpdateProgressionResults();
+            if(ProgressionResults.Value.canUnlock.Count > 0) {
+                string toUnlock = ProgressionResults.Value.canUnlock[0];
+                UnlockProgressionPoint(toUnlock);
+            }
+        }
+    }
+
+    private void UpdateProgressionResults() 
+    {
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRPCUpdateProgressionResults();
+            return;
+        }
+
+        if(progressionTree == null) 
+            throw new InvalidOperationException("Can't update progression results, there is no progression tree.");
+
+        ProgressionResults.Value = progressionTree.Evaluate(player.PlayerData);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerRPCUpdateProgressionResults() => UpdateProgressionResults();
+
+    public void UnlockProgressionPoint(string progressionPointID) 
+    {
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRPCUnlockProgressionPoint(progressionPointID);
+            return;
+        }
+
+        UpdateProgressionResults();
+
+        if(!ProgressionResults.Value.canUnlock.Contains(progressionPointID))
+            throw new InvalidOperationException($"Player tried to unlock progression point \"{progressionPointID}\" when they can't.");
+
+        PlayerData pd = player.PlayerData;
+        GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
+        gpd.balance -= progressionTree.PointByID[progressionPointID].price;
+        player.PlayerData.SetData(gpd);
+
+        ProgressionData progression = pd.GetData<ProgressionData>();
+        progression.unlockedPoints.Add(progressionPointID);
+        pd.SetData(progression);
+
+        player.GetNetworkedAudioController().PlaySound("purchased");
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerRPCUnlockProgressionPoint(string progressionPointID) => UnlockProgressionPoint(progressionPointID);
+
+}

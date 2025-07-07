@@ -4,6 +4,7 @@ using FishNet;
 using FishNet.Connection;
 using FishNet.Object;
 using UnityEditor;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -77,26 +78,24 @@ public class PlayerActions : NetworkBehaviour, IInputListener
         if(item == Item.NONE)
             return;
 
-        if(grabbableItem.Owner.IsValid && grabbableItem.Owner != InstanceFinder.ClientManager.Connection)
-            return;
-
         PlayerData pd = player.PlayerData;
         pd.EnsureLumberData();
 
-        ItemInfo info = itemAssignments.Get(item);
-
-        if(!grabbableItem.Owner.IsValid && pd.GetData<GeneralPlayerData>().balance < info.cost) {
-            player.GetHUD().ShowWarning($"Can't afford", 2f);
-            return;
+        if(grabbableItem.Owner.IsValid) {
+            if(grabbableItem.IsOwner) {
+                grabbableItem.GrabbedItem(InstanceFinder.ClientManager.Connection, player.uid.Value);
+            } else {
+                player.GetHUD().ShowWarning($"You're not the owner of this item.", 3f);
+            }
+        } else {
+            player.PlayerTransactionManager.PurchaseGrabbableItem(grabbableItem.NetworkObject);
         }
 
-        grabbableItem.GrabbedItem(InstanceFinder.ClientManager.Connection, player.uid.Value);
         toolBelt.UpdateRenderer();
     }
 
     private void HandleInteractWithVehicle(Vehicle vehicle) 
     {
-        BLog.Highlight("Interacted");
         if(vehicle.HasDriver())
             return;
 

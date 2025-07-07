@@ -13,7 +13,7 @@ using FishNet.Object.Synchronizing;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class GrabbableItem : NetworkBehaviour, IGrabbable, IS3
+public class GrabbableItem : NetworkBehaviour, IGrabbable
 {
     [SerializeField]
     private ItemAssignments itemAssignments;
@@ -26,8 +26,6 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable, IS3
     public readonly SyncVar<Item> item = new();
     [SerializeField]
     private Item itemReadout;
-
-    private GameplayManager gameplayManager;
 
     private void Awake()
     {
@@ -45,32 +43,9 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable, IS3
         item.OnChange -= Item_OnChange;        
     }
 
-    public void SingletonRegistered(Type type, object singleton)
-    {
-        if(type != typeof(GameplayManager))
-            return;
-
-        gameplayManager = singleton as GameplayManager;
-    }
-
-    public void SingletonDeregistered(Type type, object singleton)
-    {
-        if(type != typeof(GameplayManager))
-            return;
-
-    }
-    
     private void Update()
     {
         itemReadout = item.Value;
-
-        if(gameObject.scene.name == "GameplayScene") {
-            SceneLookupData lookupData = gameObject.scene.GetSceneLookupData();
-
-            if(!SceneSingletons.IsSubscribed(this, lookupData, typeof(GameplayManager))) {
-                SceneSingletons.SubscribeToSingleton(this, lookupData, typeof(GameplayManager));
-            }
-        }
 
         if(!InstanceFinder.IsServerStarted)
             return;
@@ -96,26 +71,10 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable, IS3
         if(!inventoryData.CanAddItemToHotbar())
             return;
 
-        GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
-        bool isPurchasing = false;
-        if(Owner != grabber) {
-            float cost = itemAssignments.Get(item.Value).cost;
-            if(gpd.balance >= cost) {
-                gpd.balance = gpd.balance - cost;
-                pd.SetData(gpd);
-                isPurchasing = true;
-            } else 
-                return;
-        }
-
         inventoryData.AddItemToHotbar(item.Value);
-
         pd.SetData(inventoryData);
 
-        if(!isPurchasing)
-            InstanceFinder.ServerManager.Despawn(gameObject);
-        else
-            gameplayManager.PlayerObjectManager.GetPlayer(uid).GetNetworkedAudioController().PlaySound("purchased");
+        InstanceFinder.ServerManager.Despawn(gameObject);
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCGrabbedItem(NetworkConnection grabber, string uid) => GrabbedItem(grabber, uid);
