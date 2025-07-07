@@ -15,4 +15,5 @@ MonoBehaviour:
   progressionPoints:
   - {fileID: 11400000, guid: 3b27bfaee0a2a4c46a0f4189a520c772, type: 2}
   - {fileID: 11400000, guid: fd34e3165e8465246ac89a1e916710ec, type: 2}
+  - {fileID: 11400000, guid: 8d0ead993458787439cf58425ce53287, type: 2}
   - {fileID: 11400000, guid: 1b240f58d8ba1c74488938052c2a4f61, type: 2}

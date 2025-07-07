@@ -26,10 +26,12 @@ public class SnapToGroundEditor : Editor
         Transform tf = snapTarget.transform;
         Vector3 currentPosition = tf.position;
 
+        int layerMask = 1 << LayerMask.NameToLayer("Terrain");
+
         // Only snap if position has changed
         if (currentPosition != lastPosition)
         {
-            if (Physics.Raycast(currentPosition + Vector3.up * 10f, Vector3.down, out RaycastHit hit, Mathf.Infinity))
+            if (Physics.Raycast(currentPosition + Vector3.up * 10f, Vector3.down, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
                 Vector3 newPosition = new Vector3(currentPosition.x, hit.point.y + snapTarget.heightOffset, currentPosition.z);
                 tf.position = newPosition;

@@ -34,15 +34,11 @@ public class ProgressionPointRenderer : MonoBehaviour
     public DisplayMode displayMode;
     [SerializeField]
     private List<DisplayModeSettings> displayModeSettings;
-    [SerializeField]
-    private float heightNoDesc;
-    [SerializeField]
-    private float heightWithDesc;
-    [SerializeField]
-    private float descLineHeight;
 
     private float lastTimeRendered;
     public ProgressionData shownProgressionData;
+
+    private int TargetMetricCnt => point.targetMetrics != null ? point.targetMetrics.Count : 0;
 
     private void Awake()
     {
@@ -68,7 +64,8 @@ public class ProgressionPointRenderer : MonoBehaviour
 
         lastTimeRendered = Time.time;
 
-        UpdateDisplayMode(FindDisplayModeSettings(displayMode));
+        DisplayModeSettings dispSettings = FindDisplayModeSettings(displayMode);
+        UpdateDisplayMode(dispSettings);
 
         if(point == null)
             return;
@@ -84,8 +81,10 @@ public class ProgressionPointRenderer : MonoBehaviour
         }
 
         UpdateTextElements(nameText, descriptionLines, priceText);
-        UpdateSize(descriptionLines.Count);
-        UpdateMetrics();
+        UpdateMetrics(dispSettings);
+
+        descriptionText.ForceMeshUpdate();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionText.rectTransform);
     }
 
     private void UpdateDisplayMode(DisplayModeSettings settings) 
@@ -109,56 +108,43 @@ public class ProgressionPointRenderer : MonoBehaviour
     {
         this.nameText.text = nameText;
         this.descriptionText.text = string.Join("\n", descriptionLines);
+        this.priceText.gameObject.SetActive(point != null && point.price > 0);
         this.priceText.text = priceText;
     }
 
-    private void UpdateSize(int descLineCnt) 
+    private void UpdateMetrics(DisplayModeSettings settings) 
     {
-        RectTransform t = GetComponent<RectTransform>();
-        Vector2 sizeDelta = t.sizeDelta;
-        if(descLineCnt == 0)
-            sizeDelta.y = heightNoDesc;
-        else {
-            sizeDelta.y = heightWithDesc + (descLineHeight * (descLineCnt-1));
-        }
-        t.sizeDelta = sizeDelta;            
-    }
-
-    private void UpdateMetrics() 
-    {
-        BLog.Highlight($"Point {point.name} has metrics: {point.targetMetrics}");
-        int targetMetricCnt = 0;
-        if(point.targetMetrics != null)
-            targetMetricCnt = point.targetMetrics.Count;
-
-        BLog.Highlight(targetMetricCnt.ToString());
-
-        if(metricsHolder.childCount != targetMetricCnt) {
-            if(metricsHolder.childCount > targetMetricCnt) {
-                for(int i = metricsHolder.childCount; i > point.targetMetrics.Count; i--) {
-                    Destroy(metricsHolder.GetChild(i));
+        if(metricsHolder.childCount != TargetMetricCnt) {
+            if(metricsHolder.childCount > TargetMetricCnt) {
+                for(int i = metricsHolder.childCount-1; i >= point.targetMetrics.Count; i--) {
+                    DestroyImmediate(metricsHolder.GetChild(i).gameObject);
                 }
             } else {
-                for(int i = 0; i < targetMetricCnt - metricsHolder.childCount; i++) {
+                for(int i = 0; i < TargetMetricCnt - metricsHolder.childCount; i++) {
                     Instantiate(progressionMetricPrefab, metricsHolder);
                 }
             }
         }
 
-        for(int i = 0; i < targetMetricCnt; i++) {
+        for(int i = 0; i < TargetMetricCnt; i++) {
+            GameObject progMetricObj = metricsHolder.GetChild(i).gameObject;
+            ProgressionMetricRenderer renderer = progMetricObj.GetComponent<ProgressionMetricRenderer>();
+
+            if(displayMode == DisplayMode.INVISIBLE) {
+                renderer.RenderInvisible();
+                continue;
+            }
+
             ProgressionPoint.ProgressionMetricData pmd = point.targetMetrics[i];
             string dispName = pmd.displayName;
             ProgressionMetric metric = pmd.metric;
-
-            GameObject progMetricObj = metricsHolder.GetChild(i).gameObject;
-            ProgressionMetricRenderer renderer = progMetricObj.GetComponent<ProgressionMetricRenderer>();
 
             ProgressionMetric playerMetric = null;
             if(shownProgressionData != null && shownProgressionData.HasMetric(metric.GetName())) {
                 playerMetric = shownProgressionData.GetMetric(metric.GetName());
             }
 
-            renderer.Render(dispName, metric, playerMetric);
+            renderer.Render(settings, dispName, metric, playerMetric);
         }
     }
 
@@ -170,6 +156,9 @@ public class ProgressionPointRenderer : MonoBehaviour
         public Color background;
         public Color titleText;
         public Color descriptionText;
+        public Color metricNameText;
+        public Color metricValueComplete;
+        public Color metricValueIncomplete;
     }
 
 }

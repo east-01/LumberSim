@@ -67,6 +67,15 @@ public class ProgressionManager : NetworkBehaviour
             throw new InvalidOperationException("Can't update progression results, there is no progression tree.");
 
         ProgressionResults.Value = progressionTree.Evaluate(player.PlayerData);
+
+        ProgressionData progression = player.PlayerData.GetData<ProgressionData>();
+        List<Tuple<string, ProgressionMetric.MetricType>> missingMetrics = progressionTree.GetMissingMetrics(progression, ProgressionResults.Value.visiblePoints);
+        if(missingMetrics.Count > 0) {
+            missingMetrics.ForEach(metric => {
+                progression.AddMetric(new(metric.Item1, metric.Item2, ProgressionMetric.GetDefaultValue(metric.Item2)));
+            });
+            player.PlayerData.SetData(progression);
+        }
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCUpdateProgressionResults() => UpdateProgressionResults();

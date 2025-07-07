@@ -113,6 +113,19 @@ public class ProgressionMetric
         Integer,
         Float
     }
+
+    public static object GetDefaultValue(MetricType metricType) {
+        switch(metricType) {
+            case MetricType.Boolean:
+                return false;
+            case MetricType.Integer:
+                return 0;
+            case MetricType.Float:
+                return 0f;
+        }
+
+        throw new InvalidOperationException($"Couldn't get default value for type \"{metricType}\"");
+    }
 }
 
 public class ProgressionMetricConverter : JsonConverter<ProgressionMetric>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "DefaultProgressionTree", menuName = "Progression/ProgressionTree")]
@@ -99,11 +100,15 @@ public class ProgressionTree : ScriptableObject
     {
         public Dictionary<string, List<string>> nextSteps;
         public List<string> canUnlock;
+        public List<string> visiblePoints;
 
         public EvaluationResults(Dictionary<string, List<string>> nextSteps, List<string> canUnlock) 
         {
             this.nextSteps = nextSteps;
             this.canUnlock = canUnlock;
+            this.visiblePoints = new();
+            visiblePoints.AddRange(canUnlock);
+            visiblePoints.AddRange(nextSteps.Keys);
         }
     }
 
@@ -116,7 +121,7 @@ public class ProgressionTree : ScriptableObject
         List<string> canUnlock = new();
 
         void Recurse(string pointID) {
-            BLog.Highlight($"Looking at {pointID}. Has unlocked: {progression.HasUnlocked(pointID)}");
+            BLog.Highlight($"Looking at {pointID} has unlocked: {progression.HasUnlocked(pointID)}");
             if(progression.HasUnlocked(pointID)) {
 
                 // This progression point has been unlocked, continue recursion down this path of the tree.
@@ -140,8 +145,6 @@ public class ProgressionTree : ScriptableObject
                     missingMetrics.Add("PRICE");
                 }
 
-                BLog.Highlight($"  missing metrics: {string.Join(", ", missingMetrics)}");
-
                 // Check if can be unlocked. If so add to can unlock, if not add to next steps with 
                 //   missing metrics.
                 if(missingMetrics.Count == 0) {
@@ -156,6 +159,51 @@ public class ProgressionTree : ScriptableObject
         Entries.ForEach(entry => Recurse(entry));
 
         return new EvaluationResults(nextSteps, canUnlock);
+    }
+
+    public List<Tuple<string, ProgressionMetric.MetricType>> GetMissingMetrics(ProgressionData existing, List<string> visiblePoints) 
+    {
+        List<Tuple<string, ProgressionMetric.MetricType>> metrics = new();
+        foreach(ProgressionPoint visiblePoint in visiblePoints.Select(progPointID => PointByID[progPointID])) {
+
+            if(visiblePoint.targetMetrics == null || visiblePoint.targetMetrics.Count == 0)
+                continue;
+
+            foreach(ProgressionPoint.ProgressionMetricData targetMetricData in visiblePoint.targetMetrics) {
+                ProgressionMetric targetMetric = targetMetricData.metric;
+
+                if(!existing.HasMetric(targetMetric.GetName())) {
+                    metrics.Add(new(targetMetric.GetName(), targetMetric.GetMetricType()));
+                }
+            }
+        }
+
+        return metrics;
+    }
+
+    /// <summary>
+    /// Look through the 
+    /// </summary>
+    /// <param name="existing"></param>
+    /// <returns></returns>
+    public ProgressionData PopulateMissingMetrics(ProgressionData existing, List<string> visiblePoints) 
+    {
+        List<Tuple<string, ProgressionMetric.MetricType>> metrics = new();
+        foreach(ProgressionPoint visiblePoint in visiblePoints.Select(progPointID => PointByID[progPointID])) {
+
+            if(visiblePoint.targetMetrics == null || visiblePoint.targetMetrics.Count == 0)
+                continue;
+
+            foreach(ProgressionPoint.ProgressionMetricData targetMetricData in visiblePoint.targetMetrics) {
+                ProgressionMetric targetMetric = targetMetricData.metric;
+
+                if(!existing.HasMetric(targetMetric.GetName())) {
+                    metrics.Add(new(targetMetric.GetName(), targetMetric.GetMetricType()));
+                }
+            }
+        }
+
+        return existing;
     }
 #endregion    
 }

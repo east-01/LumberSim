@@ -10,7 +10,18 @@ public class ProgressionMetricRenderer : MonoBehaviour
     [SerializeField]
     private TMP_Text metricValueText;
 
-    public void Render(string dispName, ProgressionMetric targetMetric, ProgressionMetric playerMetric = null) 
+    [SerializeField]
+    private Color metricCompleteColor;
+    [SerializeField]
+    private Color metricIncompleteColor;
+
+    public void RenderInvisible() 
+    {
+        metricNameText.text = "???";
+        metricValueText.text = "";
+    }
+
+    public void Render(ProgressionPointRenderer.DisplayModeSettings settings, string dispName, ProgressionMetric targetMetric, ProgressionMetric playerMetric = null) 
     {
         metricNameText.text = dispName;
 
@@ -20,9 +31,9 @@ public class ProgressionMetricRenderer : MonoBehaviour
         switch(targetMetric.GetMetricType()) {
             case ProgressionMetric.MetricType.Boolean:
                 if(playerMetric != null)
-                    metricValueText.text = playerMetric.GetBoolValue() ? "Completed" : "Not completed";
+                    metricValueText.text = playerMetric.GetBoolValue() ? "Completed" : "Incomplete";
                 else
-                    metricValueText.text = targetMetric.GetBoolValue().ToString();
+                    metricValueText.text = $"Req: {targetMetric.GetBoolValue()}";
                 break;
 
             case ProgressionMetric.MetricType.Integer:
@@ -40,6 +51,15 @@ public class ProgressionMetricRenderer : MonoBehaviour
                 targetPortion = targetMetric.GetFloatValue().ToString();
                 metricValueText.text = $"{playerPortion}/{targetPortion}";
                 break;                
+        }
+
+        // Update colors
+        metricNameText.color = settings.metricNameText;
+        metricValueText.color = settings.metricNameText;
+
+        if(playerMetric != null) {
+            bool hasCompleted = playerMetric.Evaluate(targetMetric);
+            metricValueText.color = hasCompleted ? settings.metricValueComplete : settings.metricValueIncomplete;
         }
     }
 

@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using EMullen.PlayerMgmt;
 using FishNet;
 using FishNet.Connection;
@@ -99,12 +100,20 @@ public class PlayerTransactionManager : NetworkBehaviour
         pd.EnsureLumberData();
         ProgressionData progression = pd.GetData<ProgressionData>();
 
-        if(item == Item.AXE_T1) {
-            if(!progression.HasMetric(MetricNames.BOUGHT_T1_AXE)) 
-                progression.AddMetric(new ProgressionMetric(MetricNames.BOUGHT_T1_AXE, ProgressionMetric.MetricType.Boolean, false));
+        Dictionary<Item, string> itemsMetricNames = new() {
+            { Item.AXE_T1, MetricNames.BOUGHT_TONE_AXE },
+            { Item.AXE_T2, MetricNames.BOUGHT_TTWO_AXE },
+            { Item.AXE_T3, MetricNames.BOUGHT_TTHREE_AXE }
+        };
 
-            progression.GetMetric(MetricNames.BOUGHT_T1_AXE).SetValue(true);           
-            pd.SetData(progression);
-        }
+        if(!itemsMetricNames.ContainsKey(item))
+            return;
+
+        string metricName = itemsMetricNames[item];
+        if(!progression.HasMetric(metricName)) 
+            progression.AddMetric(new ProgressionMetric(metricName, ProgressionMetric.MetricType.Boolean, false));
+
+        progression.GetMetric(metricName).SetValue(true);           
+        pd.SetData(progression);
     }
 }

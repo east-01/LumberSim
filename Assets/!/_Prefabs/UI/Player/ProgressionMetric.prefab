@@ -324,6 +324,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   metricNameText: {fileID: 7112424645023747220}
   metricValueText: {fileID: 9201678079507215089}
+  metricCompleteColor: {r: 0, g: 0.8679245, b: 0.14929393, a: 1}
+  metricIncompleteColor: {r: 0.754717, g: 0.16731933, b: 0.16731933, a: 1}
 --- !u!114 &6996188113996995220
 MonoBehaviour:
   m_ObjectHideFlags: 0

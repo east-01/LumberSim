@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a990f4c671d47748831a4dde672b16b, type: 3}
-  m_Name: BoughtT2Axe
+  m_Name: BoughtT3Axe
   m_EditorClassIdentifier: 
-  progressionID: BT2Axe
-  progressionDisplayName: On the up
-  progressionDescription: Buy the second tier axe from the shack. Opens up some doors...
+  progressionID: BT3Axe
+  progressionDisplayName: Aximum power
+  progressionDescription: Buy the third and highest tier axe from the shack.
   price: 0
   targetMetrics:
   - metric:
       type: 0
-      name: BoughtT2Axe
+      name: BoughtT3Axe
       boolValue: 1
       intValue: 0
       floatValue: 0
-    displayName: Buy Tier 2 Axe
+    displayName: Buy Tier 3 Axe
   - metric:
       type: 1
       name: ChoppedTrees
       boolValue: 0
-      intValue: 10
+      intValue: 500
       floatValue: 0
-    displayName: Chop 100 trees
+    displayName: Chop 500 trees
   predecessors:
-  - {fileID: 11400000, guid: 3b27bfaee0a2a4c46a0f4189a520c772, type: 2}
+  - {fileID: 11400000, guid: fd34e3165e8465246ac89a1e916710ec, type: 2}
