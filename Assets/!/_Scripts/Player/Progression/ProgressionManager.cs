@@ -53,6 +53,10 @@ public class ProgressionManager : NetworkBehaviour
                 string toUnlock = ProgressionResults.Value.canUnlock[0];
                 UnlockProgressionPoint(toUnlock);
             }
+        } else if(Input.GetKeyDown(KeyCode.O)) {
+            GeneralPlayerData gpd = player.PlayerData.GetData<GeneralPlayerData>();
+            gpd.balance += 1000;
+            player.PlayerData.SetData(gpd);
         }
     }
 
@@ -101,7 +105,7 @@ public class ProgressionManager : NetworkBehaviour
         progression.unlockedPoints.Add(progressionPointID);
         pd.SetData(progression);
 
-        player.GetNetworkedAudioController().PlaySound("purchased");
+        player.NetworkedAudioController.PlaySound("purchased");
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCUnlockProgressionPoint(string progressionPointID) => UnlockProgressionPoint(progressionPointID);

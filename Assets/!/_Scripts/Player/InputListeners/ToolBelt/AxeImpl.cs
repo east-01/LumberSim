@@ -29,7 +29,7 @@ public class AxeImpl : ToolBeltImpl
     public bool AxeSwingActive { get; private set; }
 
     private Player player;
-    private AxeCriticalBarController axeCriticalBarController => player.GetHUD().AxeCriticalBarController;
+    private AxeCriticalBarController axeCriticalBarController => (player.PlayerHUD.GetSubMenu(PlayerHUDMenuController.SUBMENU_IN_GAME) as InGameMenuController).AxeCriticalBarController;
 
     private AxePhase phase;
     public AxePhase Phase {
@@ -62,7 +62,7 @@ public class AxeImpl : ToolBeltImpl
         AxeSwingProgress = swingSpeedCurve.Evaluate(raw01Progress);
         AxeSwingActive = Time.time >= axeSwingStart && Time.time <= axeSwingEnd;
 
-        AxeCriticalBarController axeController = player.GetHUD().AxeCriticalBarController;
+        AxeCriticalBarController axeController = axeCriticalBarController;
 
         if(Phase == AxePhase.SWINGING) {
             axeController.cursorValue = AxeSwingProgress;
@@ -82,6 +82,9 @@ public class AxeImpl : ToolBeltImpl
 
     public override void HandleInput(Item item, InputAction.CallbackContext context)
     {
+        if(!enabled)
+            return;
+
         ItemInfo itemInfo = itemAssignments.Get(item);
         if(itemInfo is not AxeInfo) {
             Debug.LogError($"Can't handle input in AxeImpl.cs, item info for {item} is not an instance of AxeInfo");
@@ -110,7 +113,7 @@ public class AxeImpl : ToolBeltImpl
 
                 rechargeEndTime = axeInfo.rechargeTime;
                 
-                player.GetNetworkedAudioController().PlaySound("swingaxe");
+                player.NetworkedAudioController.PlaySound("swingaxe");
                 
                 Phase = AxePhase.COOLDOWN;
                 break;
@@ -140,7 +143,7 @@ public class AxeImpl : ToolBeltImpl
 
                 rechargeEndTime = axeInfo.rechargeTime;
 
-                player.GetNetworkedAudioController().PlaySound("swingaxe");
+                player.NetworkedAudioController.PlaySound("swingaxe");
         
                 Phase = AxePhase.COOLDOWN;
                 break;

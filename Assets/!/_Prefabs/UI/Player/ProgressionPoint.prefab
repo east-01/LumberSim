@@ -56,14 +56,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8d964c43ba24a46842307c7b750698, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  progressionMetricPrefab: {fileID: 4256676378390258512, guid: aa6c00d63ef1a7945bdcc2414b13ea95, type: 3}
+  metricsHolder: {fileID: 8717275964708568233}
+  leadingLines: []
   backgroundImage: {fileID: 4825266526652912415}
   nameText: {fileID: 4639064624964363239}
   descriptionText: {fileID: 7563503588433148384}
   priceText: {fileID: 4346069599385072191}
-  progressionMetricPrefab: {fileID: 4256676378390258512, guid: aa6c00d63ef1a7945bdcc2414b13ea95, type: 3}
-  metricsHolder: {fileID: 8717275964708568233}
   point: {fileID: 0}
-  displayMode: 2
+  displayMode: 3
   displayModeSettings:
   - displayMode: 0
     background: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 0.16470589}
@@ -72,6 +73,7 @@ MonoBehaviour:
     metricNameText: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
     metricValueComplete: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
     metricValueIncomplete: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
+    leadingLineColor: {r: 0, g: 0, b: 0, a: 0}
   - displayMode: 1
     background: {r: 0, g: 0, b: 0, a: 0.46666667}
     titleText: {r: 0.24857603, g: 0.3584906, b: 0.257488, a: 1}
@@ -79,6 +81,7 @@ MonoBehaviour:
     metricNameText: {r: 0.20784314, g: 0.24705882, b: 0.21176471, a: 1}
     metricValueComplete: {r: 0.20784314, g: 0.24705882, b: 0.21176471, a: 1}
     metricValueIncomplete: {r: 0.20784314, g: 0.24705882, b: 0.21176471, a: 1}
+    leadingLineColor: {r: 0.21568628, g: 0.3019608, b: 0.4627451, a: 0.16470589}
   - displayMode: 2
     background: {r: 1, g: 0.9137255, b: 0.69411767, a: 0.16470589}
     titleText: {r: 0.8773585, g: 0.7325116, b: 0.7399012, a: 1}
@@ -86,6 +89,7 @@ MonoBehaviour:
     metricNameText: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
     metricValueComplete: {r: 0.30704877, g: 0.8679245, b: 0.31139666, a: 1}
     metricValueIncomplete: {r: 0.8396226, g: 0.37624598, b: 0.37624598, a: 1}
+    leadingLineColor: {r: 0.21568628, g: 0.30054048, b: 0.4627451, a: 0.16470589}
   - displayMode: 3
     background: {r: 0.9811321, g: 0.85451525, b: 0.5322179, a: 0.16470589}
     titleText: {r: 0.6580189, g: 0.838338, b: 0.8773585, a: 1}
@@ -93,6 +97,7 @@ MonoBehaviour:
     metricNameText: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     metricValueComplete: {r: 0.30588236, g: 0.8666667, b: 0.30980393, a: 1}
     metricValueIncomplete: {r: 0.8392157, g: 0.3764706, b: 0.3764706, a: 1}
+    leadingLineColor: {r: 0.7735849, g: 0.7691063, b: 0.1788003, a: 0.7019608}
 --- !u!114 &2179467153914519643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.9137255, b: 0.69411767, a: 0.16470589}
+  m_Color: {r: 0.9811321, g: 0.85451525, b: 0.5322179, a: 0.16470589}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -206,7 +211,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4825266526652912415}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5782865933173265567}
+        m_TargetAssemblyTypeName: ProgressionPointRenderer, Assembly-CSharp
+        m_MethodName: Clicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &3008379525093721920
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -304,8 +321,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4290887887
-  m_fontColor: {r: 0.8113208, g: 0.753916, b: 0.757019, a: 1}
+    rgba: 4292595870
+  m_fontColor: {r: 0.61957103, g: 0.81582636, b: 0.8584906, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -515,8 +532,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4290624480
-  m_fontColor: {r: 0.8773585, g: 0.7325116, b: 0.7399012, a: 1}
+    rgba: 4292925096
+  m_fontColor: {r: 0.6580189, g: 0.838338, b: 0.8773585, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

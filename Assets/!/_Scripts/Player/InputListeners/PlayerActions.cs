@@ -55,6 +55,9 @@ public class PlayerActions : NetworkBehaviour, IInputListener
             case "ToggleMenu":
                 HandleToggleMenu(context);
                 break;
+            case "Pause":
+                player.SetPaused(!player.IsPaused);
+                break;
         }
     }
 
@@ -86,7 +89,7 @@ public class PlayerActions : NetworkBehaviour, IInputListener
             if(grabbableItem.IsOwner) {
                 grabbableItem.GrabbedItem(InstanceFinder.ClientManager.Connection, player.uid.Value);
             } else {
-                player.GetHUD().ShowWarning($"You're not the owner of this item.", 3f);
+                player.ShowHUDWarning($"You're not the owner of this item.", 3f);
             }
         } else {
             player.PlayerTransactionManager.PurchaseGrabbableItem(grabbableItem.NetworkObject);
@@ -159,7 +162,7 @@ public class PlayerActions : NetworkBehaviour, IInputListener
         if(!context.performed)
             return; 
 
-        PlayerHUDMenuController hud = player.GetHUD();
+        PlayerHUDMenuController hud = player.PlayerHUD;
         MenuController progSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_PROGRESSION);
         MenuController igSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_IN_GAME);
         if(progSubmenu.IsOpen) {

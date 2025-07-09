@@ -4,6 +4,7 @@ using EMullen.Core;
 using EMullen.MenuController;
 using EMullen.PlayerMgmt;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ProgressionMenuController : MenuController
 {
@@ -44,6 +45,9 @@ public class ProgressionMenuController : MenuController
         base.Opened();
 
         player.ProgressionManager.UpdateProgressionResults();
+
+        player.SetPaused(true);
+        player.ConsumeMouse(false);
     }
 
     public void UpdateProgressionPointRenderers() 
@@ -61,7 +65,10 @@ public class ProgressionMenuController : MenuController
 
         for(int childIdx = 0; childIdx < draggableContainer.childCount; childIdx++) {
             GameObject progPointObj = draggableContainer.GetChild(childIdx).gameObject;
-            ProgressionPointRenderer progPointRenderer = progPointObj.GetComponent<ProgressionPointRenderer>();
+
+            if(!progPointObj.TryGetComponent(out ProgressionPointRenderer progPointRenderer))
+                continue;
+            
             string progPointID = progPointRenderer.Point.progressionID;
 
             progPointRenderer.shownProgressionData = progression;
@@ -76,6 +83,42 @@ public class ProgressionMenuController : MenuController
                 progPointRenderer.displayMode = ProgressionPointRenderer.DisplayMode.CAN_UNLOCK;            
             else
                 progPointRenderer.displayMode = ProgressionPointRenderer.DisplayMode.INVISIBLE;    
+        }
+    }
+
+    private bool trackMouse;
+
+    protected override void Child_PlayerInput_ActionTriggered(InputAction.CallbackContext context)
+    {
+        base.Child_PlayerInput_ActionTriggered(context);
+
+        switch(context.action.name) {
+            case "ChangeToolbelt":
+                if(!context.performed)
+                    return;
+
+                int dir = (int)Mathf.Sign(context.ReadValue<float>());
+
+                Vector3 scale = draggableContainer.transform.localScale;
+                scale.x += .1f * dir;
+                scale.y += .1f * dir;
+                draggableContainer.transform.localScale = scale;
+                break;
+            case "Primary":
+                trackMouse = context.performed;
+                break;
+            case "Look":
+                if(!trackMouse)
+                    return;
+
+                Vector2 value = context.ReadValue<Vector2>();
+                RectTransform rt = draggableContainer.transform as RectTransform;
+
+                Vector3 pos = rt.anchoredPosition;
+                pos.x += value.x;
+                pos.y += value.y;
+                rt.anchoredPosition = pos;
+                break;
         }
     }
 

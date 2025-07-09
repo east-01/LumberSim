@@ -22,11 +22,6 @@ public class FirstPersonCamera : MonoBehaviour
     // Internal state to track vertical rotation
     private float verticalRotation = 0f;
 
-    private void Start() 
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
     void Update()
     {
         // TODO: Remove, temp input- true input in InputPoll

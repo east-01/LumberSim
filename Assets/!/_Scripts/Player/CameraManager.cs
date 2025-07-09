@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using EMullen.Core;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -32,15 +33,10 @@ public class CameraManager : MonoBehaviour, IInputListener
 
     public void InputPoll(InputAction action)
     {
-        if(Input.GetKeyDown(KeyCode.Escape)) {
-            Locked = !Locked;
-            Debug.Log("Locked: " + Locked);
-        }
-
         firstPersonCamera.input = Vector2.zero;
         thirdPersonCamera.input = Vector2.zero;
 
-        if(Locked)
+        if(Locked || !enabled)
             return;
 
         if(action.name == "Look") {

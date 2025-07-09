@@ -121,7 +121,6 @@ public class ProgressionTree : ScriptableObject
         List<string> canUnlock = new();
 
         void Recurse(string pointID) {
-            BLog.Highlight($"Looking at {pointID} has unlocked: {progression.HasUnlocked(pointID)}");
             if(progression.HasUnlocked(pointID)) {
 
                 // This progression point has been unlocked, continue recursion down this path of the tree.

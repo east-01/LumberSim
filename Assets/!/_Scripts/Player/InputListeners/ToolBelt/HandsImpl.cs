@@ -135,7 +135,7 @@ public class HandsImpl : ToolBeltImpl, IInputListener
             if(grabbed != null)
                 throw new InvalidOperationException("Can't AcceptGrabStateChange, getting a new grabbable while we already have one.");
             
-            player.GetNetworkedAudioController().PlaySound("pickup");
+            player.NetworkedAudioController.PlaySound("pickup");
 
             grabbed = grabbable.GetComponent<Grabbable>();
             player.GrabbablePicker.SetSelectedGrabbable(grabbed, true);

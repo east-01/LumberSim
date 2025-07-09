@@ -1,71 +1,73 @@
 using System;
-using System.Transactions;
 using EMullen.Core;
 using EMullen.Networking;
 using EMullen.PlayerMgmt;
 using EMullen.SceneMgmt;
-using FishNet;
-using FishNet.Component.Transforming;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// The player class is the top level controller for the Player prefab, it is activated by the
 ///   ConnectPlayer() call when the PlayerManager sends a LocalPlayer.
 /// </summary>
-[RequireComponent(typeof(PlayerInputManager))]
-[RequireComponent(typeof(ToolBelt))]
-[RequireComponent(typeof(AttachBehaviourController))]
-[RequireComponent(typeof(CameraManager))]
 public class Player : NetworkBehaviour, IS3
-{
-    public readonly SyncVar<string> uid = new();
-#if UNITY_EDITOR
-    [SerializeField]
-    private string uidReadout; // Here to show uid in editor
-#endif
-
-    public bool HasPlayerData => PlayerDataRegistry.Instance != null && uid.Value != null && PlayerDataRegistry.Instance.Contains(uid.Value);
-    public PlayerData PlayerData => PlayerDataRegistry.Instance.GetPlayerData(uid.Value);
-
-    public GameplayManager GameplayManager { get; private set; }
-    public LocalPlayer LocalPlayer { get; private set; }
-
-    private AttachBehaviourController attachBehaviourController;
-    private PlayerInputManager playerInputManager;
-
+{    
+    [Header("References")]
     [SerializeField]
     private new Camera camera;
     public Camera Camera => camera;
-    public CameraManager CameraManager { get; private set; }
-    public FirstPersonCamera FirstPersonCamera => Camera.GetComponent<FirstPersonCamera>();
     [SerializeField]
-    private GrabbablePicker grabbablePicker;
-    public GrabbablePicker GrabbablePicker => grabbablePicker;
-
-    public bool IsPaused { get; private set; }
-
-    public PlayerHUDMenuController GetHUD() => GetComponentInChildren<PlayerHUDMenuController>();
-    public NetworkedAudioController GetNetworkedAudioController() => GetComponent<NetworkedAudioController>();
-    public ToolBelt GetToolBelt() => GetComponent<ToolBelt>();
-    
+    private AttachBehaviourController attachBehaviourController;
+    public AttachBehaviourController AttachBehaviourController => attachBehaviourController;
+    [SerializeField]
+    private ProgressionManager progressionManager;
+    public ProgressionManager ProgressionManager => progressionManager;
     [SerializeField]
     private PlayerTransactionManager playerTransactionManager;
     public PlayerTransactionManager PlayerTransactionManager => playerTransactionManager;
     [SerializeField]
-    private ProgressionManager progressionManager;
-    public ProgressionManager ProgressionManager => progressionManager;
+    private NetworkedAudioController networkedAudioController;
+    public NetworkedAudioController NetworkedAudioController => networkedAudioController;
+    [SerializeField]
+    private PlayerHUDMenuController playerHUDMenuController;
+    public PlayerHUDMenuController PlayerHUD => playerHUDMenuController;
+    [SerializeField]
+    private PlayerInputManager playerInputManager;
+    public PlayerInputManager PlayerInputManager => playerInputManager;
+    [SerializeField]
+    private GrabbablePicker grabbablePicker;
+    public GrabbablePicker GrabbablePicker => grabbablePicker;
+    [SerializeField]
+    private ToolBelt toolBelt;
+    public ToolBelt ToolBelt => toolBelt;
+
+#if UNITY_EDITOR
+    [Header("Readouts")]
+    [SerializeField]
+    private string uidReadout; // Here to show uid in editor
+#endif
+
+    // Cached references
+    public CameraManager CameraManager { get; private set; }
+    public GameplayManager GameplayManager { get; private set; }
+
+    // Variables
+    public readonly SyncVar<string> uid = new();
+
+    public LocalPlayer LocalPlayer { get; private set; }
+    public bool IsPaused { get; private set; }
+
+    public bool HasPlayerData => PlayerDataRegistry.Instance != null && uid.Value != null && PlayerDataRegistry.Instance.Contains(uid.Value);
+    public PlayerData PlayerData => PlayerDataRegistry.Instance.GetPlayerData(uid.Value);
+
 
 #region Initializers
     private void Awake()
     {
         CameraManager = GetComponent<CameraManager>();
-        playerInputManager = GetComponent<PlayerInputManager>();
         attachBehaviourController = GetComponentInChildren<AttachBehaviourController>();
     }
 
@@ -90,6 +92,10 @@ public class Player : NetworkBehaviour, IS3
 #if UNITY_EDITOR
         uidReadout = uid.Value;
 #endif
+
+        if(Input.GetKeyDown(KeyCode.Escape)) {
+            SetPaused(!IsPaused);
+        }
 
         // Safely subscribe to the GameplayManager singleton
         if(gameObject.scene.name == "GameplayScene") {
@@ -144,6 +150,22 @@ public class Player : NetworkBehaviour, IS3
         gameObject.name = $"Player (LocalPlayer {localPlayer.Input.playerIndex})";
     }
 
+    public void SetPaused(bool paused) 
+    {
+        IsPaused = paused;
+        attachBehaviourController.UpdateAttachBehaviours();
+    }
+
+    /// <summary>
+    /// Should the game "consume" the users mouse- i.e. will it be disabled or active.
+    /// </summary>
+    /// <param name="consume">Should the mouse be consumed.</param>
+    public void ConsumeMouse(bool consume) 
+    {
+        Cursor.lockState = consume ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !consume;
+    }
+
     public void ShowHUDWarning(string message, float time) 
     {
         if(LocalPlayer == null) {
@@ -151,9 +173,14 @@ public class Player : NetworkBehaviour, IS3
             TargetRPCShowHUDWarning(targ, message, time);
             return;
         }
-
-        GetHUD().ShowWarning(message, time);
+        
+        // Use pragma warning disable to hide deprecation warning. 
+        // PlayerHUD.ShowWarning SHOULD be called from here.
+#pragma warning disable 0618
+        PlayerHUD.ShowWarning(message, time);
+#pragma warning restore 0618
     }
+
     [TargetRpc]
     private void TargetRPCShowHUDWarning(NetworkConnection targ, string message, float time) => ShowHUDWarning(message, time);
 

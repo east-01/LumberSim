@@ -56,6 +56,9 @@ public class ToolBelt : NetworkBehaviour, IInputListener
 
     public void InputEvent(InputAction.CallbackContext context)
     {
+        if(!enabled)
+            return;
+
         PlayerData pd = player.PlayerData;
         if(pd == null) {
             Debug.LogError("Can't execute InputEvent player doesn't have PlayerData.");
@@ -68,7 +71,11 @@ public class ToolBelt : NetworkBehaviour, IInputListener
             if(!context.performed)
                 return;
 
-            ToolbeltIndex = (ToolbeltIndex+1)%id.hotbarItems.Length;
+            int dir = (int)Mathf.Sign(context.ReadValue<float>());
+
+            ToolbeltIndex = (ToolbeltIndex+dir)%id.hotbarItems.Length;
+            if(ToolbeltIndex < 0)
+                ToolbeltIndex = id.hotbarItems.Length-1;
 
             UpdateRenderer();
         } else if(passedThroughEvents.Contains(context.action.name)){

@@ -20,7 +20,6 @@
     "com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
     "net.emullen.bootstrapper": "https://github.com/east-01/net.emullen.bootstrapper.git",
     "net.emullen.core": "https://github.com/east-01/net.emullen.core.git",
-    "net.emullen.menucontroller": "https://github.com/east-01/net.emullen.menucontroller.git",
     "net.emullen.networking": "https://github.com/east-01/net.emullen.networking.git",
     "net.emullen.playermgmt": "https://github.com/east-01/net.emullen.playermgmt.git",
     "net.emullen.scenemgmt": "https://github.com/east-01/net.emullen.scenemgmt.git",

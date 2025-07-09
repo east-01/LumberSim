@@ -337,7 +337,7 @@ public class Grabbable : NetworkBehaviour, IS3
     private void TargetRpcGrabStateChanged(NetworkConnection holder, string holderUID, NetworkObject grabbable) 
     {
         Player player = gameplayManager.PlayerObjectManager.GetPlayer(holderUID);
-        HandsImpl hands = player.GetToolBelt().GetImplementation(Item.NONE) as HandsImpl;
+        HandsImpl hands = player.ToolBelt.GetImplementation(Item.NONE) as HandsImpl;
         hands.AcceptGrabStateChange(grabbable);
     }
 #endregion

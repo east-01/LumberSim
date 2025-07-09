@@ -39,13 +39,13 @@ public class PlayerTransactionManager : NetworkBehaviour
         PlayerData pd = player.PlayerData;
         GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
         if(gpd.balance < itemAssignments.Get(item.item.Value).cost) {
-            player.GetHUD().ShowWarning($"Can't afford", 2f);
+            player.ShowHUDWarning($"Can't afford", 2f);
             return;
         }
 
        InventoryData inventoryData = pd.GetData<InventoryData>();
         if(!inventoryData.CanAddItemToHotbar()) {
-            player.GetHUD().ShowWarning($"No space", 2f);
+            player.ShowHUDWarning($"No space", 2f);
             return;
         }
 
@@ -86,7 +86,7 @@ public class PlayerTransactionManager : NetworkBehaviour
         gpd.balance -= cost;
         pd.SetData(gpd);
 
-        player.GetNetworkedAudioController().PlaySound("purchased");
+        player.NetworkedAudioController.PlaySound("purchased");
 
         // Update the progression for buying a type of item
         UpdateProgression_ItemPurchased(pd, item.item.Value);

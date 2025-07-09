@@ -14,6 +14,14 @@ public class ProgressionPointRenderer : MonoBehaviour
 {
     [Header("References")]
     [SerializeField]
+    private GameObject progressionMetricPrefab;
+    [SerializeField]
+    private Transform metricsHolder;
+    [SerializeField]
+    private List<Image> leadingLines;
+
+    [Header("References - UI")]
+    [SerializeField]
     private Image backgroundImage;
     [SerializeField]
     private TMP_Text nameText;
@@ -21,11 +29,6 @@ public class ProgressionPointRenderer : MonoBehaviour
     private TMP_Text descriptionText;
     [SerializeField]
     private TMP_Text priceText;
-
-    [SerializeField]
-    private GameObject progressionMetricPrefab;
-    [SerializeField]
-    private Transform metricsHolder;
 
     [Header("Settings")]
     [SerializeField]
@@ -82,9 +85,14 @@ public class ProgressionPointRenderer : MonoBehaviour
 
         UpdateTextElements(nameText, descriptionLines, priceText);
         UpdateMetrics(dispSettings);
+        UpdateLines(dispSettings);
 
         descriptionText.ForceMeshUpdate();
         LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionText.rectTransform);
+    }
+
+    public void Clicked() {
+        BLog.Highlight($"clicked {point.progressionDisplayName}");
     }
 
     private void UpdateDisplayMode(DisplayModeSettings settings) 
@@ -148,6 +156,11 @@ public class ProgressionPointRenderer : MonoBehaviour
         }
     }
 
+    private void UpdateLines(DisplayModeSettings settings) 
+    {
+        leadingLines.ForEach(lineRenderer => lineRenderer.color = settings.leadingLineColor);
+    }
+
     public enum DisplayMode { INVISIBLE, UNLOCKED, NEXT_STEP, CAN_UNLOCK }
 
     [Serializable]
@@ -159,6 +172,7 @@ public class ProgressionPointRenderer : MonoBehaviour
         public Color metricNameText;
         public Color metricValueComplete;
         public Color metricValueIncomplete;
+        public Color leadingLineColor;
     }
 
 }
