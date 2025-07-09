@@ -279,6 +279,13 @@
       "dependencies": {},
       "hash": "ba74ca4097a1f3eb184426eaa9f43b6b6f71d69c"
     },
+    "net.emullen.menucontroller": {
+      "version": "https://github.com/east-01/net.emullen.menucontroller.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dd4978f20b5a47e086fa5e13343eb8594517a2e0"
+    },
     "net.emullen.networking": {
       "version": "https://github.com/east-01/net.emullen.networking.git",
       "depth": 0,

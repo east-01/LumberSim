@@ -52,6 +52,7 @@ Shader "UI/DashedImage"
             float    _DashThickness;
             float    _DashLength;
             float    _DashSpacing;
+            float2 _RotationData;
 
             v2f vert(appdata_t v)
             {
@@ -65,25 +66,26 @@ Shader "UI/DashedImage"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                // THIS is your true pixel‐space coordinate inside the UI element:
-                float2 pixelPos = ClipPixelPos(i.screenPos);
+                // // THIS is your true pixel‐space coordinate inside the UI element:
+                // float2 pixelPos = ClipPixelPos(i.screenPos);
 
-                // Dash cycle length in pixels
-                float total = _DashLength + _DashSpacing;
-                float inCycle = fmod(pixelPos.x, total);
-                bool isDash = inCycle < _DashLength;
+                // // Dash cycle length in pixels
+                // float total = _DashLength + _DashSpacing;
+                // float inCycle = fmod(pixelPos.x, total);
+                // bool isDash = inCycle < _DashLength;
 
-                // Vertical thickness in pixels
-                float vOff = fmod(pixelPos.y, _DashThickness);
-                bool inThick = vOff < _DashThickness;
+                // // Vertical thickness in pixels
+                // float vOff = fmod(pixelPos.y, _DashThickness);
+                // bool inThick = vOff < _DashThickness;
 
-                // Sample your base texture
+                // // Sample your base texture
                 fixed4 baseCol = tex2D(_MainTex, i.uv) * i.color;
 
-                if (isDash && inThick)
-                    return _DashColor * baseCol.a;   // keep original alpha
-                else
-                    return baseCol;
+                // if (isDash && inThick)
+                //     return _DashColor * baseCol.a;   // keep original alpha
+                // else
+                //     return baseCol;
+                return baseCol;
             }
             ENDCG
         }

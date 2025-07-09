@@ -7,7 +7,12 @@ public class CanvasCameraScaler : MonoBehaviour
     [SerializeField]
     private Canvas targetCanvas;
 
-void Start()
+    [SerializeField]
+    private float widthPadding;
+    [SerializeField]
+    private float heightPadding;
+
+    void Start()
     {
         if (targetCanvas.renderMode != RenderMode.WorldSpace)
         {
@@ -29,8 +34,8 @@ void Start()
         // Compute the world‐space size of the RectTransform
         // Note: lossyscale accounts for any parent scaling
         Vector3 lossyScale = rt.lossyScale;
-        float worldWidth  = rt.rect.width  * lossyScale.x;
-        float worldHeight = rt.rect.height * lossyScale.y;
+        float worldWidth  = (rt.rect.width + widthPadding)  * lossyScale.x;
+        float worldHeight = (rt.rect.height + heightPadding) * lossyScale.y;
 
         // Camera.orthographicSize is half of the vertical size of the view
         // To ensure the entire canvas fits, we need:
