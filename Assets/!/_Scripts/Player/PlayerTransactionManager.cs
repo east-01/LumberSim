@@ -36,6 +36,11 @@ public class PlayerTransactionManager : NetworkBehaviour
             return;
         }
 
+        if(!player.ProgressionManager.CanUseItem(item.item.Value)) {
+            player.ShowHUDWarning($"You have to complete objectives to purchase this item!", 2f);
+            return;
+        }
+
         PlayerData pd = player.PlayerData;
         GeneralPlayerData gpd = pd.GetData<GeneralPlayerData>();
         if(gpd.balance < itemAssignments.Get(item.item.Value).cost) {
