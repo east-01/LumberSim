@@ -37,6 +37,15 @@ public class GameplayManager : NetworkBehaviour
     public PlayerObjectManager PlayerObjectManager { get; private set; }
     public TradeMarket GlobalMarket { get; private set; }
 
+    public Player Player { get { 
+        LocalPlayer lp = PlayerManager.Instance.LocalPlayers.Where(lp => lp != null).First();
+        if(lp == null)
+            return null;
+
+        Player p = PlayerObjectManager.GetPlayer(lp.UID);
+        return p;
+    } }
+
     private void Start() 
     {
         SceneSingletons.Register(this);

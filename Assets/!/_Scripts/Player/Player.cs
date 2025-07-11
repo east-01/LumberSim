@@ -95,6 +95,20 @@ public class Player : NetworkBehaviour, IS3
 
         if(Input.GetKeyDown(KeyCode.Escape)) {
             SetPaused(!IsPaused);
+            ConsumeMouse(!IsPaused);
+        }
+
+
+        if(Input.GetKeyDown(KeyCode.O)) {
+            GeneralPlayerData gpd = PlayerData.GetData<GeneralPlayerData>();
+            gpd.balance += 1000;
+            PlayerData.SetData(gpd);
+        }
+        if(Input.GetKey(KeyCode.F1) && Input.GetKeyDown(KeyCode.P)) {
+            ProgressionData progression = PlayerData.GetData<ProgressionData>();
+            progression.unlockedPoints = new();
+            PlayerData.SetData(progression);
+            BLog.Highlight("<color=red>Wiped progression points</color>");
         }
 
         // Safely subscribe to the GameplayManager singleton

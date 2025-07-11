@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8488708330787928392}
   - component: {fileID: 5782865933173265567}
+  - component: {fileID: 143262484521125733}
   - component: {fileID: 2179467153914519643}
   - component: {fileID: 1392220215716708571}
   - component: {fileID: 4825266526652912415}
-  - component: {fileID: 143262484521125733}
   - component: {fileID: 3008379525093721920}
   m_Layer: 5
   m_Name: ProgressionPoint
@@ -59,6 +59,7 @@ MonoBehaviour:
   progressionMetricPrefab: {fileID: 4256676378390258512, guid: aa6c00d63ef1a7945bdcc2414b13ea95, type: 3}
   metricsHolder: {fileID: 8717275964708568233}
   leadingLines: []
+  driverButton: {fileID: 143262484521125733}
   backgroundImage: {fileID: 4825266526652912415}
   nameText: {fileID: 4639064624964363239}
   descriptionText: {fileID: 7563503588433148384}
@@ -73,7 +74,7 @@ MonoBehaviour:
     metricNameText: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
     metricValueComplete: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
     metricValueIncomplete: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
-    leadingLineColor: {r: 0.9811321, g: 0.18974723, b: 0.18974723, a: 0.85882354}
+    leadingLineColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 0.16470589}
   - displayMode: 1
     background: {r: 0.4056604, g: 0.28098184, b: 0.1549929, a: 0.7647059}
     titleText: {r: 0.24857603, g: 0.3584906, b: 0.257488, a: 1}
@@ -89,7 +90,7 @@ MonoBehaviour:
     metricNameText: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
     metricValueComplete: {r: 0.30704877, g: 0.8679245, b: 0.31139666, a: 1}
     metricValueIncomplete: {r: 0.8396226, g: 0.37624598, b: 0.37624598, a: 1}
-    leadingLineColor: {r: 0.21568628, g: 0.30054048, b: 0.4627451, a: 0.16470589}
+    leadingLineColor: {r: 0.21568628, g: 0.30054048, b: 0.4627451, a: 0.78431374}
   - displayMode: 3
     background: {r: 0.9811321, g: 0.85451525, b: 0.5322179, a: 0.7647059}
     titleText: {r: 0.6580189, g: 0.838338, b: 0.8773585, a: 1}
@@ -97,7 +98,63 @@ MonoBehaviour:
     metricNameText: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     metricValueComplete: {r: 0.30588236, g: 0.8666667, b: 0.30980393, a: 1}
     metricValueIncomplete: {r: 0.8392157, g: 0.3764706, b: 0.3764706, a: 1}
-    leadingLineColor: {r: 0.7735849, g: 0.7691063, b: 0.1788003, a: 0.7019608}
+    leadingLineColor: {r: 0.18039213, g: 0.39399394, b: 0.77254903, a: 0.6313726}
+--- !u!114 &143262484521125733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961755331838238062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 4825266526652912415}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5782865933173265567}
+        m_TargetAssemblyTypeName: ProgressionPointRenderer, Assembly-CSharp
+        m_MethodName: Clicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2179467153914519643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,62 +225,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 10
---- !u!114 &143262484521125733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961755331838238062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 67740d71d3820df4b9de8b1f0bce528f, type: 3}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 21300000, guid: 67740d71d3820df4b9de8b1f0bce528f, type: 3}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 4825266526652912415}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5782865933173265567}
-        m_TargetAssemblyTypeName: ProgressionPointRenderer, Assembly-CSharp
-        m_MethodName: Clicked
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!222 &3008379525093721920
 CanvasRenderer:
   m_ObjectHideFlags: 0

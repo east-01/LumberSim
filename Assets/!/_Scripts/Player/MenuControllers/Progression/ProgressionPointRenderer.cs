@@ -7,10 +7,11 @@ using EMullen.PlayerMgmt;
 using MoreMountains.Feedbacks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [ExecuteInEditMode]
-public class ProgressionPointRenderer : MonoBehaviour 
+public class ProgressionPointRenderer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("References")]
     [SerializeField]
@@ -21,6 +22,8 @@ public class ProgressionPointRenderer : MonoBehaviour
     private List<Image> leadingLines;
 
     [Header("References - UI")]
+    [SerializeField]
+    private Button driverButton;
     [SerializeField]
     private Image backgroundImage;
     [SerializeField]
@@ -50,7 +53,7 @@ public class ProgressionPointRenderer : MonoBehaviour
 
     private void Start()
     {
-
+        ShowBorder(false);
     }
 
     private void Update() 
@@ -60,6 +63,8 @@ public class ProgressionPointRenderer : MonoBehaviour
 
     public void Render(bool bypassTimeLimit = true) 
     {
+        driverButton.enabled = displayMode == DisplayMode.CAN_UNLOCK;
+
         if(bypassTimeLimit) {
             if(Time.time - lastTimeRendered < 1f)
                 return;
@@ -91,9 +96,22 @@ public class ProgressionPointRenderer : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionText.rectTransform);
     }
 
-    public void Clicked() {
-        BLog.Highlight($"clicked {point.progressionDisplayName}");
+    public void ShowBorder(bool show) 
+    {
+        // BLog.Highlight($"show border: {show}");
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ShowBorder(true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        ShowBorder(false);
+    }
+
+    public void Clicked() => GetComponentInParent<ProgressionMenuController>().ProgPointRendererClicked(this);
 
     private void UpdateDisplayMode(DisplayModeSettings settings) 
     {

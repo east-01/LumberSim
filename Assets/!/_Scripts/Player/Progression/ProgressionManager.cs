@@ -44,20 +44,7 @@ public class ProgressionManager : NetworkBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.L)) {
-            UpdateProgressionResults();
-            BLog.Highlight($"Can unlock: {string.Join(", ", ProgressionResults.Value.canUnlock)}, next steps: {string.Join(", ", ProgressionResults.Value.nextSteps.Keys)}");
-        } else if(Input.GetKeyDown(KeyCode.K)) {
-            UpdateProgressionResults();
-            if(ProgressionResults.Value.canUnlock.Count > 0) {
-                string toUnlock = ProgressionResults.Value.canUnlock[0];
-                UnlockProgressionPoint(toUnlock);
-            }
-        } else if(Input.GetKeyDown(KeyCode.O)) {
-            GeneralPlayerData gpd = player.PlayerData.GetData<GeneralPlayerData>();
-            gpd.balance += 1000;
-            player.PlayerData.SetData(gpd);
-        }
+        
     }
 
     public void UpdateProgressionResults() 

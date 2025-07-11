@@ -112,6 +112,8 @@ public class GrabbableItem : NetworkBehaviour, IGrabbable
         if(!itemAssignments.Contains(item.Value))
             throw new InvalidOperationException($"Can't render item \"{item.Value}\" it is not in item assignments.");
 
+        BLog.Highlight($"Rendering with viewing player: {viewingPlayer}");
+
         ItemInfo info = itemAssignments.Get(item.Value);
         GrabbableRenderArgs args = GrabbableRenderArgs.DefaultRenderArgs(info);
         List<string> descriptionLines = args.descriptionLines.ToList();
