@@ -10,12 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 8833587232003466701}
   - component: {fileID: 3900727844183252601}
+  - component: {fileID: 1831822034824420713}
+  - component: {fileID: 6769835273039330212}
   - component: {fileID: 1810047519183149663}
   - component: {fileID: 2493312488100928114}
   - component: {fileID: 8853704450417640882}
   - component: {fileID: 7304131643830810787}
   - component: {fileID: 7456448189434878538}
-  - component: {fileID: 6769835273039330212}
   m_Layer: 0
   m_Name: TreeLogGroup
   m_TagString: Untagged
@@ -89,6 +90,39 @@ MonoBehaviour:
   ShouldPrune: 0
   logPrefab: {fileID: 3909864596577610508, guid: 47887ec04fd176d4b85f2b8624964737, type: 3}
   logHitAudios: []
+--- !u!114 &1831822034824420713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460272941845049084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ce06c102de3d3548863ac15f39c4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  info: {fileID: 11400000, guid: c1f03f1a99a2e2f4895745807cac16db, type: 2}
+--- !u!114 &6769835273039330212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6460272941845049084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edcb41349546d0a4a8281025ed9a5ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 8853704450417640882}
+  _networkObjectCache: {fileID: 0}
+  zeroGravity: 1
+  allowRotation: 1
+  velocitySmoothing: 0.1
+  maxPercievedVelocity: 10
+  rotationAccel: 720
 --- !u!114 &1810047519183149663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,26 +382,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6769835273039330212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6460272941845049084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edcb41349546d0a4a8281025ed9a5ffa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 8853704450417640882}
-  _networkObjectCache: {fileID: 0}
-  defaultSelectColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultNormalColor: {r: 0, g: 0, b: 0, a: 0}
-  info: {fileID: 11400000, guid: c1f03f1a99a2e2f4895745807cac16db, type: 2}
-  zeroGravity: 1
-  allowRotation: 1
-  velocitySmoothing: 0.1
-  maxPercievedVelocity: 10
-  rotationAccel: 720

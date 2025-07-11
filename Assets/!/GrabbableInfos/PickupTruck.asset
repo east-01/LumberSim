@@ -15,6 +15,5 @@ MonoBehaviour:
   DisplayName: Pickup Truck
   Icon: {fileID: 0}
   DescriptionLines: []
-  OutlineColors:
-  - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
-  - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}
+  color: {r: 0, g: 0.22745098, b: 0.62352943, a: 0.8156863}
+  selectedColor: {r: 0.05490196, g: 0.32156864, b: 0.78431374, a: 0.8156863}

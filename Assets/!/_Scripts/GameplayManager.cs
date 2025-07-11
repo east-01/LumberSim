@@ -37,6 +37,8 @@ public class GameplayManager : NetworkBehaviour
     public PlayerObjectManager PlayerObjectManager { get; private set; }
     public TradeMarket GlobalMarket { get; private set; }
 
+    private bool hasInitializedSelectables;
+
     public Player Player { get { 
         LocalPlayer lp = PlayerManager.Instance.LocalPlayers.Where(lp => lp != null).First();
         if(lp == null)
@@ -81,6 +83,25 @@ public class GameplayManager : NetworkBehaviour
         }
         if(registeredGrabbables.Count > 0)
             unregisteredGrabbables = unregisteredGrabbables.Except(registeredGrabbables).ToList();
+            
+        if(Player != null && !hasInitializedSelectables) {
+            StartCoroutine(InitializeSelectables());
+            hasInitializedSelectables = true;
+        }
+    }
+
+    private IEnumerator InitializeSelectables() 
+    {
+        yield return new WaitForSeconds(1f);
+        UpdateAllSelectables();
+    }
+
+    public void UpdateAllSelectables() 
+    {
+        foreach(Selectable selectable in FindObjectsOfType<Selectable>()) {
+            selectable.ClearRenderInfo();
+            selectable.UpdateSelectable(false);
+        }
     }
 
     // TODO: Below probably should go in its own TreeManager

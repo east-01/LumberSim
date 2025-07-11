@@ -9,31 +9,10 @@ using FishNet.Managing.Scened;
 using FishNet.Object;
 using UnityEngine;
 
-public class Grabbable : NetworkBehaviour, IS3
+public class Grabbable : NetworkBehaviour, IS3 
 {
-    [SerializeField]
-    private Color defaultSelectColor;
-    [SerializeField]
-    private Color defaultNormalColor;
 
-    private Outline _selectOutline;
-    public Outline SelectOutline {
-        get {
-            _selectOutline ??= CreateOutline();
-            return _selectOutline;
-        }
-        private set => _selectOutline = value;
-    }
-
-    [SerializeField]
-    private GrabbableInfo info;
-    public GrabbableInfo Info { get {
-        IGrabbable grabbable = GetIGrabbable();
-        if(grabbable != null && grabbable.OverrideGrabbableInfo() != null)
-            return grabbable.OverrideGrabbableInfo();
-        
-        return info;
-    } }
+    [Header("Settings")]
     [SerializeField]
     private bool zeroGravity = true;
     [SerializeField]
@@ -45,9 +24,11 @@ public class Grabbable : NetworkBehaviour, IS3
     [SerializeField] 
     private float rotationAccel = 720f;    // degrees per second²
 
-    private Rigidbody rb;
-    private GameplayManager gameplayManager;
+    // Cached References
+    protected Rigidbody rb;
+    protected GameplayManager gameplayManager;
 
+    // Variables
     private Vector3 lastPos;
     public Vector3 PercievedVelocity { get; private set; }
     public Vector3 SmoothedPerceivedVelocity { get; private set; }
@@ -65,7 +46,6 @@ public class Grabbable : NetworkBehaviour, IS3
 
     private void Start()
     {
-        UpdateOutline();
         isGrabbed = false;
     }
 
@@ -270,50 +250,9 @@ public class Grabbable : NetworkBehaviour, IS3
         hands.AcceptGrabStateChange(grabbable);
     }
 #endregion
-
-#region Outline
-    private Outline CreateOutline() 
-    {
-        // Find a new Outline
-        GameObject outlineObject = gameObject; // Set as self gameObject by default
-        IGrabbable grabbable = GetIGrabbable();
-        if(grabbable != null && grabbable.GetOutlineObject() != null)
-            outlineObject = grabbable.GetOutlineObject();
-
-        if(outlineObject.TryGetComponent(out Outline selectOutlineExisting)) {
-            _selectOutline = selectOutlineExisting;
-            return selectOutlineExisting;
-        }
-            
-        return outlineObject.AddComponent<Outline>();
-    }
-
-    public void UpdateOutline(bool selected = false) 
-    {
-        // grabbable.SelectOutline.enabled = selected;
-        Color selectColor = defaultSelectColor;
-        Color normalColor = defaultNormalColor;
-        if(Info.OutlineColors.Length == 1) {
-            selectColor = Info.OutlineColors[0];
-            normalColor = Info.OutlineColors[0];
-        } else if(Info.OutlineColors.Length >= 2) {
-            selectColor = Info.OutlineColors[0];
-            normalColor = Info.OutlineColors[1];
-        }
-
-        SelectOutline.OutlineColor = selected ? selectColor : normalColor;
-        SelectOutline.OutlineWidth = selected ? 8 : 4;
-        SelectOutline.OutlineMode = Outline.Mode.OutlineVisible;
-    }
-#endregion
-
 }
 
 public interface IGrabbable 
 {
-    public GrabbableRenderArgs? Render(string viewingPlayer = null) => null;
-    public Dictionary<string, string> GetVariables();
     public bool CanPickup(NetworkConnection pickupConnection, string pickupUID, out string reason);
-    public GrabbableInfo OverrideGrabbableInfo() => null;
-    public GameObject GetOutlineObject() => null;
 }

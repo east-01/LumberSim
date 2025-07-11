@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EMullen.Core;
 using EMullen.PlayerMgmt;
 using FishNet;
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
@@ -16,6 +18,8 @@ public class ProgressionManager : NetworkBehaviour
     [SerializeField]
     private ProgressionTree progressionTree;
     public ProgressionTree ProgressionTree => progressionTree;
+    [SerializeField]
+    private ItemAssignments itemAssignments;
 
     public readonly SyncVar<ProgressionTree.EvaluationResults> ProgressionResults = new();
     private Player player;
@@ -44,7 +48,7 @@ public class ProgressionManager : NetworkBehaviour
 
     private void Update()
     {
-        
+
     }
 
     public void UpdateProgressionResults() 
@@ -74,7 +78,7 @@ public class ProgressionManager : NetworkBehaviour
     public void UnlockProgressionPoint(string progressionPointID) 
     {
         if(!InstanceFinder.IsServerStarted) {
-            ServerRPCUnlockProgressionPoint(progressionPointID);
+            ServerRPCUnlockProgressionPoint(LocalConnection, progressionPointID);
             return;
         }
 
@@ -93,8 +97,37 @@ public class ProgressionManager : NetworkBehaviour
         pd.SetData(progression);
 
         player.NetworkedAudioController.PlaySound("purchased");
+
+        if(InstanceFinder.IsServerStarted)
+            player.GameplayManager.UpdateAllSelectables();
     }
     [ServerRpc(RequireOwnership = false)]
-    private void ServerRPCUnlockProgressionPoint(string progressionPointID) => UnlockProgressionPoint(progressionPointID);
+    private void ServerRPCUnlockProgressionPoint(NetworkConnection unlocker, string progressionPointID) 
+    {
+        UnlockProgressionPoint(progressionPointID);
+        TargetRPCProgressionPointUnlocked(unlocker);
+    }
+    [TargetRpc]
+    private void TargetRPCProgressionPointUnlocked(NetworkConnection unlocker) 
+    {
+        player.GameplayManager.UpdateAllSelectables();
+    }
+
+    public bool CanUseItem(Item item) 
+    {
+        ProgressionData progression = player.PlayerData.GetData<ProgressionData>();
+        List<ProgressionPoint> requiredPoints = itemAssignments.Get(item).requiredProgressionPoints;
+        if(requiredPoints.Count == 0)
+            return true;
+
+        return requiredPoints.Exists(pp => progression.HasUnlocked(pp.progressionID));
+    }
+
+    public List<ProgressionPoint> ItemRequiredProgressionPoints(Item item) 
+    {
+        ProgressionData progression = player.PlayerData.GetData<ProgressionData>();
+        List<ProgressionPoint> requiredPoints = itemAssignments.Get(item).requiredProgressionPoints;
+        return requiredPoints.Where(pp => !progression.HasUnlocked(pp.progressionID)).ToList();
+    }
 
 }

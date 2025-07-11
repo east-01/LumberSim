@@ -320,7 +320,7 @@ MonoBehaviour:
   networkedAudioController: {fileID: 3402678452535200333}
   playerHUDMenuController: {fileID: 4668408997459960316}
   playerInputManager: {fileID: 4172409528695446178}
-  grabbablePicker: {fileID: 8230513912879713399}
+  raycastPicker: {fileID: 8230513912879713399}
   toolBelt: {fileID: 6160719718300331586}
   uidReadout: 
 --- !u!114 &7978867648418830402
@@ -388,6 +388,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1450876365604900663}
   _networkObjectCache: {fileID: 0}
   progressionTree: {fileID: 11400000, guid: 17730d5fef488684e9c7b92322aeb287, type: 2}
+  itemAssignments: {fileID: 11400000, guid: 7d5e65c1dd8fc83448ed9fadca9468bc, type: 2}
 --- !u!114 &8230513912879713399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,6 +402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 4758240217155741764}
+  player: {fileID: 2962174201918927279}
   viewRange: 5
 --- !u!114 &4172409528695446178
 MonoBehaviour:

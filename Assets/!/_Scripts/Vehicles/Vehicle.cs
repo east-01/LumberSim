@@ -9,7 +9,7 @@ using UnityEngine;
 /// <summary>
 /// Connects players to control the vehicle.
 /// </summary>
-public class Vehicle : NetworkBehaviour, IGrabbable
+public class Vehicle : NetworkBehaviour
 {
     private readonly SyncVar<string> driverUID = new();
     [SerializeField]
@@ -38,16 +38,5 @@ public class Vehicle : NetworkBehaviour, IGrabbable
         }
 
         this.driverUID.Value = driverUID;
-    }
-
-    public bool CanPickup(NetworkConnection pickupConnection, string pickupUID, out string reason) 
-    {
-        reason = "";
-        return false;
-    }
-
-    public Dictionary<string, string> GetVariables()
-    {
-        return new();
     }
 }

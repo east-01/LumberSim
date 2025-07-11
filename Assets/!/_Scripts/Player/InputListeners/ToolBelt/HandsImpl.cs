@@ -23,7 +23,7 @@ public class HandsImpl : ToolBeltImpl, IInputListener
     private float rotationAcceleration = 0.25f;
     private float currentRotationSpeed;
 
-    private Grabbable grabbed;
+    public Grabbable Grabbed { get; private set; }
     private Vector3 targetPosition; // The target place the camera is pointing to.
     /// <summary>
     /// This variable is set in the InputPoll Look section, and is consumed on the next frame.
@@ -47,12 +47,12 @@ public class HandsImpl : ToolBeltImpl, IInputListener
 
     private void FixedUpdate()
     {
-        if(grabbed == null)
+        if(Grabbed == null)
             return;
 
         targetPosition = camera.transform.position + camera.transform.forward * grabDistance;
 
-        grabbed.UpdatePositionAndRotation(targetPosition, rotationDelta);
+        Grabbed.UpdatePositionAndRotation(targetPosition, rotationDelta);
 
         rotationDelta = Quaternion.identity; // Consume rotation delta
     }
@@ -72,7 +72,7 @@ public class HandsImpl : ToolBeltImpl, IInputListener
     public void InputPoll(InputAction action)
     {
         if(action.name == "Look") {
-            if(!rotatingItem || grabbed == null)
+            if(!rotatingItem || Grabbed == null)
                 return;
 
             Vector2 rotation = action.ReadValue<Vector2>();
@@ -107,12 +107,15 @@ public class HandsImpl : ToolBeltImpl, IInputListener
     {
         if(performed) {
 
-            if(grabbed != null)
+            if(Grabbed != null)
                 return;
 
-            Grabbable grabbable = player.GrabbablePicker.PickGrabbable(grabDistance, out RaycastHit hit);
+            Selectable selectable = player.RaycastPicker.PickSelectable(grabDistance, out RaycastHit hit);
 
-            if(grabbable == null)
+            if(selectable == null)
+                return;
+
+            if(!selectable.TryGetComponent(out Grabbable grabbable))
                 return;
 
             // Vector3 grabOffset = hit.point-grabbable.transform.position;
@@ -120,10 +123,10 @@ public class HandsImpl : ToolBeltImpl, IInputListener
 
         } else {
             
-            if(grabbed == null)
+            if(Grabbed == null)
                 return;
 
-            grabbed.StopGrab();
+            Grabbed.StopGrab();
 
         }
     }
@@ -132,18 +135,16 @@ public class HandsImpl : ToolBeltImpl, IInputListener
     {
         if(grabbable != null) {
      
-            if(grabbed != null)
+            if(Grabbed != null)
                 throw new InvalidOperationException("Can't AcceptGrabStateChange, getting a new grabbable while we already have one.");
             
             player.NetworkedAudioController.PlaySound("pickup");
 
-            grabbed = grabbable.GetComponent<Grabbable>();
-            player.GrabbablePicker.SetSelectedGrabbable(grabbed, true);
-
+            Grabbed = grabbable.GetComponent<Grabbable>();
         } else {
 
-            grabbed = null;
-            player.GrabbablePicker.ClearSelectedGrabbable();
+            Grabbed = null;
+            player.RaycastPicker.ClearSelectedGrabbable();
 
         }
     }

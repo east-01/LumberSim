@@ -66,7 +66,7 @@ public class PlayerActions : NetworkBehaviour, IInputListener
         if(!context.performed)
             return;
 
-        Grabbable grabbable = player.GrabbablePicker.PickGrabbable(5f);
+        Selectable grabbable = player.RaycastPicker.PickSelectable(5f);
         if(grabbable == null)
             return;
 

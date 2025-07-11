@@ -10,8 +10,8 @@ public class InGameMenuController : MenuController
     [SerializeField]
     private Player player;
     [SerializeField]
-    private GrabbableRenderer grabbableRenderer;
-    public GrabbableRenderer GrabbableRenderer => grabbableRenderer;
+    private SelectableRenderer grabbableRenderer;
+    public SelectableRenderer GrabbableRenderer => grabbableRenderer;
     [SerializeField]
     private AxeCriticalBarController axeCriticalBarController;
     public AxeCriticalBarController AxeCriticalBarController => axeCriticalBarController;

@@ -15,6 +15,5 @@ MonoBehaviour:
   DisplayName: Tree Log %PRICE%
   Icon: {fileID: 0}
   DescriptionLines: []
-  OutlineColors:
-  - {r: 0, g: 0.8962264, b: 0.08964499, a: 0.78431374}
-  - {r: 0, g: 0.6037736, b: 0.06064102, a: 0.39215687}
+  color: {r: 0.16890961, g: 0.6792453, b: 0.11854753, a: 0.80784315}
+  selectedColor: {r: 0.2731561, g: 0.8584906, b: 0.21462265, a: 0.80784315}

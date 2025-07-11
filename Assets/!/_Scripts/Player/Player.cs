@@ -38,8 +38,8 @@ public class Player : NetworkBehaviour, IS3
     private PlayerInputManager playerInputManager;
     public PlayerInputManager PlayerInputManager => playerInputManager;
     [SerializeField]
-    private GrabbablePicker grabbablePicker;
-    public GrabbablePicker GrabbablePicker => grabbablePicker;
+    private RaycastPicker raycastPicker;
+    public RaycastPicker RaycastPicker => raycastPicker;
     [SerializeField]
     private ToolBelt toolBelt;
     public ToolBelt ToolBelt => toolBelt;
@@ -97,7 +97,6 @@ public class Player : NetworkBehaviour, IS3
             SetPaused(!IsPaused);
             ConsumeMouse(!IsPaused);
         }
-
 
         if(Input.GetKeyDown(KeyCode.O)) {
             GeneralPlayerData gpd = PlayerData.GetData<GeneralPlayerData>();

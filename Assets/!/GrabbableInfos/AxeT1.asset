@@ -17,10 +17,10 @@ MonoBehaviour:
   DescriptionLines:
   - 'Power: <color=#eb5038>0.85</color>'
   - Recharges in <color=#eb5038>1.5s</color>
-  OutlineColors:
-  - {r: 0, g: 0.37368685, b: 0.8396226, a: 0.78431374}
-  - {r: 0, g: 0.2596543, b: 0.5849056, a: 0.39215687}
+  color: {r: 0, g: 0.22571316, b: 0.6226415, a: 0.8156863}
+  selectedColor: {r: 0.05540227, g: 0.3208222, b: 0.7830189, a: 0.8156863}
   cost: 5
+  requiredProgressionPoints: []
   hitPower: 0.85
   swingTime: 1
   rechargeTime: 1.5

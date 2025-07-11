@@ -5943,7 +5943,7 @@ GameObject:
   - component: {fileID: 6198894919555162525}
   - component: {fileID: 9188316124799874761}
   - component: {fileID: 1146125832977977591}
-  - component: {fileID: 165759278104251729}
+  - component: {fileID: 5760499852676739978}
   - component: {fileID: 6389796540485580627}
   - component: {fileID: 3686553863151885701}
   - component: {fileID: 7128789307663756347}
@@ -6010,6 +6010,7 @@ MonoBehaviour:
   breakForce: 2000
   maxSteerAngle: 17.5
   autoBreak: 0
+  doFrontWheelsRotate: 1
   maxSpeed: 35
   frontLeftWheelCollider: {fileID: 7195389703169122574}
   frontRightWheelCollider: {fileID: 2109507259558224740}
@@ -6019,7 +6020,7 @@ MonoBehaviour:
   frontRightWheelTransform: {fileID: 1150285079029414778}
   rearLeftWheelTransform: {fileID: 5551579353050110401}
   rearRightWheelTransform: {fileID: 4445802317343868634}
---- !u!114 &165759278104251729
+--- !u!114 &5760499852676739978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6028,20 +6029,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7602318602152109971}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edcb41349546d0a4a8281025ed9a5ffa, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ce06c102de3d3548863ac15f39c4c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 7128789307663756347}
-  _networkObjectCache: {fileID: 0}
-  defaultSelectColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultNormalColor: {r: 0, g: 0, b: 0, a: 0}
   info: {fileID: 11400000, guid: 0a88a0cd041d49849a0ac90cf57f9d03, type: 2}
-  zeroGravity: 1
-  allowRotation: 1
-  velocitySmoothing: 0.1
-  maxPercievedVelocity: 10
-  rotationAccel: 720
 --- !u!114 &6389796540485580627
 MonoBehaviour:
   m_ObjectHideFlags: 0

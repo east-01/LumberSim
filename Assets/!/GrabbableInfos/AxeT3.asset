@@ -17,10 +17,11 @@ MonoBehaviour:
   DescriptionLines:
   - Power <color=#6ecc2f>1.8</color>
   - Recharges in <color=#6ecc2f>0.9s</color>
-  OutlineColors:
-  - {r: 0.9245283, g: 0.91058594, b: 0.17007834, a: 0.78431374}
-  - {r: 0.6981132, g: 0.6884902, b: 0.23380208, a: 0.4745098}
+  color: {r: 0.9113221, g: 0.9150943, b: 0.28920433, a: 0.77254903}
+  selectedColor: {r: 0.9760966, g: 0.9811321, b: 0.1804913, a: 0.77254903}
   cost: 1000
+  requiredProgressionPoints:
+  - {fileID: 11400000, guid: fd34e3165e8465246ac89a1e916710ec, type: 2}
   hitPower: 1.8
   swingTime: 0.8
   rechargeTime: 0.9

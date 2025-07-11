@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 6268537444203111279}
   - component: {fileID: 9220712944953424199}
   - component: {fileID: 5737022153235583111}
-  - component: {fileID: 6050265142426830447}
+  - component: {fileID: 7467474889042294209}
   - component: {fileID: 4827879385799446839}
   - component: {fileID: 320528963394413947}
   - component: {fileID: 1769766745484593973}
@@ -276,7 +276,7 @@ MonoBehaviour:
   frontRightWheelTransform: {fileID: 0}
   rearLeftWheelTransform: {fileID: 0}
   rearRightWheelTransform: {fileID: 0}
---- !u!114 &6050265142426830447
+--- !u!114 &7467474889042294209
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -285,20 +285,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3928814032047215338}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edcb41349546d0a4a8281025ed9a5ffa, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ce06c102de3d3548863ac15f39c4c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 1769766745484593973}
-  _networkObjectCache: {fileID: 0}
-  defaultSelectColor: {r: 0, g: 0, b: 0, a: 0}
-  defaultNormalColor: {r: 0, g: 0, b: 0, a: 0}
   info: {fileID: 11400000, guid: 557a6a7020a4ac545808029149f4ba0b, type: 2}
-  zeroGravity: 1
-  allowRotation: 1
-  velocitySmoothing: 0.1
-  maxPercievedVelocity: 10
-  rotationAccel: 720
 --- !u!114 &4827879385799446839
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(NetworkTransform))]
 [RequireComponent(typeof(NetworkedAudioController))]
-public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEvaluator
+public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEvaluator, ISelectableController
 {
     [SerializeField]
     private GameObject logPrefab;
@@ -29,11 +29,15 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
     private NetworkedAudioController audioController;
     private Rigidbody rb;
 
+    private int? estimatedValue;
+
 #region Initializers
     private void Awake()
     {
         audioController = GetComponent<NetworkedAudioController>();
         rb = GetComponent<Rigidbody>();
+
+        GetComponent<Selectable>().selectableController = this;      
     }
 
     private void OnEnable() 
@@ -121,21 +125,6 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
         return position;
     }
 
-    private int? estimatedValue;
-
-    public Dictionary<string, string> GetVariables()
-    {
-        if(!estimatedValue.HasValue) {
-            float value = EvaluateSalePrice(gameplayManager.GlobalMarket);
-            float maxError = LumberEvaluator.EvaluateTotalLength(this)/5f;
-            estimatedValue = Mathf.RoundToInt(value + UnityEngine.Random.Range(-maxError, maxError));
-        }
-        
-        return new Dictionary<string, string>() {
-            {"%PRICE%", $"<color=\"green\">~${estimatedValue.Value}</color>"},
-        };
-    }
-
     public bool CanPickup(NetworkConnection conn, string uid, out string reason) 
     {
         PlayerData pd = PlayerDataRegistry.Instance.GetPlayerData(uid);
@@ -144,6 +133,26 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
         float carryCapacity = pd.GetData<GeneralPlayerData>().maxCarryWeight;
         reason = "Lumber too heavy";
         return LumberEvaluator.EvaluateTotalWeight(this) <= carryCapacity;
+    }
+
+    public GameObject GetOutlineObject() => gameObject;
+    public SelectableRenderInfo GetSelectableInfo()
+    {
+        SelectableInfo baseInfo = GetComponent<Selectable>().Info;
+        SelectableRenderInfo info = SelectableRenderInfo.DefaultRenderArgs(baseInfo);
+
+        if(gameplayManager == null)
+            return info;
+
+        if(!estimatedValue.HasValue) {
+            float value = EvaluateSalePrice(gameplayManager.GlobalMarket);
+            float maxError = LumberEvaluator.EvaluateTotalLength(this)/5f;
+            estimatedValue = Mathf.RoundToInt(value + UnityEngine.Random.Range(-maxError, maxError));
+        }
+
+        info.name = info.name.Replace("%PRICE%", $"<color=\"green\">~${estimatedValue.Value}</color>");
+
+        return info;
     }
 
     public float EvaluatePurchasePrice(TradeMarket market) => -1;
