@@ -37,7 +37,7 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
         audioController = GetComponent<NetworkedAudioController>();
         rb = GetComponent<Rigidbody>();
 
-        GetComponent<Selectable>().selectableController = this;      
+        RefreshSelectable();
     }
 
     private void OnEnable() 
@@ -56,6 +56,9 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
             return;
 
         gameplayManager = singleton as GameplayManager;
+
+        Selectable sel = GetComponent<Selectable>();
+        sel.UpdateSelectable(false);
     }
 
     public void SingletonDeregistered(Type type, object singleton)
@@ -140,7 +143,6 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
     {
         SelectableInfo baseInfo = GetComponent<Selectable>().Info;
         SelectableRenderInfo info = SelectableRenderInfo.DefaultRenderArgs(baseInfo);
-
         if(gameplayManager == null)
             return info;
 
@@ -153,6 +155,12 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3, IGrabbable, IMarketEv
         info.name = info.name.Replace("%PRICE%", $"<color=\"green\">~${estimatedValue.Value}</color>");
 
         return info;
+    }
+
+    protected void RefreshSelectable() 
+    {
+        if(!TryGetComponent(out ChoppableTree ctree))
+            GetComponent<Selectable>().selectableController = this;      
     }
 
     public float EvaluatePurchasePrice(TradeMarket market) => -1;

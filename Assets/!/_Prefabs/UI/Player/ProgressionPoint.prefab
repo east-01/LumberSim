@@ -65,7 +65,7 @@ MonoBehaviour:
   descriptionText: {fileID: 7563503588433148384}
   priceText: {fileID: 4346069599385072191}
   point: {fileID: 0}
-  displayMode: 3
+  displayMode: 2
   displayModeSettings:
   - displayMode: 0
     background: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 0.7647059}

@@ -91,7 +91,7 @@ public class HandsImpl : ToolBeltImpl, IInputListener
             float rotationX = rotation.y * currentRotationSpeed;
             float rotationY = rotation.x * currentRotationSpeed;
 
-            Quaternion yaw   = Quaternion.AngleAxis(rotationY, Vector3.up);
+            Quaternion yaw   = Quaternion.AngleAxis(rotationY, camera.transform.up);
             Quaternion pitch = Quaternion.AngleAxis(-rotationX, camera.transform.right);
             rotationDelta = pitch * yaw;
         }

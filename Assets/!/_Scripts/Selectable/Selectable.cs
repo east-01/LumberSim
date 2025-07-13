@@ -33,15 +33,22 @@ public class Selectable : MonoBehaviour
 
     public void UpdateSelectable(bool selected) 
     {
-        if(selectableController != null)
+        if(selectableController != null) {
             SelectableRenderInfoV = selectableController.GetSelectableInfo();
-        else if(info != null)
+        } else if(info != null) {
             SelectableRenderInfoV = SelectableRenderInfo.DefaultRenderArgs(info);
+        }
 
         if(!SelectableRenderInfoV.HasValue)
             return;
 
         SelectableRenderInfo sri = SelectableRenderInfoV.Value;
+
+        if(!sri.renders) {
+            SelectOutline.enabled = false;
+            return;
+        }
+
         UpdateOutline(sri.color, selected ? 8 : 4);
     }
 
@@ -83,6 +90,11 @@ public interface ISelectableController
 /// </summary>
 public struct SelectableRenderInfo 
 {
+    /// <summary>
+    /// A variable to determine if the selectable actually renders, this feature exists so that
+    ///   other classes can use the selectable framework without having to render it.
+    /// </summary>
+    public bool renders;
     public string name;
     public string[] descriptionLines;
     public Color color;
@@ -90,6 +102,7 @@ public struct SelectableRenderInfo
 
     public SelectableRenderInfo(string name, string[] descriptionLines, Color color, Color selectColor) 
     {
+        this.renders = true;
         this.name = name;
         this.descriptionLines = descriptionLines;
         this.color = color;

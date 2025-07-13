@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a990f4c671d47748831a4dde672b16b, type: 3}
+  m_Name: Veh_PickupTruckUnlock
+  m_EditorClassIdentifier: 
+  progressionID: PickupTruckUnlock
+  progressionDisplayName: The Pickup
+  progressionDescription: Get serious about transport.
+  price: 1500
+  targetMetrics:
+  - metric:
+      type: 1
+      name: ChoppedTrees
+      boolValue: 0
+      intValue: 125
+      floatValue: 0
+    displayName: Chop 125 trees
+  predecessors:
+  - {fileID: 11400000, guid: 004592385f8e29e40b6eb18bccf75a37, type: 2}

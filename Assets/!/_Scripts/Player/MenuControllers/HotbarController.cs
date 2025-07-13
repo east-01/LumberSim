@@ -101,6 +101,9 @@ public class HotbarController : MonoBehaviour
         if(newData.GetType() != typeof(InventoryData))
             return;
 
+        if(playerData.GetUID() != player.uid.Value)
+            return;
+
         UpdateToolbelt();
     }
 

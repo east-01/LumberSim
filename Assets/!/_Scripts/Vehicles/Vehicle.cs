@@ -20,17 +20,34 @@ public class Vehicle : NetworkBehaviour
     private CarController carController;
     public CarController CarController => carController;
 
+    private bool observedOwnerStatus = false;
+
     private void Update()
     {
+
+        if(IsOwner != observedOwnerStatus)
+            UpdateOwnershipStatus(IsOwner);
+
+        if(!IsOwner)
+            return;
+
         if(!HasDriver())
-            CarController.SetInput(0, 0, true);   
+            CarController.SetInput(0, 0, true); 
+    }
+
+    private void UpdateOwnershipStatus(bool isOwner) 
+    {
+        observedOwnerStatus = isOwner;
+
+        carController.enabled = isOwner;
     }
 
     public bool HasDriver() {
         return driverUID.Value != null && driverUID.Value != "";
     }
 
-    public void SetDriver(string driverUID) 
+    [ServerRpc]
+    public void ServerRPCSetDriver(string driverUID) 
     {
         if(HasDriver() && driverUID != null) {
             Debug.LogError("Can't set driver, Vehicle already has driver.");
@@ -39,4 +56,5 @@ public class Vehicle : NetworkBehaviour
 
         this.driverUID.Value = driverUID;
     }
+
 }

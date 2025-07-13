@@ -99,7 +99,7 @@ public class ProgressionManager : NetworkBehaviour
         player.NetworkedAudioController.PlaySound("purchased");
 
         if(InstanceFinder.IsServerStarted)
-            player.GameplayManager.UpdateAllSelectables();
+            PostUnlockUpdates();
     }
     [ServerRpc(RequireOwnership = false)]
     private void ServerRPCUnlockProgressionPoint(NetworkConnection unlocker, string progressionPointID) 
@@ -108,9 +108,13 @@ public class ProgressionManager : NetworkBehaviour
         TargetRPCProgressionPointUnlocked(unlocker);
     }
     [TargetRpc]
-    private void TargetRPCProgressionPointUnlocked(NetworkConnection unlocker) 
+    private void TargetRPCProgressionPointUnlocked(NetworkConnection unlocker) => PostUnlockUpdates();
+
+    private void PostUnlockUpdates() 
     {
         player.GameplayManager.UpdateAllSelectables();
+        player.ProgressionManager.UpdateProgressionResults();
+        player.PlayerHUD.ProgressionMenuController.UpdateProgressionPointRenderers();
     }
 
     public bool CanUseItem(Item item) 

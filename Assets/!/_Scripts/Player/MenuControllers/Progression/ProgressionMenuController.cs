@@ -13,13 +13,13 @@ public class ProgressionMenuController : MenuController
 {
     [Header("References")]
     [SerializeField]
+    private RectTransform viewport;
+    [SerializeField]
     private Transform draggableContainer;
     [SerializeField]
     private TMP_Text cashCountText;
 
     [Header("Settings")]
-    [SerializeField]
-    private Vector4 borderBoundaries_LRTB;
     [SerializeField]
     private float minScale = 0.65f;
     [SerializeField]
@@ -30,9 +30,15 @@ public class ProgressionMenuController : MenuController
 
     private Dictionary<string, ProgressionPointRenderer> cachedRenderers;
     private string selectedRenderer;
+    private bool waitingOnEvalResults = false;
 
-    private float Scale => draggableContainer.transform.localScale.x;
-    
+    private Vector4 borderBoundaries_LRTB;
+    private float ScaleX => draggableContainer.transform.localScale.x;
+    private float ScaleY => draggableContainer.transform.localScale.y;
+
+    public ProgressionTree.EvaluationResults EvalResults => player.ProgressionManager.ProgressionResults.Value;
+    public bool HasEvalResults => EvalResults.canUnlock != null;
+
     protected new void Awake()
     {
         base.Awake();
@@ -44,12 +50,14 @@ public class ProgressionMenuController : MenuController
         }
 
         PlayerDataRegistry.Instance.PlayerDataUpdatedEvent += PlayerDataRegistry_PlayerDataUpdated;        
+        player.ProgressionManager.ProgressionResults.OnChange += ProgressionResults_OnChange;
     }
 
     protected new void OnDestroy()
     {
         base.OnDestroy();   
         PlayerDataRegistry.Instance.PlayerDataUpdatedEvent -= PlayerDataRegistry_PlayerDataUpdated;
+        player.ProgressionManager.ProgressionResults.OnChange -= ProgressionResults_OnChange;
     }
 
     private void PlayerDataRegistry_PlayerDataUpdated(PlayerData playerData, PlayerDataClass newData)
@@ -57,6 +65,15 @@ public class ProgressionMenuController : MenuController
         List<Type> whitelistedTypes = new() { typeof(ProgressionData), typeof(GeneralPlayerData) };
         if(playerData.GetUID() == player.uid.Value && whitelistedTypes.Contains(newData.GetType()))
             UpdateProgressionPointRenderers();
+    }
+
+    private void ProgressionResults_OnChange(ProgressionTree.EvaluationResults prev, ProgressionTree.EvaluationResults next, bool asServer)
+    {
+        // This is for client rendering, we don't need the asServer's call.
+        if(asServer)
+            return;
+
+        UpdateProgressionPointRenderers();
     }
 
     private void Update()
@@ -71,6 +88,11 @@ public class ProgressionMenuController : MenuController
             UpdateProgressionPointRenderers();
             lastFocusedPlayer = FocusedPlayer;
         }   
+
+        if(waitingOnEvalResults && HasEvalResults) {
+            waitingOnEvalResults = false;
+            UpdateEvalResultsRequired();
+        }
     }
 
     protected override void Opened()
@@ -78,11 +100,23 @@ public class ProgressionMenuController : MenuController
         base.Opened();
 
         player.ProgressionManager.UpdateProgressionResults();
+        
+        if(HasEvalResults)
+            UpdateEvalResultsRequired();
+        else
+            waitingOnEvalResults = true;
+
+        ComputeBoundaries();
+
+        player.SetPaused(true);
+        player.ConsumeMouse(false);
+    }
+
+    public void UpdateEvalResultsRequired() 
+    {
+        ProgressionTree.EvaluationResults evalResults = player.ProgressionManager.ProgressionResults.Value;
 
         UpdateProgressionPointRenderers();
-
-        ProgressionTree.EvaluationResults evalResults = player.ProgressionManager.ProgressionResults.Value;
-        // string currentProgression = ;
 
         string moveToRenderer = "";
         if(evalResults.canUnlock.Count > 0) {
@@ -90,7 +124,7 @@ public class ProgressionMenuController : MenuController
         } else if(evalResults.nextSteps.Count > 0) {
             moveToRenderer = evalResults.nextSteps.Keys.ToArray()[0];
         }
-
+        
         // Adjust scale and position of menu
         if(moveToRenderer != null && moveToRenderer.Length > 0) {
             ProgressionPointRenderer renderer = cachedRenderers[moveToRenderer];
@@ -99,10 +133,7 @@ public class ProgressionMenuController : MenuController
         } else {
             MoveTo(0, 0);
         }
-        SetScale(1.35f);
-        
-        player.SetPaused(true);
-        player.ConsumeMouse(false);
+        SetScale(1.15f);
     }
 
     public void UpdateProgressionPointRenderers() 
@@ -163,7 +194,7 @@ public class ProgressionMenuController : MenuController
 
                 int dir = (int)Mathf.Sign(context.ReadValue<float>());
 
-                SetScale(Scale + 0.1f*dir);
+                SetScale(ScaleX + 0.1f*dir);
                 break;
             case "Primary":
                 // TODO: Perform raycast to check if dragging background or other element
@@ -188,17 +219,24 @@ public class ProgressionMenuController : MenuController
         RectTransform rt = draggableContainer.transform as RectTransform;
         Vector3 pos = rt.anchoredPosition;
 
-        if(xPos < borderBoundaries_LRTB.x)
-            xPos = borderBoundaries_LRTB.x;
+        // BLog.Highlight($"Want to move to: {xPos}, {yPos}");
 
-        if(xPos > borderBoundaries_LRTB.y)
-            xPos = borderBoundaries_LRTB.y;
+        Vector2 want = new(xPos, yPos);
 
-        if(yPos < borderBoundaries_LRTB.w)
-            yPos = borderBoundaries_LRTB.w;
+        if(xPos < borderBoundaries_LRTB.x*ScaleX)
+            xPos = borderBoundaries_LRTB.x*ScaleX;
 
-        if(yPos > borderBoundaries_LRTB.z)
-            yPos = borderBoundaries_LRTB.z;
+        if(xPos > borderBoundaries_LRTB.y*ScaleX)
+            xPos = borderBoundaries_LRTB.y*ScaleX;
+
+        if(yPos < borderBoundaries_LRTB.w*ScaleY)
+            yPos = borderBoundaries_LRTB.w*ScaleY;
+
+        if(yPos > borderBoundaries_LRTB.z*ScaleY)
+            yPos = borderBoundaries_LRTB.z*ScaleY;
+
+        if(want != new Vector2(xPos, yPos))
+            BLog.Highlight($"Will move to: {xPos}, {yPos}, lborder: {borderBoundaries_LRTB.x*ScaleX}, rborder: {borderBoundaries_LRTB.y*ScaleX}, tborder: {borderBoundaries_LRTB.z*ScaleY}, bborder: {borderBoundaries_LRTB.w*ScaleY}");
 
         pos.x = xPos;
         pos.y = yPos;
@@ -223,5 +261,23 @@ public class ProgressionMenuController : MenuController
     {
         if(selectedRenderer == null)
             selectedRenderer = player.ProgressionManager.ProgressionTree.Entries[0];
+    }
+
+    /// <summary>
+    /// Find the coordinates of the furthest left, right, top, and bottom progression points.
+    /// </summary>
+    private void ComputeBoundaries() 
+    {
+        Vector4 bounds = borderBoundaries_LRTB;
+        BLog.Highlight($"Computing bounds {cachedRenderers.Values.Count}");
+        foreach(ProgressionPointRenderer renderer in cachedRenderers.Values) {
+            Rect rect = (renderer.transform as RectTransform).rect;
+            BLog.Highlight($"lborder: {rect.xMin}, rborder: {rect.xMax}, tborder: {rect.yMax}, bborder: {rect.yMin}");
+            bounds.x = Mathf.Min(bounds.x, rect.xMin);
+            bounds.y = Mathf.Max(bounds.y, rect.xMax);
+            bounds.z = Mathf.Max(bounds.z, rect.yMax);
+            bounds.w = Mathf.Min(bounds.w, rect.yMin);
+        }
+        borderBoundaries_LRTB = bounds;
     }
 }

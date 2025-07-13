@@ -5994,6 +5994,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   playerAttachPoint: {fileID: 3101114854063224960}
   carController: {fileID: 1146125832977977591}
+  characterController: {fileID: 0}
 --- !u!114 &1146125832977977591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6066,7 +6067,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 7128789307663756347}
   _networkObjectCache: {fileID: 0}
-  _componentConfiguration: 0
+  _componentConfiguration: 2
   _synchronizeParent: 0
   _packing:
     Position: 1

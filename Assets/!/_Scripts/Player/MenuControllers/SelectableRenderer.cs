@@ -57,10 +57,10 @@ public class SelectableRenderer : MonoBehaviour
         if(shownSelectable != preferredSelectable) {
             shownSelectable = preferredSelectable;
 
-            if(shownSelectable == null)
-                Hide(true); 
-            else {
-                Render(shownSelectable);
+            if(shownSelectable == null) {
+                bool isShown = canvasGroup.alpha == 1f;
+                Hide(isShown); 
+            } else if(Render(shownSelectable)) {
                 Show(true);
             }
         }
@@ -112,23 +112,34 @@ public class SelectableRenderer : MonoBehaviour
         }
     }
 
-    public void Render(Selectable selectable) 
+    /// <summary>
+    /// Render the selectable, returns true/false if the render is successful.
+    /// </summary>
+    /// <param name="selectable">The selectable to render, will access it's selectable render info.</param>
+    /// <returns>True/false success status</returns>
+    /// <exception cref="InvalidOperationException">The selectable is null.</exception>
+    public bool Render(Selectable selectable) 
     {
         if(selectable == null)
             throw new InvalidOperationException("Null selectable.");
 
         if(!selectable.SelectableRenderInfoV.HasValue) {
             Debug.LogWarning("Skipping SelectableRenderer Render call since there is no render info.");
-            return;
+            return false;
         }
 
         SelectableRenderInfo info = selectable.SelectableRenderInfoV.Value;
+
+        if(!info.renders)
+            return false;
 
         UpdateTextElements(info);
 
         descriptionText.ForceMeshUpdate();
         LayoutRebuilder.ForceRebuildLayoutImmediate(descriptionText.rectTransform);
         // UpdateSize(info);
+
+        return true;
     }
 
     private void UpdateTextElements(SelectableRenderInfo info) 

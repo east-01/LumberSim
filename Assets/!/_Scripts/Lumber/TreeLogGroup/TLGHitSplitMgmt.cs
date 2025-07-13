@@ -100,7 +100,6 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
 
     public void SplitLog(SingleHitData hitPoint) 
     {
-        BLog.Highlight($"Should award split: {ShouldAwardSplit()}");
         if(ShouldAwardSplit())
             AwardSplit(hitPoint.owner);
 
@@ -132,6 +131,10 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
         TreeOpSet(identifierPath, newAttachedData);
 
         estimatedValue = null;
+
+        // Refresh selectable is first, changes controller to the tree log group
+        RefreshSelectable();
+        GetComponent<Selectable>().UpdateSelectable(true);
 
         // ----- Part of the tree that's just been detached -----
         // Create the data for the new log group to be spawned
@@ -166,7 +169,6 @@ public partial class TreeLogGroup : NetworkBehaviour, IS3
             int treesChopped = progression.GetMetric(MetricNames.CHOPPED_TREES).GetIntValue();
             progression.GetMetric(MetricNames.CHOPPED_TREES).SetValue(treesChopped + 1);
             pd.SetData(progression);
-            BLog.Highlight($"Player {pd.GetUID()} chopped {progression.GetMetric(MetricNames.CHOPPED_TREES).GetIntValue()} tree(s)");
         }
     }
 

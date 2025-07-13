@@ -52,7 +52,7 @@ public class VehicleDriver : MonoBehaviour, IInputListener
         if(!vehicleNob.TryGetComponent(out Vehicle vehicle))
             throw new InvalidOperationException($"Failed to get Vehicle from vehicle NetworkObject");
 
-        vehicle.SetDriver(player.uid.Value);
+        vehicle.ServerRPCSetDriver(player.uid.Value);
         drivingVehicle = vehicleNob;
     }
 
@@ -70,7 +70,7 @@ public class VehicleDriver : MonoBehaviour, IInputListener
         characterController.enabled = true;
         player.CameraManager.mode = CameraManager.Mode.FIRST_PERSON;
 
-        vehicle.SetDriver(null);
+        vehicle.ServerRPCSetDriver(null);
         drivingVehicle = null;
 
         // characterController.Move(targetPos-transform.position);

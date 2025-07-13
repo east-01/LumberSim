@@ -93,11 +93,6 @@ public class Player : NetworkBehaviour, IS3
         uidReadout = uid.Value;
 #endif
 
-        if(Input.GetKeyDown(KeyCode.Escape)) {
-            SetPaused(!IsPaused);
-            ConsumeMouse(!IsPaused);
-        }
-
         if(Input.GetKeyDown(KeyCode.O)) {
             GeneralPlayerData gpd = PlayerData.GetData<GeneralPlayerData>();
             gpd.balance += 1000;

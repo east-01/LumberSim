@@ -63,7 +63,7 @@ public class SalePoint : NetworkBehaviour, IS3
         }
 
         IMarketEvaluator eval = IMarketEvaluator.FindEvaluator(nob.gameObject);
-        BLog.Highlight($"Checking for eval: {eval}");
+
         if(eval == null)
             return;
 

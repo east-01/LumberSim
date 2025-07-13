@@ -16,6 +16,7 @@ public class PlayerHUDMenuController : MenuController
 
     public static readonly string SUBMENU_IN_GAME = "InGame";
     public static readonly string SUBMENU_PROGRESSION = "Progression";
+    public static readonly string SUBMENU_PAUSE = "PauseMenu";
 
     [Header("References")]
     [SerializeField]

@@ -1,0 +1,4 @@
+What you need to do is have central systems for data & when it gets updated by the server so:
+- Progression results updated event
+- Player hotbar changes event
+- Player progression changes event

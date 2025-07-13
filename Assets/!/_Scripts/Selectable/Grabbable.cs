@@ -154,9 +154,10 @@ public class Grabbable : NetworkBehaviour, IS3
             return;
 
         Quaternion newRot = rb.rotation;
-        if(allowRotation)
+        if(allowRotation && rotationDelta != Quaternion.identity) {
             newRot = UpdateRotation(rotationDelta);
-        UpdatePosition(targetPosition, newRot);        
+        }    
+        UpdatePosition(targetPosition, newRot);    
 
         if(!InstanceFinder.IsServerStarted)
             ServerRPCUpdatePositionAndRotation(targetPosition, rotationDelta);

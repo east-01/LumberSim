@@ -5,13 +5,14 @@ using FishNet;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using EMullen.SceneMgmt;
+using EMullen.Core;
 
 /// <summary>
 /// The ChoppableTree class is an add-on to a TreeLogGroup to automatically generate data and
 ///   make static. In the future, the tree will also age.
 /// </summary>
 [RequireComponent(typeof(TreeLogGroup))]
-public class ChoppableTree : NetworkBehaviour
+public class ChoppableTree : NetworkBehaviour, ISelectableController
 {
 
     // TODO: Move to TreeSpawner
@@ -33,6 +34,8 @@ public class ChoppableTree : NetworkBehaviour
 
     private void Start() 
     {
+        GetComponent<Selectable>().selectableController = this;
+
         if(!InstanceFinder.IsServerStarted) {
             return;
         }
@@ -191,6 +194,9 @@ public class ChoppableTree : NetworkBehaviour
 
         // UpdateAges(Root);
     }
+
+    public SelectableRenderInfo GetSelectableInfo() => new() { renders = false };
+    public GameObject GetOutlineObject() => null;
 }
 
 /// <summary>

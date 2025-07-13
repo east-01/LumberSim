@@ -8,9 +8,7 @@ public interface IMarketEvaluator
 
     public static IMarketEvaluator FindEvaluator(GameObject obj)
     {
-        BLog.Highlight($" ssss Looking at: {obj.name}");
         foreach (var component in obj.GetComponents<MonoBehaviour>()) {
-            BLog.Highlight($"Looking at: {component.name}");
             if(component is IMarketEvaluator eval)
                 return eval;
         }

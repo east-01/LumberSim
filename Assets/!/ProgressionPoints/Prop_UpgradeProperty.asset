@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a990f4c671d47748831a4dde672b16b, type: 3}
-  m_Name: BoughtT1Axe
+  m_Name: Prop_UpgradeProperty
   m_EditorClassIdentifier: 
-  progressionID: BT1Axe
-  progressionDisplayName: Getting started
-  progressionDescription: Buy the first tier axe from the shack.
-  price: 0
+  progressionID: BuyProp2
+  progressionDisplayName: Expand Property
+  progressionDescription: Comes with space for a machine.
+  price: 5000
   targetMetrics:
   - metric:
-      type: 0
-      name: BoughtT1Axe
-      boolValue: 1
-      intValue: 0
+      type: 1
+      name: ChoppedTrees
+      boolValue: 0
+      intValue: 250
       floatValue: 0
-    displayName: Buy Tier 1 Axe
-  predecessors: []
+    displayName: Chop 250 trees
+  predecessors:
+  - {fileID: 11400000, guid: 1b240f58d8ba1c74488938052c2a4f61, type: 2}

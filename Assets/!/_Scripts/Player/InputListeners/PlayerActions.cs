@@ -1,3 +1,4 @@
+using EMullen.Core;
 using EMullen.MenuController;
 using EMullen.PlayerMgmt;
 using FishNet;
@@ -56,7 +57,7 @@ public class PlayerActions : NetworkBehaviour, IInputListener
                 HandleToggleMenu(context);
                 break;
             case "Pause":
-                player.SetPaused(!player.IsPaused);
+                HandlePauseMenu(context);
                 break;
         }
     }
@@ -103,8 +104,29 @@ public class PlayerActions : NetworkBehaviour, IInputListener
         if(vehicle.HasDriver())
             return;
 
+        if(!vehicle.IsOwner) {
+            // player.ShowHUDWarning("You don't own the vehicle.", 2f);
+            // return;
+            ClaimVehicle(vehicle.NetworkObject, LocalConnection);    
+            player.ShowHUDWarning("TEMP: Claimed vehicle", 2f);
+            return;
+        }
+
+        BLog.Highlight($"veh owner: {vehicle.Owner}");
+
         vehicleDriver.SetDrivingVehicle(vehicle.NetworkObject);
     }
+
+    public void ClaimVehicle(NetworkObject nob, NetworkConnection client) {
+        if(!InstanceFinder.IsServerStarted) {
+            ServerRPCClaimVehicle(nob, LocalConnection);
+            return;
+        }
+
+        nob.GiveOwnership(client);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerRPCClaimVehicle(NetworkObject nob, NetworkConnection client) => ClaimVehicle(nob, client);
 
     private void HandleDropHotbar(InputAction.CallbackContext context) 
     {
@@ -171,6 +193,23 @@ public class PlayerActions : NetworkBehaviour, IInputListener
         } else {
             igSubmenu.Close();
             progSubmenu.Open();
+        }
+    }
+
+    private void HandlePauseMenu(InputAction.CallbackContext context) 
+    {
+        if(!context.performed)
+            return; 
+
+        PlayerHUDMenuController hud = player.PlayerHUD;
+        MenuController pauseSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_PAUSE);
+        MenuController igSubmenu = hud.GetSubMenu(PlayerHUDMenuController.SUBMENU_IN_GAME);
+        if(pauseSubmenu.IsOpen) {
+            pauseSubmenu.Close();
+            igSubmenu.Open();
+        } else {
+            igSubmenu.Close();
+            pauseSubmenu.Open();
         }
     }
 

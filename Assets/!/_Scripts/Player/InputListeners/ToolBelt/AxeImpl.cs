@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using EMullen.Core;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -182,6 +183,25 @@ public class AxeImpl : ToolBeltImpl
         int[] identifierPath = args.log.GetIdentifierPath();
         TreeLogGroup.SingleHitData hitData = new TreeLogGroup.SingleHitData(identifierPath, args.hit.point, hitPower, LocalConnection);
         args.group.HitLog(hitData);
+
+        StartCoroutine(RefreshSelectable());
+    }
+
+    /// <summary>
+    /// This is a workaround for a bug from when a TreeLogGroup splits and the selectable renderer
+    ///   doesn't know that it needs to rerender. Currently using this workaround until the problem
+    ///   appears again.
+    /// Solution: Have selectables broadcast that they're dirty
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator RefreshSelectable() 
+    {
+        for(int i = 0; i < 5; i++) {
+            yield return new WaitForSeconds(0.1f);
+            Selectable current = player.RaycastPicker.CurrentSelectable; 
+            if(current != null)
+                player.PlayerHUD.InGameMenuController.SelectableRenderer.Render(current);
+        }
     }
 
     /// <summary>
